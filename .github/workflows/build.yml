@@ -1,0 +1,14 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: dimerun-h9-ubuntu2204
+    steps:
+    - name: mount .cache as tmpfs
+      run: sudo mount -t tmpfs -o size=200G bazelcache /home/runner/.cache
+    - uses: actions/checkout@v4
+    - name: make
+      run: make

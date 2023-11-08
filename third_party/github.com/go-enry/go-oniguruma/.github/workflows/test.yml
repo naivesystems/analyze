@@ -1,0 +1,28 @@
+on: [push, pull_request]
+name: Test
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x]
+    runs-on: ubuntu-latest
+    env:
+      ONIGURUMA_VERSION: 6.9.4
+    steps:
+    - name: Install libonig5
+      run: |
+        wget "http://archive.ubuntu.com/ubuntu/pool/universe/libo/libonig/libonig5_${ONIGURUMA_VERSION}-1_amd64.deb"
+        sudo dpkg -i "libonig5_${ONIGURUMA_VERSION}-1_amd64.deb"
+        wget "http://archive.ubuntu.com/ubuntu/pool/universe/libo/libonig/libonig-dev_${ONIGURUMA_VERSION}-1_amd64.deb"
+        sudo dpkg -i "libonig-dev_${ONIGURUMA_VERSION}-1_amd64.deb"
+  
+    - name: Install Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Test
+      run: go test -v ./...

@@ -1,0 +1,28 @@
+startup --batch_cpu_scheduling --io_nice_level=7 --macos_qos_class=background
+
+build:lhw13 --jobs=72
+
+build --incompatible_strict_action_env
+
+# Set the default compiler to the `clang` binary on the `PATH`.
+build --repo_env=CC=clang --repo_env=CXX=clang++
+
+# C++14 standard version is required.
+build --cxxopt=-std=c++14 --host_cxxopt=-std=c++14
+
+# The Clang available on MacOS has a warning that isn't clean on MLIR code. The
+# warning doesn't show up with more recent Clangs, so just disable for now.
+build --cxxopt=-Wno-range-loop-analysis --host_cxxopt=-Wno-range-loop-analysis
+
+# Use `-Wall` and `-Werror` for Clang.
+build --copt=-Wall --copt=-Werror --host_copt=-Wall --host_copt=-Werror
+# This doesn't appear to be enforced by any upstream bot.
+build --copt=-Wno-unused --host_copt=-Wno-unused
+
+# To build zlib
+# TODO(xjia): remove if https://github.com/madler/zlib/issues/633 is resolved
+build --copt=-Wno-deprecated-non-prototype
+build --host_copt=-Wno-deprecated-non-prototype
+# TODO(xjia): remove the following two lines once all of us move to Clang 15+
+build --copt=-Wno-unknown-warning-option
+build --host_copt=-Wno-unknown-warning-option

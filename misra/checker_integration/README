@@ -1,0 +1,18 @@
+checker_intergration needs three parameters now:
+
+(1) check_rules: rules to be analyzed, splited by ",", like -check_rules=misra_c_2012/rule_22_1,misra_c_2012/rule_22_2
+(2) results_dir: the directory of the results files, default /output/
+(3) compile_commands_path: the path to the compile_commands file to be analyzed (not supported yet for CSA)
+
+example: in project root where already exists the folder output:
+go run misra/checker_integration/cmd/main.go -check_rules=misra_c_2012/rule_22_1 -results_dir=$PWD/output/ \
+-compile_commands_path=misra_c_2012/rule_22_1/bad/bad2/compile_commands.json \
+-alsologtostderr
+
+You can also test single rule by using Makefile (in checker_integration/):
+make check_22_1 compile_commands_path=../../../misra_c_2012/rule_22_1/bad/bad1/compile_commands.json \
+
+If you want to customize your checker binaries instead of using default config, you can add a parameter like this:
+-checker_config='{"csa_system_lib_options":"-isystem /usr/include -isystem /usr/lib/gcc/x86_64-redhat-linux/11/include/","infer_bin":"infer","clang_bin":"clang","code_checker_bin":"CodeChecker","cppcheck_bin":"third_party/cppcheck/cppcheck","python_bin":"python"}'
+
+For CSA checker, csa_system_lib_options defines the path of system library which may differ between operating systems.

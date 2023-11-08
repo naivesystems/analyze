@@ -1,0 +1,167 @@
+# NaiveSystems Analyze - A tool for static code analysis
+# Copyright (C) 2023  Naive Systems Ltd.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+package(
+    default_visibility = ["//visibility:public"],
+    licenses = ["notice"],
+)
+
+cc_library(
+    name = "clang-query-lib",
+    srcs = glob([
+        "clang-query/*.cpp",
+        "clang-query/*.h",
+    ]),
+    deps = [
+        "//clang:ast_matchers",
+        "//clang:ast_matchers_dynamic",
+        "//clang:ast",
+        "//clang:basic",
+        "//clang:frontend",
+        "//clang:serialization",
+        "//clang:tooling",
+        "//llvm:LineEditor",
+        "//llvm:Support",
+    ],
+)
+
+cc_binary(
+    name = "clang-query",
+    srcs = glob([
+        "clang-query/tool/*.cpp",
+    ]),
+    deps = [
+        ":clang-query-lib",
+    ],
+)
+
+# the genrule enables CLANG_TIDY_ENABLE_STATIC_ANALYZER by default.
+# refer to third_party/llvm-project/llvm/utils/gn/secondary/clang-tools-extra/clang-tidy/BUILD.gn:10
+genrule(
+    name = "make-clang-tidy-config",
+    srcs = ["clang-tidy/clang-tidy-config.h.cmake"],
+    outs = ["clang-tidy-config.h"],
+    cmd = "sed -e 's/#cmakedefine01\\(.*\\)/#define\\1 1/g' $(SRCS) > $(OUTS)",
+)
+
+cc_library(
+    name = "clang-tidy-config",
+    hdrs = [":make-clang-tidy-config"],
+    strip_include_prefix = ".",
+)
+
+# refer to third_party/llvm-project/llvm/utils/gn/secondary/clang-tools-extra/clang-tidy/BUILD.gn:25
+cc_library(
+    name = "clang-tidy-lib",
+    srcs = glob([
+        "clang-tidy/*.cpp",
+    ]),
+    hdrs = glob([
+        "clang-tidy/*.h",
+    ]),
+    deps = [
+        ":clang-tidy-config",
+        "//clang:ast",
+        "//clang:ast_matchers",
+        "//clang:basic",
+        "//clang:format",
+        "//clang:frontend",
+        "//clang:frontend_rewrite",
+        "//clang:lex",
+        "//clang:sema",
+        "//clang:serialization",
+        "//clang:static_analyzer_frontend",
+        "//clang:tooling",
+        "//clang:tooling_core",
+        "//clang:transformer",
+        "//llvm:Support",
+    ],
+)
+
+cc_binary(
+    name = "clang-tidy-confusable-chars-gen",
+    srcs = [
+        "clang-tidy/misc/ConfusableTable/BuildConfusableTable.cpp",
+    ],
+    deps = [
+        "//llvm:Support",
+    ],
+)
+
+# the genrule uses self-built clang-tidy-confusable-chars-gen by default.
+# refer to third_party/llvm-project/llvm/utils/gn/secondary/clang-tools-extra/clang-tidy/misc/BUILD.gn:3
+genrule(
+    name = "make_confusable_table",
+    srcs = ["clang-tidy/misc/ConfusableTable/confusables.txt"],
+    outs = ["Confusables.inc"],
+    cmd = "$(execpath :clang-tidy-confusable-chars-gen) $(SRCS) $(OUTS)",
+    exec_tools = [":clang-tidy-confusable-chars-gen"],
+)
+
+cc_library(
+    name = "confusables",
+    hdrs = [":make_confusable_table"],
+    strip_include_prefix = ".",
+)
+
+# refer to third_party/llvm-project/llvm/utils/gn/secondary/clang-tools-extra/clang-tidy/BUILD.gn:65
+cc_library(
+    name = "clang-tidy-all-checks",
+    srcs = glob([
+        "clang-tidy/*/*.cpp",
+        "clang-tidy/*/*.h",
+    ], exclude=[
+        "clang-tidy/tool/*.cpp",
+        "clang-tidy/tool/*.h",
+    ]),
+    deps = [
+        ":clang-tidy-lib",
+        ":confusables",
+        "//clang:ast",
+        "//clang:ast_matchers",
+        "//clang:ast_matchers_dynamic",
+        "//clang:basic",
+        "//clang:frontend",
+        "//clang:frontend_rewrite",
+        "//clang:serialization",
+        "//clang:static_analyzer_frontend",
+        "//clang:tooling",
+        "//clang:tooling_core",
+        "//clang:transformer",
+        "//llvm:LineEditor",
+        "//llvm:Support",
+    ],
+)
+
+# refer to third_party/llvm-project/llvm/utils/gn/secondary/clang-tools-extra/clang-tidy/tool/BUILD.gn:1
+cc_binary(
+    name = "clang-tidy",
+    srcs = [
+        "clang-tidy/tool/ClangTidyMain.cpp",
+        "clang-tidy/tool/ClangTidyMain.h",
+        "clang-tidy/tool/ClangTidyToolMain.cpp",
+    ],
+    deps = [
+        ":clang-tidy-all-checks",
+        ":clang-tidy-lib",
+        "//clang:ast",
+        "//clang:ast_matchers",
+        "//clang:basic",
+        "//clang:tooling",
+        "//clang:tooling_core",
+        "//llvm:Support",
+    ],
+)

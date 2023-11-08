@@ -1,0 +1,57 @@
+name: action-tests
+on:
+  push:
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - '**.yml'
+
+# https://github.com/actions
+jobs:
+
+  test:
+    name: Test on go ${{ matrix.go_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go_version: [1.15, 1.16, 1.17, 1.18]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Setup Go Faster
+      uses: WillAbides/setup-go-faster@v1.7.0
+      timeout-minutes: 3
+      with:
+        go-version: ${{ matrix.go_version }}
+
+    - name: Display Env
+#      run: env | grep -i term # error on exec
+      run: env
+
+    - name: Run unit tests
+      env:
+        COLOR_DEBUG_MODE: on
+      #      run: go test -v -cover ./...
+      #      must add " for profile.cov on windows OS
+      run: go test -v -coverprofile="profile.cov" ./...
+
+    - name: Send coverage
+      uses: shogo82148/actions-goveralls@v1
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      with:
+        path-to-profile: profile.cov
+        flag-name: Go-${{ matrix.go_version }}
+        parallel: true
+
+  # notifies that all test jobs are finished.
+  # https://github.com/shogo82148/actions-goveralls
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shogo82148/actions-goveralls@v1
+        with:
+          parallel-finished: true

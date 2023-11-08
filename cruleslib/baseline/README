@@ -1,0 +1,22 @@
+baseline 功能说明
+
+当 .naivesystems/baseline.json 不存在时，会在输出目录生成 baseline.json 文件；否则会根据
+baseline.json 文件，基于 git 的 hunk，过滤掉重复的结果。如果没有安装 git 或者不是 git 仓库，
+baseline 就不会运行。
+
+各个 analyzer 可以通过调用 baseline.RemoveDuplicatedResults 函数来使用 baseline 功能
+
+RemoveDuplicatedResults 需要以下参数：
+
+1. allResults: *pb.ResultsList 类型，包含所有检查结果
+2. workingDir: baseline 的工作目录，需要属于某个 git 仓库，一般是待检查项目的根目录，在容器里一般是 /src/
+3. configDir: 包含 baseline.json 文件的目录，一般就是 .naivesystems 文件夹，在容器里是 /config/
+4. resultsDir: 检查结果的输出目录，当 baseline.json 不存在时生成该文件，在容器里是 /output/
+
+RemoveDuplicatedResults(allResults *pb.ResultsList, workingDir, configDir, resultsDir string)
+
+注意：
+（1）第一次运行后，需要将输出目录中的 baseline.json 移动到 .naivesystems 文件夹下后再次运行，baseline
+才能够排除重复的结果；
+（2）因为 baseline 是基于 git 实现的，因此如果存在未 commit 的代码，过滤的结果可能会有偏差。
+（3）使用到的 git2go 动态链接有些问题，在编译的时候需要加上 -tags static

@@ -1,0 +1,63 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  test:
+    strategy:
+      matrix:
+        go_version:
+          - '1.16'
+          - '1.17'
+          - '1.18'
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    steps:
+      - name: Setup go ${{ matrix.go_version }} 
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go_version }}
+      - name: Checkout Source 
+        uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+      - name: Run Tests
+        run: make test
+  coverage:
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    steps:
+      - name: Setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+      - name: Checkout Source 
+        uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Create Test Coverage
+        run: make test-coverage
+      - name: Upload Test Coverage
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true

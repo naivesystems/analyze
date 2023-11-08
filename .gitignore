@@ -1,0 +1,11 @@
+*.pb.cc
+*.pb.go
+*.pb.h
+/.cache/
+/bazel-*
+/compile_commands.json
+/external
+csa-out/
+infer-out/
+output/
+node_modules

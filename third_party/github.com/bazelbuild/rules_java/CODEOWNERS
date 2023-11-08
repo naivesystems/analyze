@@ -1,0 +1,17 @@
+# Each line is a file pattern followed by one or more owners.
+
+# Order is important; the last matching pattern takes the most precedence.
+
+# When someone opens a pull request that only modifies files in directory, only
+# component owners and not the global owner(s) will be requested for a review.
+
+# Syntax: https://help.github.com/articles/about-codeowners/
+
+# Use individual usernames instead of teams (like @bazelbuild/android) for
+# auto-assignment to work, unless everyone in the team has write permissions to the repository.
+# See https://github.community/t5/How-to-use-Git-and-GitHub/CODEOWNERS-works-with-users-but-not-teams/td-p/4986
+
+# Component owners
+# ----------------
+
+* @iirina @hlopko

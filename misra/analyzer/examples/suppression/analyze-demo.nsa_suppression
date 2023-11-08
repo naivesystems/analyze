@@ -1,0 +1,16 @@
+{
+  "suppressions": [
+    {
+      "path": "/src/demo.c",
+      "line_number": 3,
+      "content": "5902df275fdfcf2c",
+      "rule_code": "C0513"
+    },
+    {
+      "path": "/src/demo.c",
+      "line_number": 11,
+      "content": "8c081029f8c8466b",
+      "rule_code": "C1203"
+    }
+  ]
+}

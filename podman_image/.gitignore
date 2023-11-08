@@ -1,0 +1,14 @@
+/infer-linux64-v1.1.0.tar
+/infer-linux64-v1.1.0.tar.xz
+/naivesystems-analyzer-installer.tar.gz
+/naivesystems-analyzer-installer-cwe-gjb.tar.gz
+tmpWorkSpace
+naivesystems-analyzer-installer
+clang
+clang-extdef-mapping
+clang-query
+clang-tidy
+gjb5369
+gjb8114
+misra
+misra_cpp_2008

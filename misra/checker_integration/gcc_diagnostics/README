@@ -1,0 +1,36 @@
+misra/checker_integration/gcc_diagnostics
+
+To use this, in the root path of repository, run
+
+```bash
+$ go run misra/checker_integration/cmd/main.go \
+ -check_rules=misra_c_2012/rule_17_5 \
+ -results_dir=$PWD/output/ \
+ -compile_commands_path=misra_c_2012/rule_17_5/bad/bad1/compile_commands.json \
+ -alsologtostderr
+```
+
+or use launch.json
+
+```json
+{
+  "name": "Launch file",
+  "type": "go",
+  "request": "launch",
+  "mode": "debug",
+  "program": "misra/checker_integration/cmd/main.go",
+  "cwd": "${workspaceFolder}",
+  "args": [
+    "-check_rules=misra_c_2012/rule_17_5",
+    "-results_dir=$PWD/output/",
+    "-compile_commands_path=misra_c_2012/rule_17_5/bad/bad1/compile_commands.json",
+    "-alsologtostderr"
+  ],
+},
+```
+
+References:
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+[2] https://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Message-Formatting-Options.html
+[3] https://gcc.gnu.org/onlinedocs/gccint/Guidelines-for-Diagnostics.html

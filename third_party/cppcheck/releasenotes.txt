@@ -1,0 +1,16 @@
+Color output for diagnostics are added for unix-based platforms.
+
+Added symbolic analysis for ValueFlow. A simple delta is used to compute the difference between two unknown variable. 
+
+Rules using the "define" tokenlist can also match #include as well.
+
+Library `<function>` tags can now use `<container>` tag, so free functions that accept containers such as `std::size`, `std::empty`, `std::begin`, `std::end`, etc. can specify the `yields` or `action` for the container.
+
+Library `<smart-pointer>` tag can specify a `<unique>` tag for smart pointers that have unique ownership. Cppcheck now warns about dangling references to smart pointers with unique ownership.
+
+Misra C 2012 compliance has been "completed"
+
+All misra C 2012 rules have been implemented except 1.1 , 1.2 and 17.3. Including the rules in amendment 1 and amendment 2.
+The rules 1.1 and 1.2 must be checked with a compiler.
+The rule 17.3 can be checked by a compiler, for instance GCC.
+

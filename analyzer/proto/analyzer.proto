@@ -1,0 +1,68 @@
+/*
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+syntax = "proto3";
+package analyzer.proto;
+
+option go_package = "analyzer/proto";
+
+// An analyzer definition.
+message Definition {
+  // A machine-readable name of the analyzer.
+  string name = 1;
+  // A human-readable description of the analyzer.
+  string description = 2;
+  // A list of rules supported by this analyzer.
+  repeated string rules = 3;
+  // File or directory location where the build artifacts of the analyzer should
+  // be copied from.
+  string source_location = 4;
+  // File or directory location in the container where the artifacts should be
+  // copied to.
+  string target_location = 5;
+  // Absolute path in the container to invoke the analyzer.
+  string invocation_path = 6;
+  // A list of owners who are responsible for the quality of the analyzer.
+  // In case of emergencies, owners should be contacted in the specified order.
+  // Usually the owners are identified with their corporate email addresses.
+  repeated string owners = 7;
+}
+
+message Definitions {
+  repeated Definition definitions = 1;
+  CheckerConfiguration checker_config = 2;
+}
+
+message CheckerConfiguration {
+  // System library options for CSA checker.
+  string csa_system_lib_options = 1;
+  string infer_bin = 2;
+  string clang_bin = 3;
+  string code_checker_bin = 4;
+  string cppcheck_bin = 5;
+  string python_bin = 6;
+  string clangtidy_bin = 7;
+  string clangquery_bin = 8;
+  string misra_checker_path = 9;
+  int32 num_workers = 10;
+  string infer_extra_options = 11;
+  string gcc_predefined_macros = 12;
+  string clangmapping_bin = 13;
+  int64 infer_jobs = 14;
+  string cpplint_script = 15;
+}

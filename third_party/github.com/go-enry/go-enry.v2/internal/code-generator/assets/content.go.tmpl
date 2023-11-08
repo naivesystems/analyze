@@ -1,0 +1,51 @@
+package data
+
+import (
+	"regexp"
+
+	"github.com/go-enry/go-enry/v2/data/rule"
+)
+
+var ContentHeuristics = map[string]*Heuristics{
+	{{ range $ext, $rules := . -}}
+		{{ printf "%q" $ext }}: &Heuristics{
+			{{ range $rule := $rules -}}
+				{{template "Rule" $rule}}
+			{{ end -}}
+		},
+	{{ end -}}
+}
+
+{{ define "Rule" -}}
+	{{ if eq .Op "And" -}}
+		rule.And(
+			{{ template "Languages" .Langs -}}
+			{{ range $rule := .Rules -}}
+				{{template "Rule" $rule}}
+			{{ end -}}
+		),
+	{{- else if eq .Op "Or" -}}
+		rule.Or(
+			{{ template "Languages" .Langs -}}
+			regexp.MustCompile({{ .Pattern | stringVal }}),
+		),
+	{{- else if eq .Op "Not" -}}
+		rule.Not(
+			{{ template "Languages" .Langs -}}
+			regexp.MustCompile({{ .Pattern | stringVal }}),
+		),
+	{{- else if eq .Op "Always" -}}
+		rule.Always(
+			{{ template "Languages" .Langs -}}
+		),
+	{{ end -}}
+{{ end -}}
+
+
+{{define "Languages" -}}
+	{{with . -}}
+		rule.MatchingLanguages( {{range .}} {{printf "\"%s\"" .}}, {{end}} ),
+	{{ else -}}
+		rule.MatchingLanguages(""),
+	{{end -}}
+{{end}}

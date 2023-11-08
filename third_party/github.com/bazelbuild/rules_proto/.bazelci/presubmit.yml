@@ -1,0 +1,37 @@
+---
+buildifier:
+  version: latest
+  # skylark-comment fails because links to Bazel's docs for
+  # `ProtoInfo` and `proto_common` contain `/skylark/`.
+  warnings: "-skylark-comment"
+
+platforms:
+  macos:
+    build_targets:
+      - "..."
+    test_targets:
+      - "..."
+
+  rbe_ubuntu1604:
+    build_targets:
+      - "..."
+    test_targets:
+      - "..."
+
+  ubuntu1604:
+    build_targets:
+      - "..."
+    test_targets:
+      - "..."
+
+  ubuntu1804:
+    build_targets:
+      - "..."
+    test_targets:
+      - "..."
+
+  windows:
+    build_targets:
+      - "..."
+    test_targets:
+      - "..."

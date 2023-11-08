@@ -1,0 +1,9 @@
+package data
+
+import "github.com/go-enry/go-enry/v2/regex"
+
+var VendorMatchers = []regex.EnryRegexp{
+	{{range $regexp := . -}}
+	regex.MustCompile(`{{ $regexp }}`),
+	{{end -}}
+}

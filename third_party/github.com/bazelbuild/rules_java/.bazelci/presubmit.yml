@@ -1,0 +1,19 @@
+---
+tasks:
+  ubuntu1604:
+    build_targets:
+    - "..."
+  ubuntu1804:
+    build_targets:
+    - "..."
+  ubuntu1804_nojava:
+    build_flags:
+    - "--javabase=@openjdk11_linux_archive//:runtime"
+    build_targets:
+    - "..."
+  macos:
+    build_targets:
+    - "..."
+  windows:
+    build_targets:
+    - "..."

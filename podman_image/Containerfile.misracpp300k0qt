@@ -1,0 +1,11 @@
+FROM naive.systems/analyzer/misra:dev
+
+RUN dnf install -y \
+qtcreator \
+qt5-qtdeclarative-devel \
+qt5-qttools-devel \
+qt5-qtxmlpatterns \
+qt5-qtxmlpatterns-devel
+
+COPY "misra_analyzer" "/opt/naivesystems/misra_analyzer"
+COPY "bigmain_misra_cpp_2008" "/opt/naivesystems/bigmain"

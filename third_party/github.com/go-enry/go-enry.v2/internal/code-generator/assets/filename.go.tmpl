@@ -1,0 +1,7 @@
+package data
+
+var LanguagesByFilename = map[string][]string{
+	{{range $filename, $languages := . -}}
+	"{{ $filename }}":	{ {{- formatStringSlice $languages -}} },
+	{{end -}}
+}

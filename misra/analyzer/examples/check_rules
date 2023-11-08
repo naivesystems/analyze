@@ -1,0 +1,6 @@
+misra_c_2012/rule_5_1 { "case-sensitive": false, "limit": 6 }
+misra_c_2012/rule_5_2 { "standard": "c90" }
+misra_c_2012/rule_2_1 { "max-loop": 10 }
+misra_c_2012/rule_8_2
+misra_c_2012/rule_13_2 { "aggressive-mode": false }
+misra_c_2012/dir_4_14 { "taintFilters": [{"function": "name", "args": [0], "scope": ""}], "taintSources": [{"function": "name", "dstArgs": [0], "scope": ""}],  "taintSinks": [{"function": "name", "args": [0], "scope": ""}]}

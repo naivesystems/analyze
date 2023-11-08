@@ -1,0 +1,154 @@
+load("@rules_proto//proto:defs.bzl", "proto_lang_toolchain")
+
+# Use precompiled binaries where possible.
+alias(
+    name = "protoc",
+    actual = select({
+        ":linux-aarch64": "@com_google_protobuf_protoc_linux_aarch64//:protoc",
+        ":linux-ppc": "@com_google_protobuf_protoc_linux_ppc//:protoc",
+        ":linux-s390x": "@com_google_protobuf_protoc_linux_s390x//:protoc",
+        ":linux-x86_32": "@com_google_protobuf_protoc_linux_x86_32//:protoc",
+        ":linux-x86_64": "@com_google_protobuf_protoc_linux_x86_64//:protoc",
+        ":macos-x86_64": "@com_google_protobuf_protoc_macos_x86_64//:protoc",
+        ":windows-x86_32": "@com_google_protobuf_protoc_windows_x86_32//:protoc",
+        ":windows-x86_64": "@com_google_protobuf_protoc_windows_x86_64//:protoc",
+        "//conditions:default": "@com_github_protocolbuffers_protobuf//:protoc",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+# Use the jars from maven.
+alias(
+    name = "protobuf_java",
+    actual = "@com_google_protobuf_protobuf_java//jar",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "protobuf_java_util",
+    actual = "@com_google_protobuf_protobuf_java_util//jar",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "protobuf_javalite",
+    actual = "@com_google_protobuf_protobuf_javalite//jar",
+    visibility = ["//visibility:public"],
+)
+
+proto_lang_toolchain(
+    name = "java_toolchain",
+    command_line = "--java_out=$(OUT)",
+    runtime = ":protobuf_java",
+    visibility = ["//visibility:public"],
+)
+
+proto_lang_toolchain(
+    name = "javalite_toolchain",
+    command_line = "--java_out=lite:$(OUT)",
+    runtime = ":protobuf_javalite",
+    visibility = ["//visibility:public"],
+)
+
+# Redirect everything else to the source
+redirect_targets = [
+    "wrappers_proto",
+    "well_known_protos",
+    "timestamp_proto",
+    "struct_proto",
+    "python_specific_test_protos_genproto",
+    "python_common_test_protos_genproto",
+    "protobuf_python_genproto",
+    "protobuf_python",
+    "protobuf_objc",
+    "protobuf_headers",
+    "objectivec",
+    "field_mask_proto",
+    "empty_proto",
+    "duration_proto",
+    "compiler_plugin_proto",
+    "descriptor_proto",
+    "cc_wkt_protos",
+    "cc_toolchain",
+    "cc_test_protos_genproto",
+    "cc_wkt_protos_genproto",
+    "api_proto",
+    "type_proto",
+    "source_context_proto",
+    "any_proto",
+    "protoc_lib",
+    "protobuf",
+]
+
+[
+    alias(
+        name = target,
+        actual = "@com_github_protocolbuffers_protobuf//:" + target,
+        visibility = ["//visibility:public"],
+    )
+    for target in redirect_targets
+]
+
+config_setting(
+    name = "linux-aarch64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+config_setting(
+    name = "linux-ppc",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:ppc",
+    ],
+)
+
+config_setting(
+    name = "linux-s390x",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:s390x",
+    ],
+)
+
+config_setting(
+    name = "linux-x86_32",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_32",
+    ],
+)
+
+config_setting(
+    name = "linux-x86_64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+config_setting(
+    name = "macos-x86_64",
+    constraint_values = [
+        "@platforms//os:osx",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+config_setting(
+    name = "windows-x86_32",
+    constraint_values = [
+        "@platforms//os:windows",
+        "@platforms//cpu:x86_32",
+    ],
+)
+
+config_setting(
+    name = "windows-x86_64",
+    constraint_values = [
+        "@platforms//os:windows",
+        "@platforms//cpu:x86_64",
+    ],
+)

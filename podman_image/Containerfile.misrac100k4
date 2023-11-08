@@ -1,0 +1,78 @@
+FROM fedora:36
+
+# Install build dependencies.
+RUN dnf install -y \
+arm-none-eabi-gcc \
+arm-none-eabi-gcc-cs-c++ \
+arm-none-eabi-newlib \
+autoconf \
+clang \
+clang-devel \
+clang-tools-extra \
+cmake \
+diffutils \
+expat-devel \
+file \
+findutils \
+flex \
+gcc \
+gettext-devel \
+git \
+glibc-devel.i686 \
+gnulib-devel \
+libcgroup-tools \
+libcurl-devel \
+libtool \
+libzstd \
+llvm \
+llvm-devel \
+lzip \
+make \
+openssl-devel \
+pip \
+procps-ng \
+python \
+python3-devel \
+tcl \
+texinfo \
+unzip \
+vim \
+vim-common \
+wget \
+zlib-devel
+
+# Install Bear
+COPY bear-3.0.21-2.fc36.x86_64.rpm /bear/bear-3.0.21-2.fc36.x86_64.rpm
+RUN cd bear/ && dnf install -y bear-3.0.21-2.fc36.x86_64.rpm
+
+# Install Infer
+COPY infer /infer
+RUN ln -s /infer/bin/infer /usr/local/bin/infer
+
+# Install Cppcheck
+COPY cppcheck /cppcheck
+
+# Install ProjectConverter
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ lxml==4.9.1
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ jinja2
+COPY ProjectConverter /ProjectConverter
+
+# Install Cpplint
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ flake8>=4.0.1
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ flake8-polyfill
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ pylint>=2.11.0
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ tox>=3.0.0
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ tox-pyenv
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ importlib-metadata>=0.12
+COPY cpplint.py /opt/naivesystems/cpplint.py
+
+COPY "clang" "/opt/naivesystems/clang"
+COPY "clang-extdef-mapping" "/opt/naivesystems/clang-extdef-mapping"
+COPY "clang-query" "/opt/naivesystems/clang-query"
+COPY "clang-tidy" "/opt/naivesystems/clang-tidy"
+
+COPY "misra_analyzer" "/opt/naivesystems/misra_analyzer"
+
+COPY "bigmain_misra_c_2012" "/opt/naivesystems/bigmain"
+COPY "bigmain_symlink" "/opt/naivesystems/bigmain_symlink"
+RUN chmod +x /opt/naivesystems/bigmain_symlink && /opt/naivesystems/bigmain_symlink

@@ -1,0 +1,10 @@
+package data
+
+import "github.com/go-enry/go-enry/v2/regex"
+
+var DocumentationMatchers = []regex.EnryRegexp{
+	{{range $regexp := . -}}
+	regex.MustCompile(`{{ $regexp }}`),
+	{{end -}}
+}
+

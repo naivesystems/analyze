@@ -1,0 +1,10 @@
+mock
+coverage
+pygments
+nose
+pycodestyle
+wheel
+pylint
+pytest
+twine
+jinja2

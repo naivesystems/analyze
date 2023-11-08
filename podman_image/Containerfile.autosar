@@ -1,0 +1,5 @@
+ARG base_tag=dev
+
+FROM naive.systems/analyzer/misracpp:${base_tag}
+
+COPY "bigmain_autosar" "/opt/naivesystems/bigmain"

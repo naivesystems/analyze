@@ -1,0 +1,5 @@
+ARG base_tag=dev
+
+FROM naive.systems/analyzer/misra:${base_tag}
+
+COPY "bigmain_googlecpp" "/opt/naivesystems/bigmain"

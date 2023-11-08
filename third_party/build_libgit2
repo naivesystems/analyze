@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#
+# NaiveSystems Analyze - A tool for static code analysis
+# Copyright (C) 2023  Naive Systems Ltd.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+set -eux
+
+build_libgit2() {
+	cd "$(dirname "${BASH_SOURCE[0]}")/../out"
+	local install_prefix="$(pwd)"
+	mkdir -p build_libgit2
+	cd build_libgit2
+
+	export CC=clang
+	cmake "../../third_party/github.com/libgit2/libgit2" \
+		-DCMAKE_INSTALL_PREFIX="${install_prefix}" \
+		-DCMAKE_INSTALL_LIBDIR="lib" \
+		-DTHREADSAFE=ON \
+		-DUSE_SSH=OFF \
+		-DUSE_HTTPS=OFF \
+		-DUSE_NTLMCLIENT=OFF \
+		-DUSE_ICONV=OFF \
+		-DUSE_BUNDLED_ZLIB=ON \
+		-DUSE_HTTP_PARSER=builtin \
+		-DDEPRECATE_HARD=ON \
+		-DREGEX_BACKEND=builtin \
+		-DBUILD_CLAR=OFF \
+		-DBUILD_SHARED_LIBS=OFF \
+		-DCMAKE_BUILD_TYPE="RelWithDebInfo" \
+		-DCMAKE_C_FLAGS="-fPIC"
+	cmake --build . --target install
+}
+
+build_libgit2 "$@"

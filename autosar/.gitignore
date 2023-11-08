@@ -1,0 +1,15 @@
+*.ctu-info
+*.dump
+*.log
+*.o
+checker-out
+clangsema-out
+compile_commands.json
+filtered_compile_commands.json
+infer_filtered_compile_commands.json
+*/libtooling/*.INFO*
+libtooling-out*
+*.cmake
+CMakeFiles
+CMakeCache.txt
+.cache

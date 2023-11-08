@@ -1,0 +1,109 @@
+---
+tasks:
+  ubuntu1604:
+    environment:
+      # This tests custom cache locations.
+      # https://github.com/bazelbuild/rules_jvm_external/pull/316
+      COURSIER_CACHE: /tmp/custom_coursier_cache
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+      - bazel run @unpinned_maven_install_in_custom_location//:pin
+      - bazel run @duplicate_artifacts_test//:pin
+      - bazel run @regression_testing//:outdated
+    test_flags:
+      - "--//settings:stamp_manifest=True"
+    test_targets:
+      - "//..."
+      # manual tests
+      # TODO: Re-enable after fixing https://github.com/bazelbuild/rules_jvm_external/issues/375
+      # - "//tests/com/jvm/external:UnsafeSharedCacheTest"
+      - "//tests/unit/manifest_stamp:diff_manifest_test" # https://github.com/bazelbuild/rules_jvm_external/issues/283
+  rbe_ubuntu1604:
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+    test_targets:
+      - "--"
+      - "//..."
+      # These tests are currently incompatible with RBE
+      - "-//tests/integration/override_targets"
+      - "-//tests/com/jvm/external/maven:OutdatedTest"
+  ubuntu1804_1_0_1:
+    platform: ubuntu1804
+    bazel: 1.0.1
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+      - bazel run @unpinned_maven_install_in_custom_location//:pin
+      - bazel run @regression_testing//:outdated
+    test_targets:
+      - "--"
+      - "//..."
+  ubuntu1804_1_1_0:
+    platform: ubuntu1804
+    bazel: 1.1.0
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+      - bazel run @unpinned_maven_install_in_custom_location//:pin
+      - bazel run @regression_testing//:outdated
+    test_targets:
+      - "--"
+      - "//..."
+  ubuntu1804_1_2_0:
+    platform: ubuntu1804
+    bazel: 1.2.0
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+      - bazel run @unpinned_maven_install_in_custom_location//:pin
+      - bazel run @regression_testing//:outdated
+    test_targets:
+      - "--"
+      - "//..."
+  ubuntu1804_latest:
+    platform: ubuntu1804
+    bazel: latest
+    environment:
+      # This tests custom cache locations.
+      # https://github.com/bazelbuild/rules_jvm_external/pull/316
+      COURSIER_CACHE: /tmp/custom_coursier_cache
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+      - bazel run @unpinned_maven_install_in_custom_location//:pin
+      - bazel run @duplicate_artifacts_test//:pin
+      - bazel run @regression_testing//:outdated
+    test_targets:
+      - "--"
+      - "//..."
+  macos:
+    environment:
+      # This tests custom cache locations.
+      # https://github.com/bazelbuild/rules_jvm_external/pull/316
+      COURSIER_CACHE: /tmp/custom_coursier_cache
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+      - bazel run @unpinned_maven_install_in_custom_location//:pin
+      - bazel run @duplicate_artifacts_test//:pin
+      - bazel run @regression_testing//:outdated
+    test_flags:
+      - "--//settings:stamp_manifest=True"
+    test_targets:
+      - "//..."
+      # manual tests
+      - "//tests/com/jvm/external:UnsafeSharedCacheTest"
+      - "//tests/unit/manifest_stamp:diff_manifest_test" # https://github.com/bazelbuild/rules_jvm_external/issues/283
+  windows:
+    environment:
+      # This tests custom cache locations.
+      # https://github.com/bazelbuild/rules_jvm_external/pull/316
+      COURSIER_CACHE: /tmp/custom_coursier_cache
+    shell_commands:
+      - bazel run @unpinned_regression_testing//:pin
+      - bazel run @unpinned_maven_install_in_custom_location//:pin
+      - bazel run @duplicate_artifacts_test//:pin
+      - bazel run @regression_testing//:outdated
+    test_targets:
+      - "--"
+      - "//..."
+      # rules_kotlin is not tested / does not work on Windows.
+      # https://github.com/bazelbuild/rules_kotlin/issues/179
+      # https://github.com/bazelbuild/rules_kotlin/blob/master/.bazelci/presubmit.yml
+      - "-//tests/unit/kotlin/..."
+      - "-//tests/integration/override_targets"

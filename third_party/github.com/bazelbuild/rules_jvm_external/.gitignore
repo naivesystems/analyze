@@ -1,0 +1,5 @@
+/*.class
+bazel-*
+.ijwb
+.DS_Store
+.idea
