@@ -107,7 +107,7 @@ dnf install -y autoconf automake clang cmake libtool lld make python3-devel wget
 make
 ```
 
-3. Build a container image
+5. Build a container image
 
 ```
 make -C podman_image build-en
