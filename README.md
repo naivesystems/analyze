@@ -1,3 +1,5 @@
+[中文](README.zh-CN.md)
+
 # NaiveSystems Analyze
 
 NaiveSystems Analyze is a static analysis tool for code security and compliance.
