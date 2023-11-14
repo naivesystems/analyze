@@ -1,0 +1,7 @@
+[user@host ubuntu2204]$ make
+[user@host ubuntu2204]$ make enter
+build@45267817fdad:~/analyze$ cp -r podman_image/tmpWorkSpace /home/build/podman_image/
+build@45267817fdad:~/analyze$ cp podman_image/Containerfile.misrac100k4 /home/build/podman_image/
+build@45267817fdad:~/analyze$ exit
+[user@host ubuntu2204]$ cd podman_image/
+[user@host podman_image]$ podman build -f ./Containerfile.misrac100k4 -t naive.systems/analyzer/misra:dev_en ./tmpWorkSpace
