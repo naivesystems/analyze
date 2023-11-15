@@ -130,7 +130,7 @@ If you find a bug of NaiveSystems Analyze, feel free to report it in the issues.
 
 If you use WeChat, you may scan the QR code below to join our group chat:
 
-![be51813ee21c969e3f388cc2531db6d](https://github.com/naivesystems/analyze/assets/196279/0a52e6b6-226f-4311-b7a4-6916155a8e8d)
+![20231114215906](https://github.com/naivesystems/analyze/assets/196279/3878c531-d54d-40ee-9640-1d0a335b3351)
 
 (The QR code is updated when it's expired or when the group exceeds 200 people.)
 
