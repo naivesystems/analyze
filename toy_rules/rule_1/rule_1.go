@@ -16,17 +16,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_LIB_H_
-#define ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_LIB_H_
+package rule_1
 
-namespace misra_cpp_2008 {
-namespace rule_4_10_1 {
-namespace libtooling {
+import (
+	pb "naive.systems/analyzer/analyzer/proto"
+	"naive.systems/analyzer/cruleslib/options"
+	"naive.systems/analyzer/cruleslib/runner"
+	"naive.systems/analyzer/misra/checker_integration"
+)
 
-int rule_4_10_1(int argc, char** argv);
-
-}  // namespace libtooling
-}  // namespace rule_4_10_1
-}  // namespace misra_cpp_2008
-
-#endif  // ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_LIB_H_
+func Analyze(srcdir string, opts *options.CheckOptions) (*pb.ResultsList, error) {
+	return runner.RunLibtooling(srcdir, "toy_rules/rule_1", checker_integration.Libtooling_STU, opts)
+}

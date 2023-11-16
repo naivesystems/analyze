@@ -404,3 +404,6 @@ ln -s /opt/naivesystems/bigmain /opt/naivesystems/autosar/rule_A8_5_3
 ln -s /opt/naivesystems/bigmain /opt/naivesystems/autosar/rule_A8_5_4
 ln -s /opt/naivesystems/bigmain /opt/naivesystems/autosar/rule_A9_3_1
 ln -s /opt/naivesystems/bigmain /opt/naivesystems/autosar/rule_A9_5_1
+
+mkdir /opt/naivesystems/toy_rules
+ln -s /opt/naivesystems/bigmain /opt/naivesystems/toy_rules/rule_1

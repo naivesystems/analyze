@@ -45,6 +45,7 @@ import (
 	"naive.systems/analyzer/misra/checker_integration/checkrule"
 	misra_c_2012_crules "naive.systems/analyzer/misra_c_2012_crules/analyzer"
 	misra_cpp_2008 "naive.systems/analyzer/misra_cpp_2008/analyzer"
+	toy_rules "naive.systems/analyzer/toy_rules/analyzer"
 )
 
 var compileCommandsPath = "/src/compile_commands.json"
@@ -53,23 +54,20 @@ var linesLimitStr string = "0"
 var numWorkersStr string = "0"
 var lang string = "zh"
 
-var ruleSets = []string{
-	"googlecpp", "misra_cpp_2008", "autosar", "misra_c_2012"}
-
-func isCOnly(rule string) bool {
-	switch rule {
-	case "misra_c_2012":
-		return true
-	}
-	return false
+var ruleSets = map[string]string{
+	"googlecpp":      "cpp",
+	"misra_cpp_2008": "cpp",
+	"autosar":        "cpp",
+	"misra_c_2012":   "c",
+	"toy_rules":      "cpp",
 }
 
-func isCPPOnly(rule string) bool {
-	switch rule {
-	case "googlecpp", "misra_cpp_2008", "autosar":
-		return true
-	}
-	return false
+func isCOnly(ruleSet string) bool {
+	return ruleSets[ruleSet] == "c"
+}
+
+func isCPPOnly(ruleSet string) bool {
+	return ruleSets[ruleSet] == "cpp"
 }
 
 func main() {
@@ -216,7 +214,7 @@ func main() {
 	csaSystemLibOptionsCopy := parsedCheckerConfig.CsaSystemLibOptions
 
 	checkerPathsMap := map[string]string{}
-	for _, ruleSet := range ruleSets {
+	for ruleSet := range ruleSets {
 		if ruleSet == "misra_c_2012" {
 			checkerPathsMap["misra"] = filepath.Join(sharedOptions.GetCheckerPathRoot(), "misra")
 			continue
@@ -224,7 +222,7 @@ func main() {
 		checkerPathsMap[ruleSet] = filepath.Join(sharedOptions.GetCheckerPathRoot(), ruleSet)
 	}
 
-	for _, ruleSet := range ruleSets {
+	for ruleSet := range ruleSets {
 		if isCOnly(ruleSet) && projType == analyzerinterface.Keil {
 			parsedCheckerConfig.CsaSystemLibOptions = *options.ConcatStringField("-isystem /usr/include", &parsedCheckerConfig.CsaSystemLibOptions)
 		} else {
@@ -387,6 +385,8 @@ func selectRun(rulePrefix string) (runFuncType, error) {
 		return misra_c_2012_crules.Run, nil
 	case "misra_cpp_2008":
 		return misra_cpp_2008.Run, nil
+	case "toy_rules":
+		return toy_rules.Run, nil
 	default:
 		return nil, fmt.Errorf("No such rule runner found: %s", rulePrefix)
 	}

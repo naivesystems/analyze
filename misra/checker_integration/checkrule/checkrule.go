@@ -44,6 +44,7 @@ type JSONOption struct {
 	Limit              *int                   `json:"limit,omitempty" yaml:"-"`
 	Standard           string                 `json:"standard,omitempty" yaml:"-"`
 	MaxLoop            *int                   `json:"max-loop,omitempty" yaml:"-"`
+	MaxNodes           *int                   `json:"max-nodes,omitempty" yaml:"-"`
 	Filters            *FilterAndSinkFuncList `json:"taintFilters,omitempty" yaml:"Filters,omitempty"`
 	Sources            *SourceFuncList        `json:"taintSources,omitempty" yaml:"Propagations,omitempty"`
 	Sinks              *FilterAndSinkFuncList `json:"taintSinks,omitempty" yaml:"Sinks,omitempty"`
@@ -86,6 +87,8 @@ type JSONOption struct {
 	IoMIDCharLimit                     *int     `json:"iom-id-char-limit,omitempty" yaml:"-"`       //misra_c_2012/rule_1_1
 	NestedCondIncluLimit               *int     `json:"nested-cond-inclu-limit,omitempty" yaml:"-"` //misra_c_2012/rule_1_1
 	BlockIDLimit                       *int     `json:"block-id-limit,omitempty" yaml:"-"`          //misra_c_2012/rule_1_1
+	NestedDeclLimit                    *int     `json:"nested-decl-limit,omitempty" yaml:"-"`       //misra_c_2012/rule_1_1
+	ModifyDeclLimit                    *int     `json:"modify-decl-limit,omitempty" yaml:"-"`       //misra_c_2012/rule_1_1
 }
 
 type FilterAndSinkFunc struct {
@@ -184,6 +187,9 @@ func (jsonOption *JSONOption) Update(newOption JSONOption) {
 	}
 	if newOption.MaxLoop != nil {
 		jsonOption.MaxLoop = newOption.MaxLoop
+	}
+	if newOption.MaxNodes != nil {
+		jsonOption.MaxNodes = newOption.MaxNodes
 	}
 	if newOption.Sinks != nil {
 		jsonOption.Sinks = newOption.Sinks

@@ -116,7 +116,7 @@ func modifyResult(result *analyzerResult) {
 			} else if edition == "autosar" {
 				ruleName = strings.TrimPrefix(ruleName, "rule_")
 				r.ErrorMessage = fmt.Sprintf("[%s][%s-%s]: %s", ruleName, edition, ruleStr, r.ErrorMessage)
-			} else {
+			} else if edition != "misra_c_2012" {
 				r.ErrorMessage = fmt.Sprintf("[%s][%s-%s]: %s", strings.ToUpper(ruleName), edition, ruleName, r.ErrorMessage)
 			}
 		}

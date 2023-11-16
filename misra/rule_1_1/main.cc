@@ -46,6 +46,8 @@ extern cl::opt<int> nested_include_limit;
 extern cl::opt<int> iom_id_char_limit;
 extern cl::opt<int> nested_cond_inclu_limit;
 extern cl::opt<int> block_id_limit;
+extern cl::opt<int> nested_decl_limit;
+extern cl::opt<int> modify_decl_limit;
 
 namespace misra {
 namespace rule_1_1 {
@@ -69,15 +71,14 @@ int rule_1_1(int argc, char** argv) {
   ClangTool tool(options_parser.getCompilations(),
                  options_parser.getSourcePathList());
   analyzer::proto::ResultsList all_results;
-  // running ASTChecker
-  misra::rule_1_1::ASTChecker ast_checker;
   LimitList limits{
       struct_member_limit,     function_parm_limit,  function_arg_limit,
       nested_record_limit,     nested_expr_limit,    switch_case_limit,
       enum_constant_limit,     string_char_limit,    extern_id_limit,
       macro_id_limit,          macro_parm_limit,     macro_arg_limit,
       nested_block_limit,      nested_include_limit, iom_id_char_limit,
-      nested_cond_inclu_limit, block_id_limit};
+      nested_cond_inclu_limit, block_id_limit,       nested_decl_limit,
+      modify_decl_limit};
 
   // running PreprocessChecker
   misra::rule_1_1::PreprocessChecker preprocess_checker{&all_results, &limits};
@@ -85,6 +86,7 @@ int rule_1_1(int argc, char** argv) {
   LOG(INFO) << "libtooling status (PreprocessChecker): " << status << endl;
 
   // running ASTChecker
+  misra::rule_1_1::ASTChecker ast_checker;
   ast_checker.Init(&limits, &all_results);
   status =
       tool.run(newFrontendActionFactory(ast_checker.GetMatchFinder()).get());

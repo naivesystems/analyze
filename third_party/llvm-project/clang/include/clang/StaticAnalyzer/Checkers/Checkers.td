@@ -127,10 +127,19 @@ def MisraCXX2008 : Package<"misra_cxx_2008">;
 
 def Errno : Package<"errno">, ParentPackage<MisraC2012>;
 
+def CWE : Package<"cwe">;
 
 //===----------------------------------------------------------------------===//
 // Core Checkers.
 //===----------------------------------------------------------------------===//
+
+let ParentPackage = CWE in {
+
+def TaintArgvChecker : Checker<"TaintArgv">,
+  HelpText<"Implementation of CWE-134">,
+  Documentation<NotDocumented>;
+
+}
 
 let ParentPackage = Core in {
 
@@ -1053,6 +1062,7 @@ def GenericTaintChecker : Checker<"TaintPropagation">,
                   "",
                   InAlpha>,
   ]>,
+  WeakDependencies<[TaintArgvChecker]>,
   Documentation<HasDocumentation>;
 
 } // end "alpha.security.taint"
@@ -1923,3 +1933,59 @@ def MisusedTestErrnoMisraChecker : Checker<"MisusedTestErrnoMisra">,
   Documentation<NotDocumented>;
 
 }
+
+//===----------------------------------------------------------------------===//
+// CWE checkers.
+//===----------------------------------------------------------------------===//
+
+let ParentPackage = CWE in {
+
+def CWE120CStringModeling : Checker<"CWE120CStringModeling">,
+  HelpText<"hacked version of CStringModeling">,
+  Dependencies<[CallAndMessageModeling]>,
+  Documentation<NotDocumented>,
+  Hidden;
+
+def CStringInsecureBufferCopy : Checker<"InsecureBufferCopy">,
+  HelpText<"Implementation of CWE-120">,
+  Dependencies<[CWE120CStringModeling]>,
+  Documentation<HasDocumentation>;
+
+def CStringStackBufferOverflow : Checker<"StackBufferOverflow">,
+  HelpText<"Implementation of CWE-121">,
+  Dependencies<[CWE120CStringModeling]>,
+  Documentation<HasDocumentation>;
+
+def CStringHeapBufferOverflow : Checker<"HeapBufferOverflow">,
+  HelpText<"Implementation of CWE-122">,
+  Dependencies<[CWE120CStringModeling]>,
+  Documentation<HasDocumentation>;
+
+def ArrayBoundBase : Checker<"ArrayBoundBase">,
+  HelpText<"hacked version of ArrayBoundCheckerV2">,
+  Documentation<HasDocumentation>,
+  Hidden;
+
+def StackArrayBoundChecker : Checker<"StackArrayBound">,
+  HelpText<"Implementation of CWE-121, stack array bound check">,
+  Dependencies<[ArrayBoundBase]>,
+  Documentation<HasDocumentation>;
+
+def HeapArrayBoundChecker : Checker<"HeapArrayBound">,
+  HelpText<"Implementation of CWE-122, heap array bound check">,
+  Dependencies<[ArrayBoundBase, DynamicMemoryModeling, CStringModeling]>,
+  Documentation<HasDocumentation>;
+
+def BufferUnderwriteChecker : Checker<"BufferUnderwrite">,
+  HelpText<"Implementation of CWE-124">,
+  Documentation<NotDocumented>;
+
+def BufferOverreadChecker : Checker<"BufferOverread">,
+  HelpText<"Implementation of CWE-126">,
+  Documentation<NotDocumented>;
+
+def BufferUnderreadChecker : Checker<"BufferUnderread">,
+  HelpText<"Implementation of CWE-127">,
+  Documentation<NotDocumented>;
+
+} // end CWE

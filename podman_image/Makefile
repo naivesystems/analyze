@@ -29,6 +29,10 @@ bigmain_misra_c_2012:
 bigmain_misra_cpp_2008:
 	$(BAZELBUILD) bigmain/bigmain_misra_cpp_2008
 
+.PHONY: bigmain_toy_rules
+bigmain_toy_rules:
+	$(BAZELBUILD) bigmain/bigmain_toy_rules
+
 .PHONY: build-base
 build-base:
 	$(BAZELBUILD) @llvm-project//clang && cp ../bazel-bin/external/llvm-project/clang/clang clang
@@ -81,6 +85,15 @@ build-autosar-en:
 	$(MAKE) bigmain_autosar
 	cp ../bazel-bin/podman_image/bigmain/bigmain_autosar ./tmpWorkSpace
 	podman build -f ./Containerfile.autosar --build-arg base_tag=dev_en -t naive.systems/analyzer/autosar:dev_en ./tmpWorkSpace
+	$(MAKE) clean
+
+.PHONY: build-toy-rules-en
+build-toy-rules-en:
+	$(MAKE) build-misra-cpp-en
+	mkdir -p tmpWorkSpace
+	$(MAKE) bigmain_toy_rules
+	cp ../bazel-bin/podman_image/bigmain/bigmain_toy_rules ./tmpWorkSpace
+	podman build -f ./Containerfile.toyrules --build-arg base_tag=dev_en -t naive.systems/analyzer/toyrules:dev_en ./tmpWorkSpace
 	$(MAKE) clean
 
 .PHONY: build-misra-cpp-en

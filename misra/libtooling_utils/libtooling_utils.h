@@ -237,6 +237,22 @@ class ASTVisitor : public RecursiveASTVisitor<ASTVisitor> {
     funcDecls.emplace_back(fd);  // Store the node
     return true;                 // Continue traversal
   }
+  bool VisitArrayType(const ArrayType* at) {
+    arrayTypes.emplace_back(at);  // Store the node
+    return true;                  // Continue traversal
+  }
+  bool VisitFunctionType(const FunctionType* ft) {
+    funcTypes.emplace_back(ft);  // Store the node
+    return true;                 // Continue traversal
+  }
+  bool VisitPointerType(const PointerType* pt) {
+    ptrTypes.emplace_back(pt);  // Store the node
+    return true;                // Continue traversal
+  }
+  bool VisitParenType(const ParenType* pt) {
+    parenTypes.emplace_back(pt);  // Store the node
+    return true;                  // Continue traversal
+  }
   const vector<const CXXMemberCallExpr*>& getMemberCalls() const {
     return memberCalls;
   }
@@ -256,6 +272,10 @@ class ASTVisitor : public RecursiveASTVisitor<ASTVisitor> {
     return binaryOps;
   }
   const vector<const FunctionDecl*>& getFuncDecls() const { return funcDecls; }
+  const vector<const ArrayType*>& getArrayTypes() const { return arrayTypes; }
+  const vector<const FunctionType*>& getFuncTypes() const { return funcTypes; }
+  const vector<const PointerType*>& getPtrTypes() const { return ptrTypes; }
+  const vector<const ParenType*>& getParenTypes() const { return parenTypes; }
 
  private:
   vector<const CXXMemberCallExpr*> memberCalls{};
@@ -266,6 +286,10 @@ class ASTVisitor : public RecursiveASTVisitor<ASTVisitor> {
   vector<const VarDecl*> varDecls{};
   vector<const BinaryOperator*> binaryOps{};
   vector<const FunctionDecl*> funcDecls{};
+  vector<const ArrayType*> arrayTypes{};
+  vector<const FunctionType*> funcTypes{};
+  vector<const PointerType*> ptrTypes{};
+  vector<const ParenType*> parenTypes{};
 };
 
 string GetExprName(const Expr* expr, SourceManager* sm, ASTContext* context);

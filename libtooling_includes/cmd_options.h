@@ -126,6 +126,18 @@ llvm::cl::opt<int> iom_id_char_limit(
         "significant initial characters limit count in an internal identifier or a macro name, default 63"),
     llvm::cl::init(63), llvm::cl::cat(ns_libtooling_checker));
 
+llvm::cl::opt<int> nested_decl_limit(
+    "NestedDeclLimit",
+    llvm::cl::desc(
+        "nesting level limit count for parenthesized declaration, default 63"),
+    llvm::cl::init(63), llvm::cl::cat(ns_libtooling_checker));
+
+llvm::cl::opt<int> modify_decl_limit(
+    "ModifyDeclLimit",
+    llvm::cl::desc(
+        "pointer, array, and function declarators limit count (in any combinations) modifying an arithmetic, structure, union, or void type in a declaration, default 12"),
+    llvm::cl::init(12), llvm::cl::cat(ns_libtooling_checker));
+
 llvm::cl::opt<int> nested_cond_inclu_limit(
     "NestedCondIncluLimit",
     llvm::cl::desc(

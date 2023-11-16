@@ -223,6 +223,30 @@ void ReportBlockIDError(int block_id_limit, int block_id_count, string path,
   pb_result->set_block_id_count(to_string(block_id_count));
 }
 
+void ReportNestedDeclError(int nested_decl_limit, int nested_decl_count,
+                           string declarator, string path, int line_number,
+                           ResultsList* results_list) {
+  analyzer::proto::Result* pb_result =
+      AddResultToResultsList(results_list, path, line_number, error_message);
+  pb_result->set_error_kind(
+      analyzer::proto::Result_ErrorKind_MISRA_C_2012_RULE_1_1_NESTED_DECL);
+  pb_result->set_nested_decl_limit(to_string(nested_decl_limit));
+  pb_result->set_nested_decl_count(to_string(nested_decl_count));
+  pb_result->set_name(declarator);
+}
+
+void ReportModifyDeclError(int modify_decl_limit, int modify_decl_count,
+                           string declarator, string path, int line_number,
+                           ResultsList* results_list) {
+  analyzer::proto::Result* pb_result =
+      AddResultToResultsList(results_list, path, line_number, error_message);
+  pb_result->set_error_kind(
+      analyzer::proto::Result_ErrorKind_MISRA_C_2012_RULE_1_1_MODIFY_DECL);
+  pb_result->set_modify_decl_limit(to_string(modify_decl_limit));
+  pb_result->set_modify_decl_count(to_string(modify_decl_count));
+  pb_result->set_name(declarator);
+}
+
 }  // namespace
 
 namespace misra {
@@ -663,6 +687,62 @@ class BlockIDCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
+class NestedDeclCallback : public MatchFinder::MatchCallback {
+ public:
+  void Init(int nested_decl_limit, ResultsList* results_list,
+            MatchFinder* finder) {
+    nested_decl_limit_ = nested_decl_limit;
+    results_list_ = results_list;
+    finder->addMatcher(
+        declaratorDecl(unless(isExpansionInSystemHeader())).bind("dd"), this);
+  }
+
+  void run(const MatchFinder::MatchResult& result) override {
+    const DeclaratorDecl* dd = result.Nodes.getNodeAs<DeclaratorDecl>("dd");
+    libtooling_utils::ASTVisitor visitor;
+    visitor.TraverseType(dd->getType());
+    unsigned nested_decl_count = visitor.getParenTypes().size();
+    if (nested_decl_count > nested_decl_limit_)
+      ReportNestedDeclError(
+          nested_decl_limit_, nested_decl_count, dd->getQualifiedNameAsString(),
+          libtooling_utils::GetFilename(dd, result.SourceManager),
+          libtooling_utils::GetLine(dd, result.SourceManager), results_list_);
+  }
+
+ private:
+  int nested_decl_limit_;
+  ResultsList* results_list_;
+};
+
+class ModifyDeclCallback : public MatchFinder::MatchCallback {
+ public:
+  void Init(int modify_decl_limit, ResultsList* results_list,
+            MatchFinder* finder) {
+    modify_decl_limit_ = modify_decl_limit;
+    results_list_ = results_list;
+    finder->addMatcher(
+        declaratorDecl(unless(isExpansionInSystemHeader())).bind("dd"), this);
+  }
+
+  void run(const MatchFinder::MatchResult& result) override {
+    const DeclaratorDecl* dd = result.Nodes.getNodeAs<DeclaratorDecl>("dd");
+    libtooling_utils::ASTVisitor visitor;
+    visitor.TraverseType(dd->getType());
+    unsigned modify_decl_count = visitor.getArrayTypes().size() +
+                                 visitor.getPtrTypes().size() +
+                                 visitor.getFuncTypes().size();
+    if (modify_decl_count > modify_decl_limit_)
+      ReportModifyDeclError(
+          modify_decl_limit_, modify_decl_count, dd->getQualifiedNameAsString(),
+          libtooling_utils::GetFilename(dd, result.SourceManager),
+          libtooling_utils::GetLine(dd, result.SourceManager), results_list_);
+  }
+
+ private:
+  int modify_decl_limit_;
+  ResultsList* results_list_;
+};
+
 void PPCheck::MacroExpands(const Token& MacroNameTok, const MacroDefinition& MD,
                            SourceRange Range, const MacroArgs* Args) {
   unsigned arg_count = Args ? Args->getNumMacroArguments() : 0;
@@ -773,6 +853,12 @@ void ASTChecker::Init(LimitList* limits, ResultsList* results_list) {
   intern_id_char_callback_ = new InternIDCharCallback;
   intern_id_char_callback_->Init(limits->iom_id_char_limit, results_list_,
                                  &finder_);
+  nested_decl_callback_ = new NestedDeclCallback;
+  nested_decl_callback_->Init(limits->nested_decl_limit, results_list_,
+                              &finder_);
+  modify_decl_callback_ = new ModifyDeclCallback;
+  modify_decl_callback_->Init(limits->modify_decl_limit, results_list_,
+                              &finder_);
 }
 
 void ASTChecker::Report() {

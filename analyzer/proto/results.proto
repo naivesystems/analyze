@@ -66,6 +66,8 @@ message Result {
     MISRA_C_2012_RULE_1_1_IOM_ID_CHAR = 1010116;
     MISRA_C_2012_RULE_1_1_NESTED_COND_INCLU = 1010117;
     MISRA_C_2012_RULE_1_1_BLOCK_ID = 1010118;
+    MISRA_C_2012_RULE_1_1_NESTED_DECL = 1010119;
+    MISRA_C_2012_RULE_1_1_MODIFY_DECL = 1010120;
     MISRA_C_2012_RULE_1_3 = 1010301;
     MISRA_C_2012_RULE_1_4 = 1010400;
     MISRA_C_2012_RULE_2_1 = 1020101;
@@ -552,6 +554,10 @@ message Result {
   string nested_cond_inclu_count = 60;
   string block_id_limit = 61;
   string block_id_count = 62;
+  string nested_decl_limit = 63;
+  string nested_decl_count = 64;
+  string modify_decl_limit = 65;
+  string modify_decl_count = 66;
 
   int32 severity = 21;
   string code_line_hash = 22;

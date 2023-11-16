@@ -1006,9 +1006,19 @@
             "translation": "[C1201][misra-c2012-9.5]: 对数组对象进行指定初始化时，必须显式指定数组大小"
         },
         {
-            "id": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1",
-            "message": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1",
-            "translation": "[C0808][misra-c2012-10.1]: 操作数不得为不合适的基本类型"
+            "id": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1\n{ExternalMessage}",
+            "message": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1\n{ExternalMessage}",
+            "translation": "[C0808][misra-c2012-10.1]: 操作数不得为不合适的基本类型\n{ExternalMessage}",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ]
         },
         {
             "id": "[C0807][misra-c2012-10.2]: violation of misra-c2012-10.2",

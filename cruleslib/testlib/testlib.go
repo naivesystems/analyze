@@ -35,7 +35,20 @@ import (
 	"naive.systems/analyzer/misra/utils"
 )
 
-var checkingStandards = []string{"gjb5369", "gjb8114", "misra_cpp_2008", "cwe", "autosar", "googlecpp", "clang-tidy", "misra", "cppcheck"}
+var checkingStandards = []string{
+	// BEGIN-INTERNAL
+	"gjb5369",
+	"gjb8114",
+	"cwe",
+	"clang-tidy",
+	"cppcheck",
+	// END-INTERNAL
+	"misra",
+	"misra_cpp_2008",
+	"autosar",
+	"googlecpp",
+	"toy_rules",
+}
 
 func getCheckerConfig(projectBaseDir string) *proto.CheckerConfiguration {
 	checkerConfig := proto.CheckerConfiguration{

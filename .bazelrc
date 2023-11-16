@@ -20,9 +20,9 @@ build --copt=-Wall --copt=-Werror --host_copt=-Wall --host_copt=-Werror
 build --copt=-Wno-unused --host_copt=-Wno-unused
 
 # To build zlib
-# TODO(xjia): remove if https://github.com/madler/zlib/issues/633 is resolved
+# TODO: remove if https://github.com/madler/zlib/issues/633 is resolved
 build --copt=-Wno-deprecated-non-prototype
 build --host_copt=-Wno-deprecated-non-prototype
-# TODO(xjia): remove the following two lines once all of us move to Clang 15+
+# TODO: remove the following two lines once all of us move to Clang 15+
 build --copt=-Wno-unknown-warning-option
 build --host_copt=-Wno-unknown-warning-option

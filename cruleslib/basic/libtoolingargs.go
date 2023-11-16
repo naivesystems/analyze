@@ -53,6 +53,8 @@ const (
 	kIoMIDCharLimit                     string = "IoMIDCharLimit" // IoM: Internal or Macro
 	kNestedCondIncluLimit               string = "NestedCondIncluLimit"
 	kBlockIDLimit                       string = "BlockIDLimit"
+	kNestedDeclLimit                    string = "NestedDeclLimit"
+	kModifyDeclLimit                    string = "ModifyDeclLimit"
 )
 
 var libtoolingExtraArgsMap = map[string][]string{
@@ -60,8 +62,8 @@ var libtoolingExtraArgsMap = map[string][]string{
 		kNestedRecordLimit, kNestedExprLimit, kSwitchCaseLimit, kEnumConstantLimit,
 		kStringCharLimit, kExternIDLimit, kCaseSensitive, kLimit, kMacroIDLimit,
 		kMacroParmLimit, kMacroArgLimit, kNestedBlockLimit, kNestedIncludeLimit,
-		kImplicitDecl, kIoMIDCharLimit, kNestedCondIncluLimit, kBlockIDLimit},
-
+		kImplicitDecl, kIoMIDCharLimit, kNestedCondIncluLimit, kBlockIDLimit,
+		kNestedDeclLimit, kModifyDeclLimit},
 	"misra_c_2012/rule_5_1":  {kCaseSensitive, kLimit, kImplicitDecl},
 	"misra_c_2012/rule_13_2": {kAggressiveMode},
 	"misra_c_2012/rule_13_5": {kAggressiveMode},
@@ -69,8 +71,8 @@ var libtoolingExtraArgsMap = map[string][]string{
 		kNestedRecordLimit, kNestedExprLimit, kSwitchCaseLimit, kEnumConstantLimit,
 		kStringCharLimit, kExternIDLimit, kCaseSensitive, kLimit, kMacroIDLimit,
 		kMacroParmLimit, kMacroArgLimit, kNestedBlockLimit, kNestedIncludeLimit,
-		kImplicitDecl, kIoMIDCharLimit, kNestedCondIncluLimit, kBlockIDLimit},
-
+		kImplicitDecl, kIoMIDCharLimit, kNestedCondIncluLimit, kBlockIDLimit,
+		kNestedDeclLimit, kModifyDeclLimit},
 	"misra/rule_5_1":  {kCaseSensitive, kLimit, kImplicitDecl},
 	"misra/rule_13_2": {kAggressiveMode},
 	"misra/rule_13_5": {kAggressiveMode},

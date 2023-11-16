@@ -60,6 +60,8 @@ struct LimitList {
   int iom_id_char_limit;
   int nested_cond_inclu_limit;
   int block_id_limit;
+  int nested_decl_limit;
+  int modify_decl_limit;
 };
 
 class StructMemberCallback;
@@ -74,6 +76,8 @@ class ExternIDCallback;
 class NestedBlockCallback;
 class InternIDCharCallback;
 class BlockIDCallback;
+class NestedDeclCallback;
+class ModifyDeclCallback;
 
 class ASTChecker {
  public:
@@ -95,6 +99,8 @@ class ASTChecker {
   NestedBlockCallback* nested_block_callback_;
   InternIDCharCallback* intern_id_char_callback_;
   BlockIDCallback* block_id_callback_;
+  NestedDeclCallback* nested_decl_callback_;
+  ModifyDeclCallback* modify_decl_callback_;
   ast_matchers::MatchFinder finder_;
   ResultsList* results_list_;
 };

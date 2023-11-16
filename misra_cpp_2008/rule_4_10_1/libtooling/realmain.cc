@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "libtooling_includes/cmd_options.h"
 #include "misra_cpp_2008/rule_4_10_1/libtooling/lib.h"
+
 int main(int argc, char** argv) {
   return misra_cpp_2008::rule_4_10_1::libtooling::rule_4_10_1(argc, argv);
 }

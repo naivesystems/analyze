@@ -153,7 +153,7 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 	case pb.Result_MISRA_C_2012_RULE_9_5:
 		return p.Sprintf("[C1201][misra-c2012-9.5]: violation of misra-c2012-9.5")
 	case pb.Result_MISRA_C_2012_RULE_10_1:
-		return p.Sprintf("[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1")
+		return p.Sprintf("[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_10_2:
 		return p.Sprintf("[C0807][misra-c2012-10.2]: violation of misra-c2012-10.2")
 	case pb.Result_MISRA_C_2012_RULE_10_3:

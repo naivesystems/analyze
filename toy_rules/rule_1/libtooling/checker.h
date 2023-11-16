@@ -16,32 +16,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_CHECKER_H_
-#define ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_CHECKER_H_
+#ifndef ANALYZER_TOY_RULES_1_LIBTOOLING_CHECKER_H_
+#define ANALYZER_TOY_RULES_1_LIBTOOLING_CHECKER_H_
 
-#include "clang/ASTMatchers/ASTMatchFinder.h"
+#include <clang/ASTMatchers/ASTMatchFinder.h>
+
 #include "misra/proto_util.h"
 
-using namespace clang;
-
-namespace misra_cpp_2008 {
-namespace rule_4_10_1 {
+namespace toy_rules {
+namespace rule_1 {
 namespace libtooling {
+
 class Callback;
 
 class Checker {
  public:
   void Init(analyzer::proto::ResultsList* results_list);
-  ast_matchers::MatchFinder* GetMatchFinder() { return &finder_; }
+  clang::ast_matchers::MatchFinder* GetMatchFinder() { return &finder_; }
 
  private:
   Callback* callback_;
-  ast_matchers::MatchFinder finder_;
+  clang::ast_matchers::MatchFinder finder_;
   analyzer::proto::ResultsList* results_list_;
 };
 
 }  // namespace libtooling
-}  // namespace rule_4_10_1
-}  // namespace misra_cpp_2008
+}  // namespace rule_1
+}  // namespace toy_rules
 
-#endif  // ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_CHECKER_H_
+#endif  // ANALYZER_TOY_RULES_1_LIBTOOLING_CHECKER_H_

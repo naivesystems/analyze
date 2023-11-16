@@ -1146,10 +1146,20 @@
             "fuzzy": true
         },
         {
-            "id": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1",
-            "message": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1",
-            "translation": "[C0808][misra-c2012-10.1]: Violation of MISRA C:2012 Rule 10.1: Operands shall not be of an inappropriate essential type",
+            "id": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1\n{ExternalMessage}",
+            "message": "[C0808][misra-c2012-10.1]: violation of misra-c2012-10.1\n{ExternalMessage}",
+            "translation": "[C0808][misra-c2012-10.1]: Violation of MISRA C:2012 Rule 10.1: Operands shall not be of an inappropriate essential type\n{ExternalMessage}",
             "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ],
             "fuzzy": true
         },
         {

@@ -137,6 +137,10 @@ func runSingleCSA(
 	if maxLoop != nil {
 		cmd_arr = append(cmd_arr, "-Xanalyzer", "-analyzer-max-loop", "-Xanalyzer", strconv.Itoa(*maxLoop))
 	}
+	maxNodes := jsonOptions.MaxNodes
+	if maxNodes != nil {
+		cmd_arr = append(cmd_arr, "-Xanalyzer", "-analyzer-config", "-Xanalyzer", "max-nodes="+strconv.Itoa(*maxNodes))
+	}
 	// this cmd is only for cwe 789
 	if checkerOptions == "-analyzer-checker=cwe.ExcessiveMemoryAllocation" {
 		MaximumAllowedSize := jsonOptions.MaximumAllowedSize

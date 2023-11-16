@@ -16,17 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_LIB_H_
-#define ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_LIB_H_
+#include "libtooling_includes/cmd_options.h"
+#include "toy_rules/rule_1/libtooling/lib.h"
 
-namespace misra_cpp_2008 {
-namespace rule_4_10_1 {
-namespace libtooling {
-
-int rule_4_10_1(int argc, char** argv);
-
-}  // namespace libtooling
-}  // namespace rule_4_10_1
-}  // namespace misra_cpp_2008
-
-#endif  // ANALYZER_MISRA_CPP_2008_RULE_4_10_1_LIBTOOLING_LIB_H_
+int main(int argc, char** argv) {
+  return toy_rules::rule_1::libtooling::rule_1(argc, argv);
+}

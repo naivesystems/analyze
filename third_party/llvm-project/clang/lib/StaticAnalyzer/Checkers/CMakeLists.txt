@@ -29,6 +29,10 @@ add_clang_library(clangStaticAnalyzerCheckers
   CloneChecker.cpp
   ContainerModeling.cpp
   ConversionChecker.cpp
+  cwe-120-CStringChecker.cpp
+  cwe-121-ArrayBoundCheckerV2.cpp
+  cwe-124-127-BufferUnderAccessChecker.cpp
+  cwe-126-BuferOverAccessChecker.cpp
   CXXSelfAssignmentChecker.cpp
   DeadStoresChecker.cpp
   DebugCheckers.cpp

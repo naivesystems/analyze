@@ -1617,7 +1617,7 @@ class Result:
         "c2012-21.16": "[C0405]",
         "c2012-21.21": "[C0421]",
     }
-    def __init__(self, path, line_num, err_msg, optional_flag = False, other_locations = None, error_numbers = None):
+    def __init__(self, path, line_num, err_msg, optional_flag = False, other_locations = None, error_numbers = None, external_message = None):
         ns_tag = ""
         if err_msg in self.rule_trans_map:
             ns_tag = self.rule_trans_map[err_msg]
@@ -1634,6 +1634,10 @@ class Result:
         if other_locations is not None:
             for loc in other_locations:
                 self.locations.append(ErrorLocation(loc.file, loc.linenr))
+        if not external_message or external_message == '':
+            self.external_message = None
+        else:
+            self.external_message = external_message
 
 class NaiveSystemsResult:
     rule_trans_map = {
@@ -2895,48 +2899,57 @@ class MisraChecker:
                     if token.str not in ('++', '--', '+', '-', '[', '!', '~'):
                         continue
                     if token.str in ('++', '--'):
-                        if e1 in ('bool', 'enum') or e2 in ('bool', 'enum') :
-                            self.reportError(token, 10, 1)
+                        if e1 in ('bool', 'enum'):
+                            self.reportError(token, 10, 1, category = [e1])
+                        elif e2 in ('bool', 'enum'):
+                            self.reportError(token, 10, 1, category = [e2])
                     elif token.str in ('+', '-'):
                         if e1 in ('bool', 'enum', 'char'):
-                            self.reportError(token, 10, 1)
+                            self.reportError(token, 10, 1, category = [e1])
                         elif token.str == '-' and isUnsignedType(e1):
-                            self.reportError(token, 10, 1)
+                            self.reportError(token, 10, 1, category = [e1])
                     elif token.str == '[':
                         if token.link.str == ']' and e2 in ('bool', 'char', 'floating'):
-                            self.reportError(token, 10, 1)
+                            self.reportError(token, 10, 1, category = [e2])
                     elif token.str == '!':
                         if e1 != 'bool':
-                            self.reportError(token, 10, 1)
+                            self.reportError(token, 10, 1, category = [e1])
                     elif token.str == '~':
                         if not isUnsignedType(e1):
-                            self.reportError(token, 10, 1)
+                            self.reportError(token, 10, 1, category = [e1])
 
                 if token.str in ('<<', '>>'):
                     if not isUnsignedType(e1):
-                        self.reportError(token, 10, 1)
+                        self.reportError(token, 10, 1, category = [e1, ''])
                     elif not isUnsignedType(e2) and (not token.astOperand2.isNumber or token.astOperand2.getKnownIntValue() < 0):
-                        self.reportError(token, 10, 1)
+                        self.reportError(token, 10, 1, category = ['', e2])
                 elif token.str in ('+', '-', '+=', '-='):
-                    if e1 in ('bool', 'enum') or e2 in ('bool', 'enum') :
-                        self.reportError(token, 10, 1)
+                    category = [e for e in (e1, e2) if e in ('bool', 'enum')]
+                    if any(category):
+                        self.reportError(token, 10, 1, category = category)
                 elif token.str in ('*', '/', '%'):
-                    if e1 in ('bool', 'enum', 'char') or e2 in ('bool', 'enum', 'char') :
-                        self.reportError(token, 10, 1)
-                    if token.str == '%' and (e1 == 'floating' or e2 == 'floating'):
-                        self.reportError(token, 10, 1)
+                    category = [e for e in (e1, e2) if e in ('bool', 'enum', 'char')]
+                    if any(category):
+                        self.reportError(token, 10, 1, category = category)
+                    if token.str == '%':
+                        category = [e for e in (e1, e2) if e == 'floating']
+                        if any(category):
+                            self.reportError(token, 10, 1, category = category)
                 elif token.str in ('>', '<', '<=', '>='):
-                    if e1 == 'bool' or e2 == 'bool':
-                        self.reportError(token, 10, 1)
+                    category = [e for e in (e1, e2) if e == 'bool']
+                    if any(category):
+                        self.reportError(token, 10, 1, category = category)
                 elif token.str in ('&&', '||'):
-                    if e1 != 'bool' or e2 != 'bool':
-                        self.reportError(token, 10, 1)
+                    category = [e for e in (e1, e2) if e != 'bool']
+                    if any(category):
+                        self.reportError(token, 10, 1, category = category)
                 elif token.str in ('&', '|', '^'):
-                    if not isUnsignedType(e1) or not isUnsignedType(e2):
-                        self.reportError(token, 10, 1)
+                    category = [e for e in (e1, e2) if not isUnsignedType(e)]
+                    if any(category):
+                        self.reportError(token, 10, 1, category = category)
                 elif token.str == '?' and token.astOperand2.str == ':':
                     if e1 != 'bool':
-                        self.reportError(token, 10, 1)
+                        self.reportError(token, 10, 1, category = [e1, ''])
 
     def misra_10_2(self, data):
         def isEssentiallySignedOrUnsigned(op):
@@ -6851,8 +6864,36 @@ class MisraChecker:
                     self.violations[naiveSystems_severity] = []
                 self.violations[naiveSystems_severity].append('naivesystems' + "-" + errorId)
 
+    def formExternalMessage(self, location, num1, num2, category):
+        """Form the external message to report.
+        location: The token to report an error message.
+        num1, num2: Error numbers to specify the rule number and the error kind.
+        category: A list of categories of errors reported. It is used as
+            indicators to report external messages. The usage may be different
+            for different rules.
+        """
+        if not category:
+            return ''
+        # check for misra_rule_10_1
+        if num1 != 10 or num2 != 1:
+            return ''
+        if len(category) == 1:
+            # unary operand
+            return 'The operand of the %s operator is of an inappropriate essential type category %s.' % (location.str, category[0])
+        if len(category) == 2:
+            # binary operand
+            left_message = ''
+            if category[0] != '':
+                left_message = 'The left operand of the %s operator is of an inappropriate essential type category %s.' % (location.str, category[0])
+            if category[1] != '':
+                right_message = 'The right operand of the %s operator is of an inappropriate essential type category %s.' % (location.str, category[1])
+                if left_message != '':
+                    return left_message + '\n' + right_message
+                return right_message
+            return left_message
+        return ''
 
-    def reportError(self, location, num1, num2, case_number = 0, optional_flag = False, other_locations = None):
+    def reportError(self, location, num1, num2, case_number = 0, optional_flag = False, other_locations = None, category = None):
         ruleNum = num1 * 100 + num2
 
         if self.isRuleGloballySuppressed(ruleNum):
@@ -6888,7 +6929,8 @@ class MisraChecker:
             # skip it since it has already been displayed.
             if not this_violation in self.existing_violations:
                 self.existing_violations.add(this_violation)
-                self.current_json_list.append(Result(location.file, location.linenr, errorId, optional_flag = optional_flag, other_locations = other_locations, error_numbers = [num1, num2, case_number]))
+                external_message = self.formExternalMessage(location, num1, num2, category)
+                self.current_json_list.append(Result(location.file, location.linenr, errorId, optional_flag = optional_flag, other_locations = other_locations, error_numbers = [num1, num2, case_number], external_message = external_message))
                 cppcheckdata.reportError(location, cppcheck_severity, errmsg, 'misra', errorId, misra_severity)
 
                 if misra_severity not in self.violations:

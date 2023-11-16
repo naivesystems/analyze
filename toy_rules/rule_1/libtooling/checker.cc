@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "misra_cpp_2008/rule_4_10_1/libtooling/checker.h"
+#include "toy_rules/rule_1/libtooling/checker.h"
 
 #include <glog/logging.h>
 
@@ -29,8 +29,8 @@ using namespace clang::ast_matchers;
 using analyzer::proto::ResultsList;
 using std::string;
 
-namespace misra_cpp_2008 {
-namespace rule_4_10_1 {
+namespace toy_rules {
+namespace rule_1 {
 namespace libtooling {
 
 class Callback : public MatchFinder::MatchCallback {
@@ -59,11 +59,12 @@ class Callback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
+  results_list_ = result_list;
   callback_ = new Callback;
-  callback_->Init(result_list, &finder_);
+  callback_->Init(results_list_, &finder_);
 }
 
 }  // namespace libtooling
-}  // namespace rule_4_10_1
-}  // namespace misra_cpp_2008
+}  // namespace rule_1
+}  // namespace toy_rules

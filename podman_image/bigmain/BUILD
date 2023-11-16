@@ -435,6 +435,13 @@ cc_library(
 )
 
 cc_library(
+    name = "toy_rules_deps",
+    deps = [
+        "//toy_rules/rule_1/libtooling:rule_1_lib",
+    ],
+)
+
+cc_library(
     name = "rule",
     hdrs = ["rule.h"],
     visibility = [
@@ -498,6 +505,18 @@ cc_binary(
         ":misra_cpp_2008_deps",
         ":misra_deps",
         ":rule",
+        "//libtooling_includes:cmd_options",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/strings:str_format",
+    ],
+)
+
+cc_binary(
+    name = "bigmain_toy_rules",
+    srcs = ["main.cc"],
+    deps = [
+        ":rule",
+        ":toy_rules_deps",
         "//libtooling_includes:cmd_options",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/strings:str_format",
