@@ -1,0 +1,5 @@
+results {
+    path: "bad.cc"
+    line_number: 6
+    error_message: "NULL不得用作整型值"
+}
