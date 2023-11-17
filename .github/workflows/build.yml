@@ -9,6 +9,7 @@ jobs:
     steps:
     - name: mount .cache as tmpfs
       run: sudo mount -t tmpfs -o size=200G bazelcache /home/runner/.cache
+    - run: sudo loginctl enable-linger runner
     - uses: actions/checkout@v4
-    - name: make
-      run: make
+    - run: make
+    - run: make -C podman_image build-en
