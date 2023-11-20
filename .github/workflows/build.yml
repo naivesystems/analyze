@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: dimerun-k3-ubuntu2204
+    runs-on: dimerun-k4-ubuntu2204
     steps:
     - run: sudo loginctl enable-linger runner
     - uses: actions/checkout@v4
