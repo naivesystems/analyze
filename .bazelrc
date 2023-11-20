@@ -1,6 +1,6 @@
 startup --batch_cpu_scheduling --io_nice_level=7 --macos_qos_class=background
 
-build --jobs=2
+build --jobs=4
 
 build --incompatible_strict_action_env
 
