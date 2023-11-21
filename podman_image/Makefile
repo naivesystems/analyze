@@ -11,7 +11,6 @@ endif
 .PHONY: all
 all:
 	$(MAKE) build
-	$(MAKE) clean
 
 .PHONY: bigmain_googlecpp
 bigmain_googlecpp:
@@ -35,6 +34,7 @@ bigmain_toy_rules:
 
 .PHONY: build-base
 build-base:
+	$(MAKE) clean
 	$(BAZELBUILD) @llvm-project//clang && cp ../bazel-bin/external/llvm-project/clang/clang clang
 	$(BAZELBUILD) @llvm-project//clang:clang-extdef-mapping && cp ../bazel-bin/external/llvm-project/clang/clang-extdef-mapping clang-extdef-mapping
 	$(BAZELBUILD) @llvm-project//clang-tools-extra:clang-query && cp ../bazel-bin/external/llvm-project/clang-tools-extra/clang-query clang-query
@@ -59,7 +59,6 @@ build-base:
 	cp -r ../third_party/github.com/cpplint/cpplint/cpplint.py ./tmpWorkSpace
 	cp bigmain_symlink ./tmpWorkSpace
 	podman build -f ./Containerfile.misrac100k4 -t $(IMAGE_NAME) ./tmpWorkSpace
-	$(MAKE) clean
 
 .PHONY: build
 build:
@@ -72,40 +71,40 @@ build-en:
 .PHONY: build-googlecpp-en
 build-googlecpp-en:
 	$(MAKE) build-en
+	$(MAKE) clean
 	mkdir -p tmpWorkSpace
 	$(MAKE) bigmain_googlecpp
 	cp ../bazel-bin/podman_image/bigmain/bigmain_googlecpp ./tmpWorkSpace
 	podman build -f ./Containerfile.googlecpp --build-arg base_tag=dev_en -t naive.systems/analyzer/googlecpp:dev_en ./tmpWorkSpace
-	$(MAKE) clean
 
 .PHONY: build-autosar-en
 build-autosar-en:
 	$(MAKE) build-misra-cpp-en
+	$(MAKE) clean
 	mkdir -p tmpWorkSpace
 	$(MAKE) bigmain_autosar
 	cp ../bazel-bin/podman_image/bigmain/bigmain_autosar ./tmpWorkSpace
 	podman build -f ./Containerfile.autosar --build-arg base_tag=dev_en -t naive.systems/analyzer/autosar:dev_en ./tmpWorkSpace
-	$(MAKE) clean
 
 .PHONY: build-toy-rules-en
 build-toy-rules-en:
 	$(MAKE) build-misra-cpp-en
+	$(MAKE) clean
 	mkdir -p tmpWorkSpace
 	$(MAKE) bigmain_toy_rules
 	cp ../bazel-bin/podman_image/bigmain/bigmain_toy_rules ./tmpWorkSpace
 	podman build -f ./Containerfile.toyrules --build-arg base_tag=dev_en -t naive.systems/analyzer/toyrules:dev_en ./tmpWorkSpace
-	$(MAKE) clean
 
 .PHONY: build-misra-cpp-en
 build-misra-cpp-en:
 	$(MAKE) build
+	$(MAKE) clean
 	make -C ../misra/analyzer/cmd/ LIMIT=300000 NUM_WORKERS=0 LANG="en"
 	mkdir -p tmpWorkSpace
 	cp ../misra/analyzer/cmd/misra_analyzer ./tmpWorkSpace
 	$(MAKE) bigmain_misra_cpp_2008
 	cp ../bazel-bin/podman_image/bigmain/bigmain_misra_cpp_2008 ./tmpWorkSpace
 	podman build -f ./Containerfile.misracpp300k0qt -t naive.systems/analyzer/misracpp:dev_en ./tmpWorkSpace
-	$(MAKE) clean
 
 .PHONY: clean
 clean:
