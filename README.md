@@ -41,7 +41,7 @@ podman run --rm \
   -v $PWD:/src:O \
   -v $PWD/.naivesystems:/config:Z \
   -v $PWD/output:/output:Z \
-  ccr.ccs.tencentyun.com/naivesystems/analyze:2023.3.0.0 \
+  ghcr.io/naivesystems/analyze:master \
   /opt/naivesystems/misra_analyzer -show_results
 ```
 
