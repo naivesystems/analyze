@@ -12,7 +12,7 @@ Enterprise Edition.
 NaiveSystems Analyze Community Edition currently supports the following coding
 standards:
 
-- [MISRA C:2012](https://misra.org.uk/product/misra-c2012-third-edition-first-revision/)
+- [MISRA C:2012](https://misra.org.uk/product/misra-c2012-third-edition-first-revision/) a.k.a. MISRA C:2019
 - [MISRA C++:2008](https://misra.org.uk/product/misra-c2008/)
 - [AUTOSAR C++14](https://www.autosar.org/fileadmin/standards/R22-11/AP/AUTOSAR_RS_CPP14Guidelines.pdf)
 - [Google C++ Style Guide](https://naive.systems/styleguide/cppguide.html)
