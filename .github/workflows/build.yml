@@ -1,6 +1,8 @@
 name: Build
 
 on:
+  push:
+    tags: [ '202[3-9].[1-4].*.*' ]
   workflow_dispatch:
 
 env:
