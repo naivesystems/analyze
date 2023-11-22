@@ -126,7 +126,9 @@ reach out to us to get the Enterprise Edition.
 
 ## Join the Community
 
-If you find a bug of NaiveSystems Analyze, feel free to report it in the issues.
+If you find a bug of NaiveSystems Analyze, feel free to report it in the [issues](https://github.com/naivesystems/analyze/issues).
+
+Use [GitHub Discussions](https://github.com/naivesystems/analyze/discussions) for other topics.
 
 If you use WeChat, you may scan the QR code below to join our group chat:
 
