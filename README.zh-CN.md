@@ -2,7 +2,7 @@ This is a translation done by ChatGPT.
 
 # NaiveSystems Analyze
 
-NaiveSystems Analyze 是一个用于代码安全和合规性的静态分析工具。此存储库包含社区版的源代码，该版本是免费且开源的。联系 `hello[AT]naivesystems.com` 了解更多关于企业版的信息。
+NaiveSystems Analyze 是一个用于代码安全和合规性的静态分析工具。此存储库包含社区版的源代码，该版本是免费且开源的。要了解更多关于企业版的信息，请访问[官方网站](https://www.naivesystems.com/)或联系 `hello[AT]naivesystems.com`。
 
 ## 编码标准
 
