@@ -1,3 +1,4 @@
+[user@host ubuntu2204]$ sudo apt-get install git make
 [user@host ubuntu2204]$ make
 [user@host ubuntu2204]$ make enter
 build@45267817fdad:~/analyze$ cp -r podman_image/tmpWorkSpace /home/build/podman_image/
