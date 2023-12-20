@@ -38,6 +38,8 @@ example.
 For projects using Makefiles, run the commands below in your project root:
 
 ```
+podman pull ghcr.io/naivesystems/analyze:latest
+
 mkdir -p output
 
 podman run --rm \
