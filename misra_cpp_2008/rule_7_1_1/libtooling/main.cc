@@ -48,13 +48,13 @@ int rule_7_1_1(int argc, char** argv) {
       ns_libtooling_checker);
   gflags::ParseCommandLineFlags(&gflag_argc, &argv, false);
   if (!expected_parser) {
-    llvm::errs() << expected_parser.takeError();
+    errs() << expected_parser.takeError();
     return 1;
   }
   CommonOptionsParser& options_parser = expected_parser.get();
   vector<string> path_list = options_parser.getSourcePathList();
   if (path_list.size() != 1) {
-    llvm::errs() << "The number of filepath is not equal to 1";
+    errs() << "The number of filepath is not equal to 1";
     return 1;
   }
   ClangTool tool(options_parser.getCompilations(),

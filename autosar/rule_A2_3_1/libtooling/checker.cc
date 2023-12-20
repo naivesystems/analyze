@@ -49,10 +49,9 @@ namespace autosar {
 namespace rule_A2_3_1 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         varDecl(unless(isExpansionInSystemHeader())).bind("value_decl"), this);
@@ -70,7 +69,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
                        this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const VarDecl* var_decl = result.Nodes.getNodeAs<VarDecl>("value_decl");
     if (var_decl &&
         !misra::libtooling_utils::IsInSystemHeader(var_decl, result.Context)) {
@@ -123,10 +122,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

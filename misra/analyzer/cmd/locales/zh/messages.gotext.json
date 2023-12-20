@@ -145,8 +145,8 @@
             ]
         },
         {
-            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\n{Name}{StructMemberCount}{StructMemberLimit}",
-            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\n{Name}{StructMemberCount}{StructMemberLimit}",
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSTRUCT_MEMBER{Name}{StructMemberCount}{StructMemberLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSTRUCT_MEMBER{Name}{StructMemberCount}{StructMemberLimit}",
             "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n结构体 {Name} 中定义了 {StructMemberCount} 个成员，超过限制数 {StructMemberLimit}",
             "placeholders": [
                 {
@@ -172,6 +172,611 @@
                     "underlyingType": "string",
                     "argNum": 3,
                     "expr": "result.StructMemberLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nFUNCTION_PARM{Name}{FunctionParmCount}{FunctionParmLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nFUNCTION_PARM{Name}{FunctionParmCount}{FunctionParmLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n函数 {Name} 中定义了 {FunctionParmCount} 个参数，超过限制数 {FunctionParmLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "FunctionParmCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.FunctionParmCount"
+                },
+                {
+                    "id": "FunctionParmLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.FunctionParmLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nFUNCTION_ARG{Name}{FunctionArgCount}{FunctionArgLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nFUNCTION_ARG{Name}{FunctionArgCount}{FunctionArgLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n函数调用 {Name} 中使用了了 {FunctionArgCount} 个形参，超过限制数 {FunctionArgLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "FunctionArgCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.FunctionArgCount"
+                },
+                {
+                    "id": "FunctionArgLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.FunctionArgLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_RECORD{Name}{NestedRecordCount}{NestedRecordLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_RECORD{Name}{NestedRecordCount}{NestedRecordLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n单个结构声明列表中的嵌套结构或联合定义的层数{NestedRecordCount} 超过限制数 {NestedRecordLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "NestedRecordCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.NestedRecordCount"
+                },
+                {
+                    "id": "NestedRecordLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.NestedRecordLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_EXPR{Name}{NestedExprCount}{NestedExprLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_EXPR{Name}{NestedExprCount}{NestedExprLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n完整表达式 {Name} 中括号表达式的嵌套层数{NestedExprCount} 超过限制数 {NestedExprLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "NestedExprCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.NestedExprCount"
+                },
+                {
+                    "id": "NestedExprLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.NestedExprLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSWITCH_CASE{Name}{SwitchCaseCount}{SwitchCaseLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSWITCH_CASE{Name}{SwitchCaseCount}{SwitchCaseLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\nswitch语句中的case标签数{SwitchCaseCount} 超过限制数 {SwitchCaseLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "SwitchCaseCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.SwitchCaseCount"
+                },
+                {
+                    "id": "SwitchCaseLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.SwitchCaseLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nENUM_CONSTANT{Name}{EnumConstantCount}{EnumConstantLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nENUM_CONSTANT{Name}{EnumConstantCount}{EnumConstantLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n单个枚举 {Name} 中的枚举常量{EnumConstantCount} 超过限制数 {EnumConstantLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "EnumConstantCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.EnumConstantCount"
+                },
+                {
+                    "id": "EnumConstantLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.EnumConstantLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSTRING_CHAR{Name}{StringCharCount}{StringCharLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSTRING_CHAR{Name}{StringCharCount}{StringCharLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n单个字符串字面量 {Name} 中的字符数量{StringCharCount} 超过限制数 {StringCharLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "StringCharCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.StringCharCount"
+                },
+                {
+                    "id": "StringCharLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.StringCharLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nEXTERN_ID{Name}{ExternIdCount}{ExternIdLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nEXTERN_ID{Name}{ExternIdCount}{ExternIdLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n一个翻译单元中的外部标识符数量{ExternIdCount} 超过限制数 {ExternIdLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "ExternIdCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.ExternIdCount"
+                },
+                {
+                    "id": "ExternIdLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.ExternIdLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\n{Kind}: {Name}\nFirst identifier location: {Loc}\nDuplicated identifier '{ExternalMessage}' location: {OtherLoc}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\n{Kind}: {Name}\nFirst identifier location: {Loc}\nDuplicated identifier '{ExternalMessage}' location: {OtherLoc}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n{Kind}: {Name}\n位置: {Loc}\n重复的标识符'{ExternalMessage}'位置: {OtherLoc}",
+            "placeholders": [
+                {
+                    "id": "Kind",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Kind"
+                },
+                {
+                    "id": "Name",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "Loc",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.Loc"
+                },
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[4]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 4,
+                    "expr": "result.ExternalMessage"
+                },
+                {
+                    "id": "OtherLoc",
+                    "string": "%[5]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 5,
+                    "expr": "result.OtherLoc"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_ID{Name}{MacroIdCount}{MacroIdLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_ID{Name}{MacroIdCount}{MacroIdLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n在一个预处理翻译单元中同时定义的宏标识符数{MacroIdCount} 超过限制数 {MacroIdLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "MacroIdCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.MacroIdCount"
+                },
+                {
+                    "id": "MacroIdLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.MacroIdLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_PARM{Name}{MacroParmCount}{MacroParmLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_PARM{Name}{MacroParmCount}{MacroParmLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n一个宏定义 {Name} 中的参数数量{MacroParmCount} 超过限制数 {MacroParmLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "MacroParmCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.MacroParmCount"
+                },
+                {
+                    "id": "MacroParmLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.MacroParmLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_ARG{Name}{MacroArgCount}{MacroArgLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_ARG{Name}{MacroArgCount}{MacroArgLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n一次宏调用 {Name} 中的参数数量{MacroArgCount} 超过限制数 {MacroArgLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "MacroArgCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.MacroArgCount"
+                },
+                {
+                    "id": "MacroArgLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.MacroArgLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_BLOCK{Name}{NestedBlockCount}{NestedBlockLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_BLOCK{Name}{NestedBlockCount}{NestedBlockLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n块的嵌套层数{NestedBlockCount} 超过限制数 {NestedBlockLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "NestedBlockCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.NestedBlockCount"
+                },
+                {
+                    "id": "NestedBlockLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.NestedBlockLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_INCLUDE{Name}{NestedIncludeCount}{NestedIncludeLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_INCLUDE{Name}{NestedIncludeCount}{NestedIncludeLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n#include文件嵌套层数{NestedIncludeCount} 超过限制数 {NestedIncludeLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "NestedIncludeCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.NestedIncludeCount"
+                },
+                {
+                    "id": "NestedIncludeLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.NestedIncludeLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nIOM_ID_CHAR{Name}{IomIdCharCount}{IomIdCharLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nIOM_ID_CHAR{Name}{IomIdCharCount}{IomIdCharLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n内部标识符或宏名称 {Name} 中的有效初始字符数{IomIdCharCount} 超过限制数 {IomIdCharLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "IomIdCharCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.IomIdCharCount"
+                },
+                {
+                    "id": "IomIdCharLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.IomIdCharLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_COND_INCLU{Name}{NestedCondIncluCount}{NestedCondIncluLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_COND_INCLU{Name}{NestedCondIncluCount}{NestedCondIncluLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n条件包含的嵌套深度{NestedCondIncluCount} 超过限制数 {NestedCondIncluLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "NestedCondIncluCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.NestedCondIncluCount"
+                },
+                {
+                    "id": "NestedCondIncluLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.NestedCondIncluLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nBLOCK_ID{Name}{BlockIdCount}{BlockIdLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nBLOCK_ID{Name}{BlockIdCount}{BlockIdLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n在一个块中声明具有块作用域的标识符数量{BlockIdCount} 超过限制数 {BlockIdLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "BlockIdCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.BlockIdCount"
+                },
+                {
+                    "id": "BlockIdLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.BlockIdLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_DECL{Name}{NestedDeclCount}{NestedDeclLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_DECL{Name}{NestedDeclCount}{NestedDeclLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n完整声明符 {Name} 中括号声明符的嵌套深度{NestedDeclCount} 超过限制数 {NestedDeclLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "NestedDeclCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.NestedDeclCount"
+                },
+                {
+                    "id": "NestedDeclLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.NestedDeclLimit"
+                }
+            ]
+        },
+        {
+            "id": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMODIFY_DECL{Name}{ModifyDeclCount}{ModifyDeclLimit}",
+            "message": "[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMODIFY_DECL{Name}{ModifyDeclCount}{ModifyDeclLimit}",
+            "translation": "[C2201][misra-c2012-1.1]: 程序不得违反C语言标准语法和约束，不得超出实现的翻译限制\n指针、数组和函数声明符（任意组合）修改声明 {Name} 中的算术、结构、联合或 void 类型的数量{ModifyDeclCount} 超过限制数 {ModifyDeclLimit}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.Name"
+                },
+                {
+                    "id": "ModifyDeclCount",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "result.ModifyDeclCount"
+                },
+                {
+                    "id": "ModifyDeclLimit",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "result.ModifyDeclLimit"
                 }
             ]
         },
@@ -541,6 +1146,11 @@
             "translation": "[C0701][misra-c2012-6.2]: 一个一位的已命名位域不得为有符号类型"
         },
         {
+            "id": "[C0703][misra-c2012-6.3]: violation of misra-c2012-6.3",
+            "message": "[C0703][misra-c2012-6.3]: violation of misra-c2012-6.3",
+            "translation": "[C0703][misra-c2012-6.3]: 位字段不得声明为联合体的成员"
+        },
+        {
             "id": "[C0904][misra-c2012-7.1]: violation of misra-c2012-7.1",
             "message": "[C0904][misra-c2012-7.1]: violation of misra-c2012-7.1",
             "translation": "[C0904][misra-c2012-7.1]: 不得使用八进制常量"
@@ -579,6 +1189,21 @@
             "id": "[C0901][misra-c2012-7.4]: violation of misra-c2012-7.4\n{ExternalMessage}",
             "message": "[C0901][misra-c2012-7.4]: violation of misra-c2012-7.4\n{ExternalMessage}",
             "translation": "[C0901][misra-c2012-7.4]: 不得将字符串字面量赋值给对象，除非对象类型为“指向const修饰的char的指针”\n{ExternalMessage}",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ]
+        },
+        {
+            "id": "[C0905][misra-c2012-7.5]: violation of misra-c2012-7.5\n{ExternalMessage}",
+            "message": "[C0905][misra-c2012-7.5]: violation of misra-c2012-7.5\n{ExternalMessage}",
+            "translation": "[C0905][misra-c2012-7.5]: 整型常量宏的参数应具有适当的形式\n{ExternalMessage}",
             "placeholders": [
                 {
                     "id": "ExternalMessage",
@@ -969,6 +1594,31 @@
             "id": "[C0501][misra-c2012-8.14]: violation of misra-c2012-8.14",
             "message": "[C0501][misra-c2012-8.14]: violation of misra-c2012-8.14",
             "translation": "[C0501][misra-c2012-8.14]: 不得使用restrict类型修饰符 "
+        },
+        {
+            "id": "[C0515][misra-c2012-8.15]: violation of misra-c2012-8.15\n{ExternalMessage}",
+            "message": "[C0515][misra-c2012-8.15]: violation of misra-c2012-8.15\n{ExternalMessage}",
+            "translation": "[C0515][misra-c2012-8.15]: 具有显式对齐规范的对象的所有声明都应指定相同的对齐方式\n{ExternalMessage}",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ]
+        },
+        {
+            "id": "[C0516][misra-c2012-8.16]: violation of misra-c2012-8.16",
+            "message": "[C0516][misra-c2012-8.16]: violation of misra-c2012-8.16",
+            "translation": "[C0516][misra-c2012-8.16]: 零对齐规范不应出现在对象声明中"
+        },
+        {
+            "id": "[C0517][misra-c2012-8.17]: violation of misra-c2012-8.17",
+            "message": "[C0517][misra-c2012-8.17]: violation of misra-c2012-8.17",
+            "translation": "[C0517][misra-c2012-8.17]: 对象声明中最多应出现一个显式对齐说明符"
         },
         {
             "id": "[C1205][misra-c2012-9.1]: violation of misra-c2012-9.1\n{ExternalMessage}",
@@ -1905,6 +2555,46 @@
             "translation": "[C1501][misra-c2012-17.8]: 不应修改函数形参"
         },
         {
+            "id": "[C1509][misra-c2012-17.9]: violation of misra-c2012-17.9\n{ExternalMessage}",
+            "message": "[C1509][misra-c2012-17.9]: violation of misra-c2012-17.9\n{ExternalMessage}",
+            "translation": "[C1509][misra-c2012-17.9]: 使用 _Noreturn 函数说明符声明的函数不应返回到其调用者\n{ExternalMessage}",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ]
+        },
+        {
+            "id": "[C1510][misra-c2012-17.10]: violation of misra-c2012-17.10",
+            "message": "[C1510][misra-c2012-17.10]: violation of misra-c2012-17.10",
+            "translation": "[C1510][misra-c2012-17.10]: 使用 _Noreturn 函数说明符声明的函数应具有 void 返回类型"
+        },
+        {
+            "id": "[C1512][misra-c2012-17.12]: violation of misra-c2012-17.12",
+            "message": "[C1512][misra-c2012-17.12]: violation of misra-c2012-17.12",
+            "translation": "[C1512][misra-c2012-17.12]: 函数标识符只能与前面的 \u0026 或带括号的参数列表一起使用"
+        },
+        {
+            "id": "[C1513][misra-c2012-17.13]: violation of misra-c2012-17.13\n{ExternalMessage}",
+            "message": "[C1513][misra-c2012-17.13]: violation of misra-c2012-17.13\n{ExternalMessage}",
+            "translation": "[C1513][misra-c2012-17.13]: 函数类型不应被类型限定\n{ExternalMessage}",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ]
+        },
+        {
             "id": "[C1308][misra-c2012-18.1]: Pointer arithmetic may cause array out of bound.\n{ExternalMessage}",
             "message": "[C1308][misra-c2012-18.1]: Pointer arithmetic may cause array out of bound.\n{ExternalMessage}",
             "translation": "[C1308][misra-c2012-18.1]: 对指针操作数进行算术运算得来的指针只得用于寻址与该指针操作数同一数组的元素\n{ExternalMessage}",
@@ -2140,6 +2830,11 @@
             "translation": "[C0409][misra-c2012-21.12]: 不应使用\u003cfenv.h\u003e的异常处理特性"
         },
         {
+            "id": "[C0409][misra-c2012-21.12]: violation of misra-c2012-21.12-amd3",
+            "message": "[C0409][misra-c2012-21.12]: violation of misra-c2012-21.12-amd3",
+            "translation": "[C0409][misra-c2012-21.12]: 不得使用标准头文件\u003cfenv.h\u003e"
+        },
+        {
             "id": "[C0408][misra-c2012-21.13]: violation of misra-c2012-21.13\n{ExternalMessage}",
             "message": "[C0408][misra-c2012-21.13]: violation of misra-c2012-21.13\n{ExternalMessage}",
             "translation": "[C0408][misra-c2012-21.13]: 传递给\u003cctype.h\u003e函数的值必须能够表示为无符号char或EOF类型\n{ExternalMessage}",
@@ -2307,6 +3002,31 @@
             "translation": "[C0421][misra-c2012-21.21]: 不得使用\u003cstdlib.h\u003e中的标准库函数system"
         },
         {
+            "id": "[C0422][misra-c2012-21.22]: violation of misra-c2012-21.22\n{ExternalMessage}",
+            "message": "[C0422][misra-c2012-21.22]: violation of misra-c2012-21.22\n{ExternalMessage}",
+            "translation": "[C0422][misra-c2012-21.22]: 在\u003ctgmath.h\u003e中声明的任何类型泛型宏的所有操作数参数都必须具有适当的基本类型\n{ExternalMessage}",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ]
+        },
+        {
+            "id": "[C0423][misra-c2012-21.23]: violation of misra-c2012-21.23",
+            "message": "[C0423][misra-c2012-21.23]: violation of misra-c2012-21.23",
+            "translation": "[C0423][misra-c2012-21.23]: 在\u003ctgmath.h\u003c中声明的任何多参数类型泛型宏的所有操作数参数必须具有相同的标准类型"
+        },
+        {
+            "id": "[C0424][misra-c2012-21.24]: violation of misra-c2012-21.24",
+            "message": "[C0424][misra-c2012-21.24]: violation of misra-c2012-21.24",
+            "translation": "[C0424][misra-c2012-21.24]: 不能使用\u003cstdlib.h\u003c的随机数生成器函数"
+        },
+        {
             "id": "[C0210][misra-c2012-22.1]: violation of misra-c2012-22.1\n{ExternalMessage}",
             "message": "[C0210][misra-c2012-22.1]: violation of misra-c2012-22.1\n{ExternalMessage}",
             "translation": "[C0210][misra-c2012-22.1]: 通过标准库函数动态获取的所有资源都必须被显式释放\n{ExternalMessage}",
@@ -2455,6 +3175,41 @@
                     "expr": "result.ExternalMessage"
                 }
             ]
+        },
+        {
+            "id": "[C2401][misra-c2012-23.1]: violation of misra-c2012-23.1",
+            "message": "[C2401][misra-c2012-23.1]: violation of misra-c2012-23.1",
+            "translation": "[C2401][misra-c2012-23.1]: 通用选择只能从宏扩展"
+        },
+        {
+            "id": "[C2402][misra-c2012-23.2]: violation of misra-c2012-23.2",
+            "message": "[C2402][misra-c2012-23.2]: violation of misra-c2012-23.2",
+            "translation": "[C2402][misra-c2012-23.2]: 未从宏扩展的通用选择不应在控制表达式中包含潜在的副作用"
+        },
+        {
+            "id": "[C2403][misra-c2012-23.3]: violation of misra-c2012-23.3",
+            "message": "[C2403][misra-c2012-23.3]: violation of misra-c2012-23.3",
+            "translation": "[C2403][misra-c2012-23.3]: 通用选择应至少包含一个非默认关联"
+        },
+        {
+            "id": "[C2404][misra-c2012-23.4]: violation of misra-c2012-23.4\n{ExternalMessage}",
+            "message": "[C2404][misra-c2012-23.4]: violation of misra-c2012-23.4\n{ExternalMessage}",
+            "translation": "[C2404][misra-c2012-23.4]: 通用关联应列出适当的类型\n{ExternalMessage}",
+            "placeholders": [
+                {
+                    "id": "ExternalMessage",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "result.ExternalMessage"
+                }
+            ]
+        },
+        {
+            "id": "[C2405][misra-c2012-23.5]: violation of misra-c2012-23.5",
+            "message": "[C2405][misra-c2012-23.5]: violation of misra-c2012-23.5",
+            "translation": "[C2405][misra-c2012-23.5]: 通用选择不应依赖于隐式指针类型转换"
         },
         {
             "id": "[C2306][misra-c2012-dir-4.3]: assembly code should be isolated",
@@ -3892,8 +4647,8 @@
             ]
         },
         {
-            "id": "Starting generating CTU infomation",
-            "message": "Starting generating CTU infomation",
+            "id": "Starting generating CTU information",
+            "message": "Starting generating CTU information",
             "translation": "CTU信息开始生成"
         },
         {

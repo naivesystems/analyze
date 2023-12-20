@@ -86,7 +86,7 @@ class Callback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

@@ -39,7 +39,7 @@ struct Loc {
   string begin_loc;
 };
 void ReportError(string filename, int line, ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "[C1605][misra-c2012-13.2]: multiple related functions should not be called in the same expression";
   analyzer::proto::Result* pb_result =
       AddResultToResultsList(results_list, filename, line, error_message);
@@ -214,8 +214,7 @@ class MemberExprCallCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(bool aggressive_mode,
-                   analyzer::proto::ResultsList* results_list) {
+void Checker::Init(bool aggressive_mode, ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new OperatorSideEffectCallback;
   callback_->Init(aggressive_mode, results_list_, &finder_);

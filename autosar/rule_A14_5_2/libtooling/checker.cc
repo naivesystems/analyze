@@ -33,9 +33,9 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "Class members that are not dependent on template class parameters should be defined in a separate base class.";
   AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
@@ -48,10 +48,9 @@ namespace autosar {
 namespace rule_A14_5_2 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(cxxRecordDecl(isClass(), hasDefinition(),
                                      hasParent(classTemplateDecl()),
@@ -85,7 +84,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   bool ContainsDependentMember(const DeclContext* dc) {
     if (!dc) return false;
     for (const Decl* child : dc->decls()) {
@@ -117,7 +116,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

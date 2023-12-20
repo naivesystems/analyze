@@ -31,10 +31,9 @@ using namespace llvm;
 namespace misra_cpp_2008 {
 namespace rule_6_5_5 {
 namespace libtooling {
-class ForStmtCallback : public ast_matchers::MatchFinder::MatchCallback {
+class ForStmtCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     auto loop_counter_matcher =
@@ -55,7 +54,7 @@ class ForStmtCallback : public ast_matchers::MatchFinder::MatchCallback {
                        this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Stmt* for_stmt = result.Nodes.getNodeAs<Stmt>("for_stmt");
     const DeclRefExpr* var_ref = result.Nodes.getNodeAs<DeclRefExpr>("var_ref");
 
@@ -83,10 +82,9 @@ class ForStmtCallback : public ast_matchers::MatchFinder::MatchCallback {
   analyzer::proto::ResultsList* results_list_;
 };
 
-class WhileStmtCallback : public ast_matchers::MatchFinder::MatchCallback {
+class WhileStmtCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     auto loop_var_matcher =
@@ -105,7 +103,7 @@ class WhileStmtCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Stmt* while_stmt = result.Nodes.getNodeAs<Stmt>("while_stmt");
     const DeclRefExpr* var_ref = result.Nodes.getNodeAs<DeclRefExpr>("var_ref");
 

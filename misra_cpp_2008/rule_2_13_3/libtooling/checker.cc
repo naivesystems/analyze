@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "misra_cpp_2008/rule_2_13_3/libtooling/checker.h"
@@ -36,10 +48,9 @@ auto isOctal(StringRef num) -> bool {
   return num.startswith("0");
 };
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(integerLiteral(hasType(isUnsignedInteger())).bind("lit"),
                        this);
@@ -62,7 +73,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);  // pretend to use integerLiteral as unsigned
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const IntegerLiteral* lit = result.Nodes.getNodeAs<IntegerLiteral>("lit");
     clang::SourceRange range =
         SourceRange(result.SourceManager->getSpellingLoc(lit->getBeginLoc()),
@@ -80,7 +91,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     if (source.endswith("U")) {
       return;  // marked with U
     }
-    std::string error_message =
+    string error_message =
         "必须对所有八进制或十六进制的无符号整型字面量使用后缀“U”";
     analyzer::proto::Result* pb_result = AddResultToResultsList(
         results_list_,

@@ -38,7 +38,7 @@ namespace libtooling {
 
 void Check::Init(analyzer::proto::ResultsList* results_list,
                  SourceManager* source_manager,
-                 const std::string& optional_info_file) {
+                 const string& optional_info_file) {
   results_list_ = results_list;
   source_manager_ = source_manager;
   ofs.open(optional_info_file, std::ios::app);
@@ -87,7 +87,7 @@ bool Action::BeginSourceFileAction(CompilerInstance& ci) {
 }
 
 void Checker::Init(analyzer::proto::ResultsList* results_list,
-                   const std::string& optional_info_file) {
+                   const string& optional_info_file) {
   results_list_ = results_list;
   optional_info_file_ = optional_info_file;
 }

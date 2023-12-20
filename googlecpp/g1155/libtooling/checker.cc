@@ -47,19 +47,19 @@ namespace googlecpp {
 namespace g1155 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
   int maximum_inline_func_line_;
 
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder, int maximum_inline_func_line) {
+  void Init(ResultsList* results_list, MatchFinder* finder,
+            int maximum_inline_func_line) {
     results_list_ = results_list;
     maximum_inline_func_line_ = maximum_inline_func_line;
     // It will also catch the inline member functions
     finder->addMatcher(functionDecl(isInline()).bind("inlineFunc"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     if (const FunctionDecl* func =
             result.Nodes.getNodeAs<FunctionDecl>("inlineFunc")) {
       if (misra::libtooling_utils::IsInSystemHeader(func, result.Context))
@@ -80,11 +80,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list,
-                   int maximum_inline_func_line) {
+void Checker::Init(ResultsList* results_list, int maximum_inline_func_line) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_, maximum_inline_func_line);

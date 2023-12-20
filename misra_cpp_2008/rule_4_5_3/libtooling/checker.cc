@@ -31,10 +31,9 @@ namespace misra_cpp_2008 {
 namespace rule_4_5_3 {
 namespace libtooling {
 const int zero_char = 48;
-class OPCallback : public ast_matchers::MatchFinder::MatchCallback {
+class OPCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         binaryOperator(
@@ -84,7 +83,7 @@ class OPCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Expr* e = result.Nodes.getNodeAs<Expr>("op");
     if (misra::libtooling_utils::IsInSystemHeader(e, result.Context)) {
       return;
@@ -104,10 +103,9 @@ class OPCallback : public ast_matchers::MatchFinder::MatchCallback {
   analyzer::proto::ResultsList* results_list_;
 };
 
-class AddCallback : public ast_matchers::MatchFinder::MatchCallback {
+class AddCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         binaryOperator(
@@ -127,7 +125,7 @@ class AddCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     ASTContext* context = result.Context;
     const BinaryOperator* add_op =
         result.Nodes.getNodeAs<BinaryOperator>("addOp");

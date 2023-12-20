@@ -38,8 +38,7 @@ namespace {
 void ReportError(string path, int line_number, ResultsList* results_list) {
   string error_message =
       "Do not use using-directives (e.g., using namespace foo)";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }

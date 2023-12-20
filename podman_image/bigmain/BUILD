@@ -460,66 +460,69 @@ cc_library(
     ],
 )
 
-cc_binary(
-    name = "bigmain_misra_c_2012",
+cc_library(
+    name = "bigmain",
     srcs = ["main.cc"],
+    visibility = ["//visibility:public"],
     deps = [
-        ":misra_deps",
         ":rule",
         "//libtooling_includes:cmd_options",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/strings:str_format",
+    ],
+)
+
+cc_binary(
+    name = "bigmain_ce",
+    deps = [
+        ":autosar_deps",
+        ":bigmain",
+        ":googlecpp_deps",
+        ":misra_cpp_2008_deps",
+        ":misra_deps",
+    ],
+)
+
+cc_binary(
+    name = "bigmain_misra_c_2012",
+    deps = [
+        ":bigmain",
+        ":misra_deps",
     ],
 )
 
 cc_binary(
     name = "bigmain_misra_cpp_2008",
-    srcs = ["main.cc"],
     deps = [
+        ":bigmain",
         ":misra_cpp_2008_deps",
         ":misra_deps",
-        ":rule",
-        "//libtooling_includes:cmd_options",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/strings:str_format",
     ],
 )
 
 cc_binary(
     name = "bigmain_googlecpp",
-    srcs = ["main.cc"],
     deps = [
+        ":bigmain",
         ":googlecpp_deps",
-        ":rule",
-        "//libtooling_includes:cmd_options",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/strings:str_format",
     ],
 )
 
 cc_binary(
     name = "bigmain_autosar",
-    srcs = ["main.cc"],
     deps = [
         ":autosar_deps",
+        ":bigmain",
         ":misra_cpp_2008_deps",
         ":misra_deps",
-        ":rule",
-        "//libtooling_includes:cmd_options",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/strings:str_format",
     ],
 )
 
 cc_binary(
     name = "bigmain_toy_rules",
-    srcs = ["main.cc"],
     deps = [
-        ":rule",
+        ":bigmain",
         ":toy_rules_deps",
-        "//libtooling_includes:cmd_options",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/strings:str_format",
     ],
 )
 

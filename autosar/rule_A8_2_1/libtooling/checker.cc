@@ -32,12 +32,11 @@ using std::string;
 namespace {
 constexpr char kFunctionDeclString[] = "functionDecl";
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "When declaring function templates, the trailing return type syntax shall be used if the return type depends on the type of parameters.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -48,26 +47,24 @@ namespace autosar {
 namespace rule_A8_2_1 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder);
+  void Init(ResultsList* results_list, MatchFinder* finder);
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result);
+  void run(const MatchFinder::MatchResult& result);
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Callback::Init(analyzer::proto::ResultsList* results_list,
-                    ast_matchers::MatchFinder* finder) {
+void Callback::Init(ResultsList* results_list, MatchFinder* finder) {
   results_list_ = results_list;
   finder->addMatcher(functionDecl(isDefinition(), unless(hasTrailingReturn()))
                          .bind(kFunctionDeclString),
                      this);
 }
 
-void Callback::run(const ast_matchers::MatchFinder::MatchResult& result) {
+void Callback::run(const MatchFinder::MatchResult& result) {
   const FunctionDecl* function_decl =
       result.Nodes.getNodeAs<FunctionDecl>(kFunctionDeclString);
   if (misra::libtooling_utils::IsInSystemHeader(function_decl,
@@ -79,15 +76,15 @@ void Callback::run(const ast_matchers::MatchFinder::MatchResult& result) {
        function_decl->getReturnType()->isDependentType())) {
     // The checker reports errors when the return type is a dependent type or it
     // starts with "typename".
-    std::string path = misra::libtooling_utils::GetFilename(
-        function_decl, result.SourceManager);
+    string path = misra::libtooling_utils::GetFilename(function_decl,
+                                                       result.SourceManager);
     int line_number =
         misra::libtooling_utils::GetLine(function_decl, result.SourceManager);
     ReportError(path, line_number, results_list_);
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

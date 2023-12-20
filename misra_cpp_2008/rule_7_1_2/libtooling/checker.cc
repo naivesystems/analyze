@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "misra_cpp_2008/rule_7_1_2/libtooling/checker.h"
@@ -36,7 +48,7 @@ namespace misra_cpp_2008 {
 namespace rule_7_1_2 {
 namespace libtooling {
 
-std::unordered_map<const clang::ParmVarDecl*, std::tuple<std::string, int>>
+std::unordered_map<const clang::ParmVarDecl*, std::tuple<string, int>>
     not_const_parm_map{};
 std::unordered_set<const clang::ParmVarDecl*> used_parm_map{};
 
@@ -85,8 +97,7 @@ std::unordered_set<const clang::ParmVarDecl*> used_parm_map{};
 //  find the parameters should be const qualified(not modified and not escaped).
 class ReturnCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // match A pointer or reference parameter in a function not be declared as
     // pointer to const or reference to const
@@ -158,7 +169,7 @@ class ReturnCallback : public MatchFinder::MatchCallback {
         traverse(TK_IgnoreUnlessSpelledInSource, member_param_pointer), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const ParmVarDecl* parm =
         result.Nodes.getNodeAs<ParmVarDecl>("not_const_func_parm");
     const ParmVarDecl* used_param =
@@ -179,7 +190,7 @@ class ReturnCallback : public MatchFinder::MatchCallback {
       if (misra::libtooling_utils::IsInSystemHeader(parm, result.Context)) {
         return;
       }
-      std::string path_ =
+      string path_ =
           misra::libtooling_utils::GetFilename(parm, result.SourceManager);
       int line_number_ =
           misra::libtooling_utils::GetLine(parm, result.SourceManager);
@@ -191,7 +202,7 @@ class ReturnCallback : public MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
 void Checker::checkFuncParmMapAndReport(void) {
@@ -204,7 +215,7 @@ void Checker::checkFuncParmMapAndReport(void) {
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   returnCallback_ = new ReturnCallback;
   returnCallback_->Init(results_list_, &finder_);

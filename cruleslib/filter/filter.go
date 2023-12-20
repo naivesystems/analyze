@@ -29,7 +29,6 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/golang/glog"
@@ -50,55 +49,6 @@ func IsCCFile(path string) bool {
 	return false
 }
 
-func GetRuleNameFromErrorMessage(msg string) (string, error) {
-	reg := regexp.MustCompile(`\[([a-zA-Z\_\d]*)\]\[([a-zA-Z\.\-\_\d]*)\].*`)
-	matches := reg.FindAllStringSubmatch(msg, -1)
-
-	for _, match := range matches {
-		if len(match) < 3 {
-			continue
-		}
-		ruleInfo := strings.Split(match[2], "-")
-		if len(ruleInfo) == 4 {
-			if ruleInfo[0] == "misra" && ruleInfo[1] == "c2012" && ruleInfo[2] == "dir" {
-				ruleId := strings.ReplaceAll(ruleInfo[3], ".", "_")
-				return "misra_c_2012/dir_" + ruleId, nil
-			}
-		}
-		if len(ruleInfo) == 3 {
-			if ruleInfo[0] == "misra" && ruleInfo[1] == "c2012" {
-				ruleId := strings.ReplaceAll(ruleInfo[2], ".", "_")
-				return "misra_c_2012/rule_" + ruleId, nil
-			}
-			if ruleInfo[0] == "misra" && ruleInfo[1] == "cpp2008" {
-				ruleId := strings.ReplaceAll(ruleInfo[2], ".", "_")
-				return "misra_cpp_2008/rule_" + ruleId, nil
-			}
-			if ruleInfo[0] == "gjb" && ruleInfo[1] == "5369" {
-				ruleId := strings.ReplaceAll(ruleInfo[2], ".", "_")
-				return "gjb5369/rule_" + ruleId, nil
-			}
-			if ruleInfo[0] == "gjb" && ruleInfo[1] == "8114" {
-				ruleId := strings.ReplaceAll(ruleInfo[2], ".", "_")
-				return "gjb8114/rule_" + ruleId, nil
-			}
-		}
-		if len(ruleInfo) == 2 {
-			if ruleInfo[0] == "cwe" {
-				return "cwe/" + ruleInfo[1], nil
-			}
-			if ruleInfo[0] == "autosar" {
-				return "autosar/" + ruleInfo[1], nil
-			}
-		}
-		lastIndex := strings.LastIndex(match[2], "-")
-		if lastIndex != -1 {
-			return fmt.Sprintf("%s/%s", match[2][:lastIndex], match[2][lastIndex+1:]), nil
-		}
-	}
-	return "", fmt.Errorf("invalid error message %v", msg)
-}
-
 func DeleteExceedResults(allResults *pb.ResultsList, checkRules []checkrule.CheckRule) *pb.ResultsList {
 	maxReportNumMap := make(map[string]int)
 	for _, checkRule := range checkRules {
@@ -109,12 +59,12 @@ func DeleteExceedResults(allResults *pb.ResultsList, checkRules []checkrule.Chec
 	errHashMap := make(map[string]int)
 	rtnResults := make([]*pb.Result, 0)
 	for _, currentResult := range allResults.Results {
-		rule, err := GetRuleNameFromErrorMessage(currentResult.ErrorMessage)
-		if err != nil {
-			glog.Errorf("GetRuleNameFromErrorMessage: %v", err)
+		if currentResult.Ruleset == "" || currentResult.RuleId == "" {
+			glog.Errorf("unknown rule: %s/%s", currentResult.Ruleset, currentResult.RuleId)
 			rtnResults = append(rtnResults, currentResult)
 			continue
 		}
+		rule := fmt.Sprintf("%s/%s", currentResult.Ruleset, currentResult.RuleId)
 		if _, exist := maxReportNumMap[rule]; !exist {
 			rtnResults = append(rtnResults, currentResult)
 			continue

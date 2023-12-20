@@ -31,7 +31,45 @@ var languageMap = map[string]language.Tag{"en": language.English, "zh": language
 func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 	switch result.ErrorKind {
 	case pb.Result_MISRA_C_2012_RULE_1_1_STRUCT_MEMBER:
-		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\n%s%s%s", result.Name, result.StructMemberCount, result.StructMemberLimit)
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSTRUCT_MEMBER%s%s%s", result.Name, result.StructMemberCount, result.StructMemberLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_FUNCTION_PARM:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nFUNCTION_PARM%s%s%s", result.Name, result.FunctionParmCount, result.FunctionParmLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_FUNCTION_ARG:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nFUNCTION_ARG%s%s%s", result.Name, result.FunctionArgCount, result.FunctionArgLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_NESTED_RECORD:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_RECORD%s%s%s", result.Name, result.NestedRecordCount, result.NestedRecordLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_NESTED_EXPR:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_EXPR%s%s%s", result.Name, result.NestedExprCount, result.NestedExprLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_SWITCH_CASE:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSWITCH_CASE%s%s%s", result.Name, result.SwitchCaseCount, result.SwitchCaseLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_ENUM_CONSTANT:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nENUM_CONSTANT%s%s%s", result.Name, result.EnumConstantCount, result.EnumConstantLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_STRING_CHAR:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nSTRING_CHAR%s%s%s", result.Name, result.StringCharCount, result.StringCharLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_EXTERN_ID:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nEXTERN_ID%s%s%s", result.Name, result.ExternIdCount, result.ExternIdLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_EXTERN_ID_CHAR:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\n%s: %s\nFirst identifier location: %s\nDuplicated identifier '%s' location: %s", result.Kind, result.Name, result.Loc, result.ExternalMessage, result.OtherLoc)
+	case pb.Result_MISRA_C_2012_RULE_1_1_MACRO_ID:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_ID%s%s%s", result.Name, result.MacroIdCount, result.MacroIdLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_MACRO_PARM:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_PARM%s%s%s", result.Name, result.MacroParmCount, result.MacroParmLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_MACRO_ARG:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMACRO_ARG%s%s%s", result.Name, result.MacroArgCount, result.MacroArgLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_NESTED_BLOCK:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_BLOCK%s%s%s", result.Name, result.NestedBlockCount, result.NestedBlockLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_NESTED_INCLUDE:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_INCLUDE%s%s%s", result.Name, result.NestedIncludeCount, result.NestedIncludeLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_IOM_ID_CHAR:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nIOM_ID_CHAR%s%s%s", result.Name, result.IomIdCharCount, result.IomIdCharLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_NESTED_COND_INCLU:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_COND_INCLU%s%s%s", result.Name, result.NestedCondIncluCount, result.NestedCondIncluLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_BLOCK_ID:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nBLOCK_ID%s%s%s", result.Name, result.BlockIdCount, result.BlockIdLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_NESTED_DECL:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nNESTED_DECL%s%s%s", result.Name, result.NestedDeclCount, result.NestedDeclLimit)
+	case pb.Result_MISRA_C_2012_RULE_1_1_MODIFY_DECL:
+		return p.Sprintf("[C2201][misra-c2012-1.1]: violation of misra-c2012-1.1\nMODIFY_DECL%s%s%s", result.Name, result.ModifyDeclCount, result.ModifyDeclLimit)
 	case pb.Result_MISRA_C_2012_RULE_1_3:
 		return p.Sprintf("[C2203][misra-c2012-1.3]: violation of misra-c2012-1.3\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_1_4:
@@ -86,6 +124,8 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 		return p.Sprintf("[C0702][misra-c2012-6.1]: violation of misra-c2012-6.1")
 	case pb.Result_MISRA_C_2012_RULE_6_2:
 		return p.Sprintf("[C0701][misra-c2012-6.2]: violation of misra-c2012-6.2")
+	case pb.Result_MISRA_C_2012_RULE_6_3:
+		return p.Sprintf("[C0703][misra-c2012-6.3]: violation of misra-c2012-6.3")
 	case pb.Result_MISRA_C_2012_RULE_7_1:
 		return p.Sprintf("[C0904][misra-c2012-7.1]: violation of misra-c2012-7.1")
 	case pb.Result_MISRA_C_2012_RULE_7_2:
@@ -98,6 +138,8 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 		return p.Sprintf("[C0901][misra-c2012-7.4]: Assignment violation of misra-c2012-7.4\ntry to assign string literal to object with improper type\nLocation: %s", result.Loc)
 	case pb.Result_MISRA_C_2012_RULE_7_4_EXTERNAL:
 		return p.Sprintf("[C0901][misra-c2012-7.4]: violation of misra-c2012-7.4\n%s", result.ExternalMessage)
+	case pb.Result_MISRA_C_2012_RULE_7_5:
+		return p.Sprintf("[C0905][misra-c2012-7.5]: violation of misra-c2012-7.5\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_8_1:
 		return p.Sprintf("[C0514][misra-c2012-8.1]: violation of misra-c2012-8.1\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_8_2_FUNC_DECL_PARM_NOT_NAMED_ERROR:
@@ -142,6 +184,12 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 		return p.Sprintf("[C0503][misra-c2012-8.12]: violation of misra-c2012-8.12")
 	case pb.Result_MISRA_C_2012_RULE_8_14:
 		return p.Sprintf("[C0501][misra-c2012-8.14]: violation of misra-c2012-8.14")
+	case pb.Result_MISRA_C_2012_RULE_8_15:
+		return p.Sprintf("[C0515][misra-c2012-8.15]: violation of misra-c2012-8.15\n%s", result.ExternalMessage)
+	case pb.Result_MISRA_C_2012_RULE_8_16:
+		return p.Sprintf("[C0516][misra-c2012-8.16]: violation of misra-c2012-8.16")
+	case pb.Result_MISRA_C_2012_RULE_8_17:
+		return p.Sprintf("[C0517][misra-c2012-8.17]: violation of misra-c2012-8.17")
 	case pb.Result_MISRA_C_2012_RULE_9_1:
 		return p.Sprintf("[C1205][misra-c2012-9.1]: violation of misra-c2012-9.1\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_9_2:
@@ -302,6 +350,14 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 		return p.Sprintf("[C1501][misra-c2012-17.8]: violation of misra-c2012-17.8")
 	case pb.Result_MISRA_C_2012_RULE_17_8:
 		return p.Sprintf("[C1501][misra-c2012-17.8]: parameters should not be modified")
+	case pb.Result_MISRA_C_2012_RULE_17_9:
+		return p.Sprintf("[C1509][misra-c2012-17.9]: violation of misra-c2012-17.9\n%s", result.ExternalMessage)
+	case pb.Result_MISRA_C_2012_RULE_17_10:
+		return p.Sprintf("[C1510][misra-c2012-17.10]: violation of misra-c2012-17.10")
+	case pb.Result_MISRA_C_2012_RULE_17_12:
+		return p.Sprintf("[C1512][misra-c2012-17.12]: violation of misra-c2012-17.12")
+	case pb.Result_MISRA_C_2012_RULE_17_13:
+		return p.Sprintf("[C1513][misra-c2012-17.13]: violation of misra-c2012-17.13\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_18_1:
 		return p.Sprintf("[C1308][misra-c2012-18.1]: Pointer arithmetic may cause array out of bound.\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_18_2:
@@ -376,6 +432,8 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 		return p.Sprintf("[C0410][misra-c2012-21.11]: violation of misra-c2012-21.11")
 	case pb.Result_MISRA_C_2012_RULE_21_12:
 		return p.Sprintf("[C0409][misra-c2012-21.12]: violation of misra-c2012-21.12")
+	case pb.Result_MISRA_C_2012_RULE_21_12_AMD3:
+		return p.Sprintf("[C0409][misra-c2012-21.12]: violation of misra-c2012-21.12-amd3")
 	case pb.Result_MISRA_C_2012_RULE_21_13:
 		return p.Sprintf("[C0408][misra-c2012-21.13]: violation of misra-c2012-21.13\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_21_14:
@@ -398,6 +456,12 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 		return p.Sprintf("[C0401][misra-c2012-21.20]: violation of misra-c2012-21.20\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_21_21:
 		return p.Sprintf("[C0421][misra-c2012-21.21]: violation of misra-c2012-21.21")
+	case pb.Result_MISRA_C_2012_RULE_21_22:
+		return p.Sprintf("[C0422][misra-c2012-21.22]: violation of misra-c2012-21.22\n%s", result.ExternalMessage)
+	case pb.Result_MISRA_C_2012_RULE_21_23:
+		return p.Sprintf("[C0423][misra-c2012-21.23]: violation of misra-c2012-21.23")
+	case pb.Result_MISRA_C_2012_RULE_21_24:
+		return p.Sprintf("[C0424][misra-c2012-21.24]: violation of misra-c2012-21.24")
 	case pb.Result_MISRA_C_2012_RULE_22_1:
 		return p.Sprintf("[C0210][misra-c2012-22.1]: violation of misra-c2012-22.1\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_22_2:
@@ -418,6 +482,16 @@ func localizeErrorMessage(result *pb.Result, p *message.Printer) string {
 		return p.Sprintf("[C0202][misra-c2012-22.9]: violation of misra-c2012-22.9\n%s", result.ExternalMessage)
 	case pb.Result_MISRA_C_2012_RULE_22_10:
 		return p.Sprintf("[C0201][misra-c2012-22.10]: violation of misra-c2012-22.10\n%s", result.ExternalMessage)
+	case pb.Result_MISRA_C_2012_RULE_23_1:
+		return p.Sprintf("[C2401][misra-c2012-23.1]: violation of misra-c2012-23.1")
+	case pb.Result_MISRA_C_2012_RULE_23_2:
+		return p.Sprintf("[C2402][misra-c2012-23.2]: violation of misra-c2012-23.2")
+	case pb.Result_MISRA_C_2012_RULE_23_3:
+		return p.Sprintf("[C2403][misra-c2012-23.3]: violation of misra-c2012-23.3")
+	case pb.Result_MISRA_C_2012_RULE_23_4:
+		return p.Sprintf("[C2404][misra-c2012-23.4]: violation of misra-c2012-23.4\n%s", result.ExternalMessage)
+	case pb.Result_MISRA_C_2012_RULE_23_5:
+		return p.Sprintf("[C2405][misra-c2012-23.5]: violation of misra-c2012-23.5")
 	case pb.Result_MISRA_C_2012_DIR_4_3_ASM_SHOULD_BE_ISOLATED:
 		return p.Sprintf("[C2306][misra-c2012-dir-4.3]: assembly code should be isolated")
 	case pb.Result_MISRA_C_2012_DIR_4_3_ASM_SHOULD_BE_ENCAPSULATED:

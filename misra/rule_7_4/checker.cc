@@ -33,9 +33,9 @@ using analyzer::proto::ResultsList;
 
 namespace {
 
-void ReportError(string loc, std::string path, int line_number,
+void ReportError(string loc, string path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message = absl::StrFormat(
+  string error_message = absl::StrFormat(
       "[C0901][misra-c2012-7.4]: Assignment violation of misra-c2012-7.4\n"
       "try to assign string literal to object with improper type\n"
       "Location: %s",
@@ -55,7 +55,7 @@ namespace rule_7_4 {
 
 class CastCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(std::map<std::string, StringLiteralInfo>* count_str_literal_cast,
+  void Init(std::map<string, StringLiteralInfo>* count_str_literal_cast,
             ResultsList* results_list, MatchFinder* finder) {
     count_str_literal_cast_ = count_str_literal_cast;
     results_list_ = results_list;
@@ -73,10 +73,9 @@ class CastCallback : public MatchFinder::MatchCallback {
       return;
     }
     ASTContext* context = result.Context;
-    std::string path = libtooling_utils::GetFilename(ce, result.SourceManager);
+    string path = libtooling_utils::GetFilename(ce, result.SourceManager);
     int line_number = libtooling_utils::GetLine(ce, result.SourceManager);
-    std::string location =
-        libtooling_utils::GetLocation(ce, result.SourceManager);
+    string location = libtooling_utils::GetLocation(ce, result.SourceManager);
     if (!ce->getType()->isPointerType()) {
       ReportError(location, path, line_number, results_list_);
       return;
@@ -114,8 +113,8 @@ class CastCallback : public MatchFinder::MatchCallback {
 };
 
 void Checker::Init(
-    analyzer::proto::ResultsList* results_list,
-    std::map<std::string, StringLiteralInfo>* count_str_literal_cast) {
+    ResultsList* results_list,
+    std::map<string, StringLiteralInfo>* count_str_literal_cast) {
   results_list_ = results_list;
   callback_ = new CastCallback;
   count_str_literal_cast_ = count_str_literal_cast;

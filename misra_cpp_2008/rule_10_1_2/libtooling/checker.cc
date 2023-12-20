@@ -70,9 +70,8 @@ inline const CXXRecordDecl* GetBaseClass(
   return base_specifier.getType()->getAsCXXRecordDecl();
 }
 
-void ReportError(std::string filepath, int line_number,
-                 ResultsList* results_list) {
-  std::string error_message = absl::StrFormat(
+void ReportError(string filepath, int line_number, ResultsList* results_list) {
+  string error_message = absl::StrFormat(
       "只有在用于菱形层次结构（diamond hierarchy）时，才能声明一个基类为虚拟基类");
   analyzer::proto::Result* pb_result = AddResultToResultsList(
       results_list, filepath, line_number, error_message);

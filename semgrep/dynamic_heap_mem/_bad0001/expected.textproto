@@ -1,0 +1,11 @@
+results {
+  path: "test.cc"
+  line_number: 3
+  error_message: "[dynamic-heap-memory]: Dynamic heap memory allocation shall not be used."
+}
+
+results {
+  path: "test.cc"
+  line_number: 4
+  error_message: "[dynamic-heap-memory]: Dynamic heap memory allocation shall not be used."
+}

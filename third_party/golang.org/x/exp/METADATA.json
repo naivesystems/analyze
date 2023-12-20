@@ -1,5 +1,6 @@
 {
 	"third_party": {
+		"license": "BSD-3-Clause",
 		"version": "v0.0.0-20220518171630-0b5c67f07fdf"
 	}
 }

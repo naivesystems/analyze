@@ -1,6 +1,6 @@
 /*
 NaiveSystems Analyze - A tool for static code analysis
-Copyright (C) 2023  Naive Systems Ltd.
+Copyright (C) 2022-2023  Naive Systems Ltd.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,24 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "misra_cpp_2008/rule_4_10_2/libtooling/checker.h"
-
-#include <glog/logging.h>
-
-#include "absl/strings/str_format.h"
 #include "misra/libtooling_utils/libtooling_utils.h"
+#include "misra/proto_util.h"
+#include "sdk/checker/ast_checker.h"
+#include "sdk/checker/define_ast_checker.h"
 
-using namespace clang;
 using namespace clang::ast_matchers;
-using namespace llvm;
 
-namespace misra_cpp_2008 {
-namespace rule_4_10_2 {
-namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+namespace {
+
+class Callback : public sdk::checker::ASTCheckerCallback {
  public:
   void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+            MatchFinder* finder) override {
     results_list_ = results_list;
     finder->addMatcher(castExpr(hasCastKind(CK_NullToPointer),
                                 hasSourceExpression(integerLiteral(equals(0))))
@@ -41,7 +36,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
                        this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Expr* e = result.Nodes.getNodeAs<Expr>("cast");
     if (misra::libtooling_utils::IsInSystemHeader(e, result.Context)) {
       return;
@@ -60,10 +55,6 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   analyzer::proto::ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
-  callback_ = new Callback;
-  callback_->Init(result_list, &finder_);
-}
-}  // namespace libtooling
-}  // namespace rule_4_10_2
-}  // namespace misra_cpp_2008
+sdk::checker::DefineASTChecker<Callback> _("misra_cpp_2008/rule_4_10_2");
+
+}  // namespace

@@ -41,10 +41,9 @@ void ReportError(string path, int line_number,
                                line_number);
 }
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         varDecl(hasInitializer(initListExpr()), hasType(autoType()))
@@ -56,7 +55,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const VarDecl* varDecl = result.Nodes.getNodeAs<VarDecl>("bracedInit");
 
     if (varDecl &&

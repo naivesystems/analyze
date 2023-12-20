@@ -172,7 +172,7 @@ class ExternalFDCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   vd_callback_ = new ExternalVDCallback;
   vd_callback_->Init(results_list_, &finder_);

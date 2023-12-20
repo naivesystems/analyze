@@ -31,12 +31,11 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "“operator new” and “operator delete” shall be defined together.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -47,10 +46,9 @@ namespace autosar {
 namespace rule_A18_5_11 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     global_check_done_ = false;
 
@@ -69,7 +67,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     bool has_new = false;
     bool has_delete = false;
     bool has_array_new = false;
@@ -126,7 +124,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
 
     if ((!has_new && has_delete) || (has_new && !has_delete)) {
       for (auto new_or_delete_decl : new_or_delete_decls) {
-        std::string path = misra::libtooling_utils::GetFilename(
+        string path = misra::libtooling_utils::GetFilename(
             new_or_delete_decl, result.SourceManager);
         int line_number = misra::libtooling_utils::GetLine(
             new_or_delete_decl, result.SourceManager);
@@ -136,7 +134,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     if ((!has_array_new && has_array_delete) ||
         (has_array_new && !has_array_delete)) {
       for (auto array_new_or_delete_decl : array_new_or_delete_decls) {
-        std::string path = misra::libtooling_utils::GetFilename(
+        string path = misra::libtooling_utils::GetFilename(
             array_new_or_delete_decl, result.SourceManager);
         int line_number = misra::libtooling_utils::GetLine(
             array_new_or_delete_decl, result.SourceManager);
@@ -146,11 +144,11 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   bool global_check_done_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

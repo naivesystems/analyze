@@ -92,7 +92,7 @@ class ParamCallback : public MatchFinder::MatchCallback {
     finder->addMatcher(callExpr().bind("call_fd"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const FunctionDecl* fd = result.Nodes.getNodeAs<FunctionDecl>("fd");
     if (fd) {
       if (!fd->doesThisDeclarationHaveABody()) return;
@@ -116,7 +116,7 @@ class ParamCallback : public MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
 void Checker::Run() const {
@@ -129,7 +129,7 @@ void Checker::Run() const {
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new ParamCallback;
   callback_->Init(results_list, &finder_);

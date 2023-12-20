@@ -44,17 +44,15 @@ void ReportError(const Decl* decl, SourceManager* sm,
 namespace misra_cpp_2008 {
 namespace rule_14_7_1 {
 namespace libtooling {
-class ClassTemplateDeclCallback
-    : public ast_matchers::MatchFinder::MatchCallback {
+class ClassTemplateDeclCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     this->results_list_ = results_list;
 
     finder->addMatcher(classTemplateDecl().bind("class_template_unins"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const ClassTemplateDecl* class_template =
         result.Nodes.getNodeAs<ClassTemplateDecl>("class_template_unins");
     if (misra::libtooling_utils::IsInSystemHeader(class_template,
@@ -68,14 +66,12 @@ class ClassTemplateDeclCallback
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-class ClassTemplateInstanceCallback
-    : public ast_matchers::MatchFinder::MatchCallback {
+class ClassTemplateInstanceCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(classTemplateSpecializationDecl(
@@ -102,7 +98,7 @@ class ClassTemplateInstanceCallback
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const CXXMethodDecl* cxx_method =
         result.Nodes.getNodeAs<CXXMethodDecl>("method");
     const FieldDecl* field_decl =
@@ -150,20 +146,18 @@ class ClassTemplateInstanceCallback
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-class FuncTemplateInitCallback
-    : public ast_matchers::MatchFinder::MatchCallback {
+class FuncTemplateInitCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     this->results_list_ = results_list;
 
     finder->addMatcher(functionTemplateDecl().bind("func_template"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const FunctionTemplateDecl* func_template =
         result.Nodes.getNodeAs<FunctionTemplateDecl>("func_template");
     if (misra::libtooling_utils::IsInSystemHeader(func_template,
@@ -177,10 +171,10 @@ class FuncTemplateInitCallback
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   class_template_decl_callback_ = new ClassTemplateDeclCallback;
   class_template_decl_callback_->Init(results_list, &finder_);
   class_template_callback_ = new ClassTemplateInstanceCallback;

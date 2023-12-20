@@ -51,7 +51,7 @@ class CallCallback : public MatchFinder::MatchCallback {
     string function_name = callee_function->getAsFunction()->getNameAsString();
     if (function_name == "malloc" || function_name == "calloc" ||
         function_name == "realloc" || function_name == "free") {
-      std::string error_message =
+      string error_message =
           "[C2315][misra-c2012-dir-4.12]: dynamic allocation should not be used";
       analyzer::proto::Result* pb_result = AddResultToResultsList(
           results_list_,
@@ -72,7 +72,7 @@ class CallCallback : public MatchFinder::MatchCallback {
   }
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new CallCallback;
   callback_->Init(results_list_, &finder_);

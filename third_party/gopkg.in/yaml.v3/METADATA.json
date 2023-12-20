@@ -1,5 +1,6 @@
 {
 	"third_party": {
+		"license": "MIT and Apache-2.0",
 		"version": "v3.0.1"
 	}
 }

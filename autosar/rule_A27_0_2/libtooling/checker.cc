@@ -31,12 +31,11 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "A C-style string shall guarantee sufficient space for data and the null terminator.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -53,10 +52,9 @@ unordered_set<string> dangerous_func_set = {"memcpy",  "bcopy",  "strcpy",
                                             "strncpy", "strcat", "strncat",
                                             "memmove", "memcmp", "memset"};
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     Matcher<Decl> c_string_var =
@@ -76,7 +74,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     finder->addMatcher(
         cxxConstructExpr(
             hasDescendant(c_string_ref),
-            // filter cases like std::string str(buffer, in.gcount());
+            // filter cases like string str(buffer, in.gcount());
             unless(hasDescendant(declRefExpr(unless(to(c_string_var)))))),
         this);
     // to match functions like strcpy(...);
@@ -161,7 +159,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const DeclRefExpr* decl_ref =
         result.Nodes.getNodeAs<DeclRefExpr>("decl_ref");
     string path =
@@ -182,10 +180,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

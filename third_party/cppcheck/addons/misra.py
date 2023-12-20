@@ -401,6 +401,20 @@ C11_ADDED_KEYWORDS = {
     'alignas', 'alignof', 'noreturn', 'static_assert'
 }
 
+# See C specification C11 - Annex K, page 578
+FACILITES_OF_ANNEX_K = {
+    'tmpfile_s', 'tmpnam_s', 'fopen_s', 'freopen_s', 'fprintf_s', 'fscanf_s', 'printf_s', 'scanf_s',
+    'snprintf_s', 'sprintf_s', 'sscanf_s', 'vfprintf_s', 'vfscanf_s', 'vprintf_s', 'vscanf_s',
+    'vsnprintf_s', 'vsprintf_s', 'vsscanf_s', 'gets_s', 'set_constraint_handler_s', 'abort_handler_s',
+    'ignore_handler_s', 'getenv_s', 'bsearch_s', 'qsort_s', 'wctomb_s', 'mbstowcs_s', 'wcstombs_s',
+    'memcpy_s', 'memmove_s', 'strcpy_s', 'strncpy_s', 'strcat_s', 'strncat_s', 'strtok_s', 'memset_s',
+    'strerror_s', 'strerrorlen_s', 'strnlen_s', 'asctime_s', 'ctime_s', 'gmtime_s', 'localtime_s',
+    'fwprintf_s', 'fwscanf_s', 'snwprintf_s', 'swprintf_s', 'swscanf_s', 'vfwprintf_s', 'vfwscanf_s',
+    'vsnwprintf_s', 'vswprintf_s', 'vswscanf_s', 'vwprintf_s', 'vwscanf_s', 'wprintf_s', 'wscanf_s',
+    'wcscpy_s', 'wcsncpy_s', 'wmemcpy_s', 'wmemmove_s', 'wcscat_s', 'wcsncat_s', 'wcstok_s', 'wcsnlen_s',
+    'wcrtomb_s', 'mbsrtowcs_s', 'wcsrtombs_s'
+}
+
 def isKeyword(keyword, standard='c99'):
     kw_set = {}
     if standard == 'c89':
@@ -1770,6 +1784,16 @@ class GoogleCPPResult:
             for loc in other_locations:
                 self.locations.append(ErrorLocation(loc.file, loc.linenr))
 
+class ToyRuleResult:
+    def __init__(self, path, line_num, err_msg, other_locations = None):
+        self.path = path
+        self.line_number = line_num
+        self.error_message = f'{err_msg}'
+        self.locations = [ErrorLocation(path, line_num)]
+        if other_locations is not None:
+            for loc in other_locations:
+                self.locations.append(ErrorLocation(loc.file, loc.linenr))
+
 class MisraSettings(object):
     """Hold settings for misra.py script."""
 
@@ -1973,23 +1997,24 @@ class MisraChecker:
 
     def misra_1_4(self, cfg, rawTokens):
         for token in rawTokens:
-            if token.str in ('<stdnoreturn.h>', '<stdalign.h>'):
+            if token.str in ('<stdnoreturn.h>', '<stdalign.h>', '<stdatomic.h>', '<threads.h>'):
                 self.reportError(token, 1, 4)
         for token in cfg.tokenlist:
             if token.str in ('_Atomic', '_Noreturn', '_Generic', '_Thread_local', '_Alignas', '_Alignof', '__alignas_is_defined', '__alignof_is_defined'):
                 self.reportError(token, 1, 4)
             if token.str.endswith('_s') and isFunctionCall(token.next):
-                # See C specification C11 - Annex K, page 578
-                if token.str in ('tmpfile_s', 'tmpnam_s', 'fopen_s', 'freopen_s', 'fprintf_s', 'fscanf_s', 'printf_s', 'scanf_s',
-                                 'snprintf_s', 'sprintf_s', 'sscanf_s', 'vfprintf_s', 'vfscanf_s', 'vprintf_s', 'vscanf_s',
-                                 'vsnprintf_s', 'vsprintf_s', 'vsscanf_s', 'gets_s', 'set_constraint_handler_s', 'abort_handler_s',
-                                 'ignore_handler_s', 'getenv_s', 'bsearch_s', 'qsort_s', 'wctomb_s', 'mbstowcs_s', 'wcstombs_s',
-                                 'memcpy_s', 'memmove_s', 'strcpy_s', 'strncpy_s', 'strcat_s', 'strncat_s', 'strtok_s', 'memset_s',
-                                 'strerror_s', 'strerrorlen_s', 'strnlen_s', 'asctime_s', 'ctime_s', 'gmtime_s', 'localtime_s',
-                                 'fwprintf_s', 'fwscanf_s', 'snwprintf_s', 'swprintf_s', 'swscanf_s', 'vfwprintf_s', 'vfwscanf_s',
-                                 'vsnwprintf_s', 'vswprintf_s', 'vswscanf_s', 'vwprintf_s', 'vwscanf_s', 'wprintf_s', 'wscanf_s',
-                                 'wcscpy_s', 'wcsncpy_s', 'wmemcpy_s', 'wmemmove_s', 'wcscat_s', 'wcsncat_s', 'wcstok_s', 'wcsnlen_s',
-                                 'wcrtomb_s', 'mbsrtowcs_s', 'wcsrtombs_s'):
+                if token.str in FACILITES_OF_ANNEX_K:
+                    self.reportError(token, 1, 4)
+
+    def misra_1_4_amd3(self, cfg, rawTokens): # rule 1.4 for MISRA：2023
+        for token in rawTokens:
+            if token.str in ('<stdatomic.h>', '<threads.h>'):
+                self.reportError(token, 1, 4)
+        for token in cfg.tokenlist:
+            if token.str in ('_Atomic', '_Thread_local'):
+                self.reportError(token, 1, 4)
+            if token.str.endswith('_s') and isFunctionCall(token.next):
+                if token.str in FACILITES_OF_ANNEX_K:
                     self.reportError(token, 1, 4)
 
     def misra_2_3(self, dumpfile, typedefInfo):
@@ -4774,6 +4799,11 @@ class MisraChecker:
                         'fetestexcept')):
                     self.reportError(token, 21, 12)
 
+    def misra_21_12_amd3(self, data):
+        directive = findInclude(data.directives, '<fenv.h>')
+        if directive:
+            self.reportError(directive, 21, 12)
+
     def misra_21_14(self, data):
         # buffers used in strcpy/strlen/etc function calls
         string_buffers = []
@@ -5357,6 +5387,7 @@ class MisraChecker:
         # report error for unmatched #define
         for directive in defined_macros.values():
             self.reportGJBError(directive, 1, 1, 6, gjb_type = '8114')
+
     def gjb8114_1_1_7(self, data):
         def reportErrorFunc(directive):
             self.reportGJBError(directive, 1, 1, 7, gjb_type='8114')
@@ -6621,6 +6652,12 @@ class MisraChecker:
                 if name and name == token.str:
                     self.reportAUTOSARError(token, 18, 0, 3)
 
+    def toy_rule_2(self, data):
+        """Refer from func misra_15_1"""
+        for token in data.tokenlist:
+            if token.str == "goto":
+                self.reportToyRuleError(token, 2)
+
     def get_verify_expected(self):
         """Return the list of expected violations in the verify test"""
         return self.verify_expected
@@ -7067,6 +7104,23 @@ class MisraChecker:
                     self.violations[autosar_severity] = []
                 self.violations[autosar_severity].append('autosar' + "-" + errorId)
 
+    def reportToyRuleError(self, location, rule_num, other_locations = None):
+        if self.settings.verify:
+            self.verify_actual.append('%s:%d %d.%d.%d' % (location.file, location.linenr, rule_num))
+        else:
+            errorId = f"Rule-{rule_num}"
+            toyrule_severity = 'Required'
+            this_violation = '{}-{}-{}-{}'.format(location.file, location.linenr, location.column, rule_num)
+            # If this is new violation then record it and show it. If not then
+            # skip it since it has already been displayed.
+            if not this_violation in self.existing_violations:
+                self.existing_violations.add(this_violation)
+                self.current_json_list.append(ToyRuleResult(location.file, location.linenr, errorId, other_locations))
+                cppcheckdata.reportError(location, toyrule_severity, "", "toy", errorId)
+                if toyrule_severity not in self.violations:
+                    self.violations[toyrule_severity] = []
+                self.violations[toyrule_severity].append('toy' + "-" + errorId)
+
     def loadRuleTexts(self, filename):
         num1 = 0
         num2 = 0
@@ -7213,6 +7267,9 @@ class MisraChecker:
     def executeAUTOSARCheck(self, check_function, *args):
         check_function(*args)
 
+    def executeToyRuleCheck(self, check_function, *args):
+        check_function(*args)
+
     def parseDump(self, dumpfile, check_rules, output_dir, create_dump_error=None):
         global _checkRule_2_4, _checkRule_2_5, _checkRule_5_7
         def fillVerifyExpected(verify_expected, tok):
@@ -7275,6 +7332,8 @@ class MisraChecker:
                     scope.setIsBooleanEnumTrue()
             if "misra_c_2012/rule_1_4" in rules_list or check_rules == "all":
                 self.executeCheck(104, self.misra_1_4, cfg, data.rawTokens)
+            if "misra_c_2012/rule_1_4_amd3" in rules_list or check_rules == "all":
+                self.executeCheck(104, self.misra_1_4_amd3, cfg, data.rawTokens)
             if "misra_c_2012/rule_2_3" in rules_list or check_rules == "all":
                 self.executeCheck(203, self.misra_2_3, dumpfile, cfg.typedefInfo)
             if "misra_c_2012/rule_2_4" in rules_list or check_rules == "all":
@@ -7540,6 +7599,8 @@ class MisraChecker:
                 self.executeCheck(2111, self.misra_21_11, cfg)
             if "misra_c_2012/rule_21_12" in rules_list or check_rules == "all":
                 self.executeCheck(2112, self.misra_21_12, cfg)
+            if "misra_c_2012/rule_21_12_amd3" in rules_list or check_rules == "all":
+                self.executeCheck(2112, self.misra_21_12_amd3, cfg)
             if "misra_c_2012/rule_21_14" in rules_list or check_rules == "all":
                 self.executeCheck(2114, self.misra_21_14, cfg)
             if "misra_c_2012/rule_21_15" in rules_list or check_rules == "all":
@@ -7718,6 +7779,9 @@ class MisraChecker:
                 self.executeAUTOSARCheck(self.rule_A16_7_1, cfg)
             if "autosar/rule_A18_0_3" in rules_list or check_rules == "all":
                 self.executeAUTOSARCheck(self.rule_A18_0_3, cfg)
+
+            if "toy_rules/rule_2" in rules_list or check_rules == "all":
+                self.executeToyRuleCheck(self.toy_rule_2, cfg)
 
     def analyse_ctu_info(self, ctu_info_files):
         all_typedef_info = []

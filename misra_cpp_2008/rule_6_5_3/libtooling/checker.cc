@@ -31,10 +31,9 @@ using namespace misra::libtooling_utils;
 namespace misra_cpp_2008 {
 namespace rule_6_5_3 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     auto loop_counter_matcher =
@@ -48,7 +47,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const ForStmt* for_stmt = result.Nodes.getNodeAs<ForStmt>("for_stmt");
     if (misra::libtooling_utils::IsInSystemHeader(for_stmt, result.Context)) {
       return;

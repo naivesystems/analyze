@@ -33,9 +33,9 @@ using analyzer::proto::ResultsList;
 
 namespace {
 
-void ReportError(QualType destination, QualType source, string loc,
-                 std::string path, int line_number, ResultsList* results_list) {
-  std::string error_message = absl::StrFormat(
+void ReportError(QualType destination, QualType source, string loc, string path,
+                 int line_number, ResultsList* results_list) {
+  string error_message = absl::StrFormat(
       "[C0402][misra-c2012-21.19]: the return value of function is assigned to non-const qualified type\n"
       "source pointer object type: %s\n"
       "destination object type: %s\n"
@@ -81,7 +81,7 @@ class CastCallback : public MatchFinder::MatchCallback {
       if (libtooling_utils::IsInSystemHeader(withoutCast, result.Context)) {
         return;
       }
-      std::string path =
+      string path =
           libtooling_utils::GetFilename(withoutCast, result.SourceManager);
       int line_number =
           libtooling_utils::GetLine(withoutCast, result.SourceManager);
@@ -99,11 +99,10 @@ class CastCallback : public MatchFinder::MatchCallback {
       return;
     }
 
-    std::string path =
-        libtooling_utils::GetFilename(withCast, result.SourceManager);
+    string path = libtooling_utils::GetFilename(withCast, result.SourceManager);
     int line_number = libtooling_utils::GetLine(withCast, result.SourceManager);
-    std::string location = libtooling_utils::GetLocation(withCast->getSubExpr(),
-                                                         result.SourceManager);
+    string location = libtooling_utils::GetLocation(withCast->getSubExpr(),
+                                                    result.SourceManager);
     QualType destination_type = withCast->getType();
     QualType source_type = withCast->getSubExpr()->getType();
     if (destination_type->isVoidType()) {
@@ -122,7 +121,7 @@ class CastCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new CastCallback;
   callback_->Init(results_list_, &finder_);

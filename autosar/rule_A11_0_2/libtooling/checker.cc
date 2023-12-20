@@ -32,12 +32,11 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "A type defined as struct shall: (1) provide only public data members, (2) not provide any special member functions or methods, (3) not be a base of another struct or class, (4) not inherit from another struct or class.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -52,10 +51,9 @@ auto isPrivateOrProtected(StringRef spec) -> bool {
   return spec.contains("private") || spec.contains("protected");
 };
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(
@@ -71,7 +69,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const CXXRecordDecl* decl = result.Nodes.getNodeAs<CXXRecordDecl>("decl");
     const AccessSpecDecl* spec = result.Nodes.getNodeAs<AccessSpecDecl>("spec");
 
@@ -83,7 +81,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         continue;
       }
       if (rd->isStruct()) {
-        std::string path =
+        string path =
             misra::libtooling_utils::GetFilename(rd, result.SourceManager);
         int line_number =
             misra::libtooling_utils::GetLine(rd, result.SourceManager);
@@ -105,7 +103,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
                                            result.Context->getLangOpts());
 
         if (isPrivateOrProtected(source)) {
-          std::string path =
+          string path =
               misra::libtooling_utils::GetFilename(decl, result.SourceManager);
           int line_number =
               misra::libtooling_utils::GetLine(decl, result.SourceManager);
@@ -120,7 +118,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
       // (constructor, destructor, copy operation,
       // move operation), etc.
       if (decl->getNumBases() || !decl->isPOD()) {
-        std::string path =
+        string path =
             misra::libtooling_utils::GetFilename(decl, result.SourceManager);
         int line_number =
             misra::libtooling_utils::GetLine(decl, result.SourceManager);
@@ -131,10 +129,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

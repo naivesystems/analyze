@@ -48,11 +48,9 @@ namespace libtooling {
 
 set<uint64_t> record_decl_set;
 
-class FriendInSameFileCallback
-    : public ast_matchers::MatchFinder::MatchCallback {
+class FriendInSameFileCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         cxxRecordDecl(unless(isExpansionInSystemHeader()),
@@ -61,7 +59,7 @@ class FriendInSameFileCallback
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     SourceManager* source_manager = result.SourceManager;
 
     auto* record_decl = result.Nodes.getNodeAs<RecordDecl>("record");
@@ -91,10 +89,10 @@ class FriendInSameFileCallback
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   callback_ = new FriendInSameFileCallback;
   callback_->Init(result_list, &finder_);
 }

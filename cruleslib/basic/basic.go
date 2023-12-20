@@ -42,6 +42,7 @@ import (
 
 	"github.com/golang/glog"
 	"golang.org/x/text/message"
+	telemetry "naive.systems/analyzer/telemetry/client/sender"
 )
 
 type combinedOutput struct {
@@ -97,6 +98,7 @@ func NewCheckingProcessPrinter(totalTaskNum int) CheckingProcessPrinter {
 func (c *CheckingProcessPrinter) StartAnalyzeTask(ruleName string, printer *message.Printer) {
 	c.mutex.Lock()
 	c.startAnalyzeTaskNum++
+	telemetry.Send("Start analyzing", "ruleName", ruleName, "startAnalyzeTaskNum", c.startAnalyzeTaskNum, "totalTaskNum", c.totalTaskNum)
 	PrintfWithTimeStamp(printer.Sprintf("Start analyzing for %s (%v/%v)", ruleName, c.startAnalyzeTaskNum, c.totalTaskNum))
 	c.timeElapsed[ruleName] = time.Now()
 	c.mutex.Unlock()
@@ -111,6 +113,7 @@ func (c *CheckingProcessPrinter) FinishAnalyzeTask(ruleName string, printer *mes
 	currentFinishedNumber := c.finishAnalyzeTaskNum
 	totalRuleNumber := c.totalTaskNum
 	timeUsed := FormatTimeDuration(elapsed)
+	telemetry.Send("Analysis completed", "ruleName", ruleName, "percent", percent, "currentFinishedNumber", currentFinishedNumber, "totalRuleNumber", totalRuleNumber, "start", c.timeElapsed[ruleName], "elapsed", elapsed, "timeUsed", timeUsed)
 	PrintfWithTimeStamp(printer.Sprintf("Analysis of %s completed (%s, %v/%v) [%s]", ruleName, percent, currentFinishedNumber, totalRuleNumber, timeUsed))
 	c.mutex.Unlock()
 }

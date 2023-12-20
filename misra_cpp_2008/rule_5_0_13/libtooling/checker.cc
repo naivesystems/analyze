@@ -30,10 +30,9 @@ using namespace llvm;
 namespace misra_cpp_2008 {
 namespace rule_5_0_13 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     auto impcast =
         implicitCastExpr(unless(hasSourceExpression(hasType(booleanType()))),
@@ -62,7 +61,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Stmt* s = result.Nodes.getNodeAs<Stmt>("stmt");
     if (misra::libtooling_utils::IsInSystemHeader(s, result.Context)) {
       return;

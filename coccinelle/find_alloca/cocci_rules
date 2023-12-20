@@ -1,0 +1,1 @@
+find_alloca.cocci {"error-message": "alloca() should not be used"}

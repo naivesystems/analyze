@@ -38,7 +38,7 @@ struct Loc {
   string begin_loc;
 };
 void ReportError(string filename, int line, ResultsList* results_list) {
-  std::string error_message = "[C7966][NAIVESYSTEMS_C7966]: violation of C7966";
+  string error_message = "[C7966][NAIVESYSTEMS_C7966]: violation of C7966";
   analyzer::proto::Result* pb_result =
       AddResultToResultsList(results_list, filename, line, error_message);
   pb_result->set_error_kind(
@@ -94,7 +94,7 @@ class Callback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

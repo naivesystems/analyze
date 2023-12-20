@@ -57,7 +57,7 @@ class InitListCallback : public MatchFinder::MatchCallback {
     if (location.isInvalid() || location.isInSystemHeader()) {
       return;
     }
-    std::string error_message =
+    string error_message =
         "[C1606][misra-c2012-13.1]: Init list has volatile referenced member";
     analyzer::proto::Result* pb_result = AddResultToResultsList(
         results_list_, libtooling_utils::GetFilename(init_list, source_manager),
@@ -71,7 +71,7 @@ class InitListCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new InitListCallback;
   callback_->Init(results_list_, &finder_);

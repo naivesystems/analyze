@@ -35,8 +35,7 @@ void ReportError(const std::string& path, int line_number,
                  ResultsList* results_list) {
   std::string error_message =
       "All code shall conform to ISO/IEC 14882:2014 - Programming Language C++ and shall not use deprecated features.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -64,9 +63,7 @@ void Checker::HandleDiagnostic(DiagnosticsEngine::Level level,
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
-  results_list_ = result_list;
-}
+void Checker::Init(ResultsList* result_list) { results_list_ = result_list; }
 
 }  // namespace libtooling
 }  // namespace rule_A1_1_1

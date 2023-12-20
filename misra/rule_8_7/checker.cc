@@ -152,7 +152,7 @@ void Checker::Run() {
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   vd_callback_ = new ExternalVDCallback;
   vd_callback_->Init(results_list_, &finder_, &vd_name_locations_);

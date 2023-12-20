@@ -41,17 +41,16 @@ void ReportError(string path, int line_number,
                                line_number);
 }
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(binaryOperator().bind("bin_op"), this);
     finder->addMatcher(unaryOperator().bind("un_op"), this);
     finder->addMatcher(cxxOperatorCallExpr().bind("op_call"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const BinaryOperator* bin_op =
         result.Nodes.getNodeAs<BinaryOperator>("bin_op");
     if (bin_op &&

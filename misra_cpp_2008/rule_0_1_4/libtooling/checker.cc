@@ -54,7 +54,7 @@ namespace libtooling {
  * not violate this rule.
  */
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   finder_.addMatcher(varDecl(unless(parmVarDecl())).bind("var_decl"), this);
   finder_.addMatcher(

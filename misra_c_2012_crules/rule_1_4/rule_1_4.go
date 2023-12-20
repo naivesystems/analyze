@@ -29,7 +29,11 @@ import (
 )
 
 func Analyze(srcdir string, opts *options.CheckOptions) (*pb.ResultsList, error) {
-	results, err := runner.RunCppcheck(srcdir, "misra_c_2012/rule_1_4", checker_integration.Cppcheck_STU, opts)
+	ruleName := "misra_c_2012/rule_1_4"
+	if opts.JsonOption.Misra2023 != nil && *opts.JsonOption.Misra2023 {
+		ruleName = "misra_c_2012/rule_1_4_amd3"
+	}
+	results, err := runner.RunCppcheck(srcdir, ruleName, checker_integration.Cppcheck_STU, opts)
 	if err != nil {
 		glog.Error(err)
 		return nil, err

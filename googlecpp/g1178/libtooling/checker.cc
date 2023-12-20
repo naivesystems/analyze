@@ -46,10 +46,9 @@ namespace googlecpp {
 namespace g1178 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     auto operators = hasAnyName(
         "operator+", "operator-", "operator*", "operator/", "operator%",
@@ -68,7 +67,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     SourceManager* source_manager = result.SourceManager;
     auto* op = result.Nodes.getNodeAs<FunctionTemplateDecl>("op_decl");
     ReportError(misra::libtooling_utils::GetFilename(op, source_manager),
@@ -77,10 +76,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   callback_ = new Callback;
   callback_->Init(result_list, &finder_);
 }

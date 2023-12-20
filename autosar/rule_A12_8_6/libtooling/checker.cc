@@ -32,19 +32,17 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
-                 ResultsList* results_list, string str = "") {
-  std::string error_message =
+void ReportError(const string& path, int line_number, ResultsList* results_list,
+                 string str = "") {
+  string error_message =
       "Copy and move constructors and copy assignment and move assignment operators shall be declared protected or defined \"=delete\" in base class." +
       str;
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
 
-void InitFinder(MatchFinder* finder,
-                ast_matchers::MatchFinder::MatchCallback* callback) {
+void InitFinder(MatchFinder* finder, MatchFinder::MatchCallback* callback) {
   finder->addMatcher(
       cxxRecordDecl(isClass(), hasDefinition(), unless(isImplicit()),
                     unless(isExpansionInSystemHeader()))
@@ -58,14 +56,14 @@ namespace autosar {
 namespace rule_A12_8_6 {
 namespace libtooling {
 
-class CollectBasesCallback : public ast_matchers::MatchFinder::MatchCallback {
+class CollectBasesCallback : public MatchFinder::MatchCallback {
  public:
-  CollectBasesCallback(analyzer::proto::ResultsList* results_list)
+  CollectBasesCallback(ResultsList* results_list)
       : results_list_(results_list) {}
 
   std::set<string> GetBases() { return bases_; }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const CXXRecordDecl* crd = result.Nodes.getNodeAs<CXXRecordDecl>("crd");
     if (crd)
       for (const auto base : crd->bases()) {
@@ -76,18 +74,17 @@ class CollectBasesCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   std::set<string> bases_{};
   friend class Checker;
 };
 
-class CheckBasesCallback : public ast_matchers::MatchFinder::MatchCallback {
+class CheckBasesCallback : public MatchFinder::MatchCallback {
  public:
-  CheckBasesCallback(analyzer::proto::ResultsList* results_list,
-                     std::set<string> bases)
+  CheckBasesCallback(ResultsList* results_list, std::set<string> bases)
       : results_list_(results_list), bases_(bases) {}
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const CXXRecordDecl* crd = result.Nodes.getNodeAs<CXXRecordDecl>("crd");
     QualType qt = result.Context->getTypeDeclType(crd);
     string type = TypeName::getFullyQualifiedName(
@@ -108,12 +105,11 @@ class CheckBasesCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   const std::set<string> bases_;
 };
 
-void Checker::InitCollectBasesCallback(
-    analyzer::proto::ResultsList* results_list) {
+void Checker::InitCollectBasesCallback(ResultsList* results_list) {
   results_list_ = results_list;
   callback1_ = new CollectBasesCallback{results_list};
   InitFinder(&finder1_, callback1_);

@@ -69,7 +69,7 @@ unordered_map<string, unordered_set<string>> dependent_base_names_;
 // if not, report
 class InfoFillCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(ast_matchers::MatchFinder* finder) {
+  void Init(MatchFinder* finder) {
     finder->addMatcher(
         classTemplateDecl(hasDescendant(
             cxxRecordDecl(forEachDescendant(namedDecl().bind("name")))
@@ -87,8 +87,7 @@ class InfoFillCallback : public MatchFinder::MatchCallback {
 
 class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         classTemplateDecl(
@@ -183,7 +182,7 @@ class Callback : public MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   string GetDependentBaseClassName(string base) {
     auto pos = base.find("<");
     if (pos == string::npos) {
@@ -247,7 +246,7 @@ void InfoFillChecker::Init() {
   callback_ = new InfoFillCallback;
   callback_->Init(&finder_);
 }
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   callback_ = new Callback;
   callback_->Init(result_list, &finder_);
 }

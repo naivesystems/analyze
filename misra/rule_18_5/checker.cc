@@ -30,10 +30,9 @@ using namespace llvm;
 namespace misra {
 namespace rule_18_5 {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         varDecl(unless(isExpansionInSystemHeader())).bind("var_decl"), this);
@@ -59,7 +58,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
                         remaining_pointer);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     Decl* decl;
     const VarDecl* var_decl = result.Nodes.getNodeAs<VarDecl>("var_decl");
     const FieldDecl* field_decl =

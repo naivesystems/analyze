@@ -64,7 +64,7 @@ int rule_1_1(int argc, char** argv) {
       libtooling_argc, &const_argv[argc - libtooling_argc],
       ns_libtooling_checker);
   if (!expected_parser) {
-    llvm::errs() << expected_parser.takeError();
+    errs() << expected_parser.takeError();
     return 1;
   }
   CommonOptionsParser& options_parser = expected_parser.get();

@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef ANALYZER_PODMAN_IMAGE_BIGMAIN_SUFFIX_RULE_H_
 #define ANALYZER_PODMAN_IMAGE_BIGMAIN_SUFFIX_RULE_H_
 
+#include <functional>
 #include <string>
 
 #include "podman_image/bigmain/rule.h"
@@ -28,11 +29,13 @@ namespace bigmain {
 
 class SuffixRule : Rule {
  public:
-  typedef int (*Fn)(int, char**);
+  typedef std::function<int(int, char**)> Fn;
 
   SuffixRule(std::string suffix, Fn fn) : suffix_(suffix), fn_(fn) {}
 
   bool Entrypoint(int argc, char** argv, int* return_value) override;
+
+  int Run(int argc, char** argv) override { return fn_(argc, argv); }
 
  private:
   std::string suffix_;
@@ -42,4 +45,4 @@ class SuffixRule : Rule {
 }  // namespace bigmain
 }  // namespace podman_image
 
-#endif
+#endif  // ANALYZER_PODMAN_IMAGE_BIGMAIN_SUFFIX_RULE_H_

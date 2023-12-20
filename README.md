@@ -32,7 +32,8 @@ directly from the source code.
 
 ### Using prebuilt container images
 
-Refer to [analyze-demo](https://github.com/naivesystems/analyze-demo) for an example.
+Refer to [analyze-demo](https://github.com/naivesystems/analyze-demo) for an
+example.
 
 For projects using Makefiles, run the commands below in your project root:
 
@@ -43,7 +44,7 @@ podman run --rm \
   -v $PWD:/src:O \
   -v $PWD/.naivesystems:/config:Z \
   -v $PWD/output:/output:Z \
-  ghcr.io/naivesystems/analyze:2023.3.3.0 \
+  ghcr.io/naivesystems/analyze:latest \
   /opt/naivesystems/misra_analyzer -show_results
 ```
 
@@ -65,7 +66,7 @@ A few notes:
 
 * You may remove `:Z` if you are not using SELinux.
 
-* Replace `2023.3.3.0` with the actual version that you want to use.
+* Replace `latest` with the actual version that you want to use.
 
 NaiveSystems Analyze can trace and capture your build process automatically.
 Currently we only publish Fedora-based images in the Community Edition, so your
@@ -92,7 +93,7 @@ information.
 
 ### Building from source
 
-To build from source, follow the steps below on Fedora 36 or 37. Other versions
+To build from source, follow the steps below on Fedora 37. Other versions
 may also work but are not officially supported in the Community Edition.
 
 1. Install build dependencies

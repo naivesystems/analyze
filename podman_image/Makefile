@@ -1,6 +1,8 @@
 include ../scripts/Makefile.lib
 
-LIMIT = 0
+LIMIT := 10000
+NUM_WORKERS := 2
+
 DEBUG ?= 0
 ifeq ($(DEBUG), 0)
 	BAZELBUILD = bazel build $(BAZEL_OPTS) -c opt
@@ -47,7 +49,7 @@ build-base:
 	$(MAKE) bigmain_misra_c_2012
 	cp ../bazel-bin/podman_image/bigmain/bigmain_misra_c_2012 ./tmpWorkSpace
 	cp ../misra/analyzer/cmd/misra_analyzer ./tmpWorkSpace
-	cp bear/f36/bear-3.0.21-2.fc36.x86_64.rpm ./tmpWorkSpace
+	cp bear/f37/bear-3.1.3-2.fc37.x86_64.rpm ./tmpWorkSpace
 	cp clang ./tmpWorkSpace
 	cp clang-extdef-mapping ./tmpWorkSpace
 	cp clang-query ./tmpWorkSpace
@@ -62,11 +64,11 @@ build-base:
 
 .PHONY: build
 build:
-	$(MAKE) build-base LIMIT=100000 NUM_WORKERS=4 LANG="zh" IMAGE_NAME="naive.systems/analyzer/misra:dev"
+	$(MAKE) build-base LIMIT=$(LIMIT) NUM_WORKERS=$(NUM_WORKERS) LANG="zh" IMAGE_NAME="naive.systems/analyzer/misra:dev"
 
 .PHONY: build-en
 build-en:
-	$(MAKE) build-base LIMIT=100000 NUM_WORKERS=4 LANG="en" IMAGE_NAME="naive.systems/analyzer/misra:dev_en"
+	$(MAKE) build-base LIMIT=$(LIMIT) NUM_WORKERS=$(NUM_WORKERS) LANG="en" IMAGE_NAME="naive.systems/analyzer/misra:dev_en"
 
 .PHONY: build-googlecpp-en
 build-googlecpp-en:
@@ -99,7 +101,7 @@ build-toy-rules-en:
 build-misra-cpp-en:
 	$(MAKE) build
 	$(MAKE) clean
-	make -C ../misra/analyzer/cmd/ LIMIT=300000 NUM_WORKERS=0 LANG="en"
+	make -C ../misra/analyzer/cmd/ LIMIT=$(LIMIT) NUM_WORKERS=$(NUM_WORKERS) LANG="en"
 	mkdir -p tmpWorkSpace
 	cp ../misra/analyzer/cmd/misra_analyzer ./tmpWorkSpace
 	$(MAKE) bigmain_misra_cpp_2008

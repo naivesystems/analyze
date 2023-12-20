@@ -41,11 +41,9 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	pb "naive.systems/analyzer/analyzer/proto"
-	"naive.systems/analyzer/cruleslib/filter"
 	"naive.systems/analyzer/misra/checker_integration/checkrule"
 	"naive.systems/analyzer/misra/checker_integration/compilecommand"
 	"naive.systems/analyzer/misra/utils"
-	"naive.systems/analyzer/rulesets"
 	rs "naive.systems/analyzer/rulesets"
 )
 
@@ -66,12 +64,13 @@ func (i *ArrayFlags) Set(value string) error {
 type ProjectType int
 
 const (
-	Other  ProjectType = 0
-	CMake  ProjectType = 1
-	Make   ProjectType = 2
-	Keil   ProjectType = 3
-	QMake  ProjectType = 4
-	Script ProjectType = 5
+	Other ProjectType = iota
+	CMake
+	Make
+	Keil
+	QMake
+	Script
+	None
 )
 
 func PrintCmdOutput(cmd *exec.Cmd) error {
@@ -85,35 +84,27 @@ func PrintCmdOutput(cmd *exec.Cmd) error {
 }
 
 func createFakeCCJson(srcdir, compileCommandsPath string) {
-	var cppFiles []string
-	err := filepath.Walk(srcdir, func(path string, info os.FileInfo, err error) error {
-		// Check for errors during traversal.
-		if err != nil {
-			return err
+	countLangs := []string{"C", "C++"}
+	clocOpts := gocloc.NewClocOptions()
+	languages := gocloc.NewDefinedLanguages()
+	for _, lang := range countLangs {
+		if _, exists := languages.Langs[lang]; exists {
+			clocOpts.IncludeLangs[lang] = struct{}{}
 		}
-		// Ignore directories.
-		if info.IsDir() {
-			return nil
-		}
-		// Check if file has cpp extension.
-		if filter.IsCCFile(path) {
-			if !strings.HasPrefix(path, "/src/") {
-				cppFiles = append(cppFiles, filepath.Join(srcdir, path))
-			} else {
-				cppFiles = append(cppFiles, path)
-			}
-		}
-		return nil
-	})
+	}
+	clocOpts.SkipDuplicated = true // skip duplicated check
+	processor := gocloc.NewProcessor(languages, clocOpts)
+	result, err := processor.Analyze([]string{srcdir})
 	if err != nil {
-		glog.Fatalf("createFakeCCJson: Failed to walk src dir %v", err)
+		glog.Errorf("gocloc fail: %v", err)
 	}
 
 	var commands []compilecommand.CompileCommand
-	for _, file := range cppFiles {
+	for _, file := range result.Files {
 		var command compilecommand.CompileCommand
-		command.File = file
+		command.File = file.Name
 		command.Directory = srcdir
+		command.Command = "clang -c " + file.Name
 		commands = append(commands, command)
 	}
 	content, err := json.Marshal(&commands)
@@ -163,6 +154,8 @@ func CheckCompilationDatabase(
 			err, cc_exist = CreateCompilationDatabaseByQMake(compileCommandsPath, dir, qmakeBin, qtProPath)
 		case Script:
 			err = CreateCompilationDatabaseByScript(dir, scriptContents)
+		case None:
+			createFakeCCJson(dir, compileCommandsPath)
 		case Other:
 			glog.Fatalf("no viable builder found in %s. Stop", dir)
 		}
@@ -174,8 +167,9 @@ func CheckCompilationDatabase(
 			}
 			if !cc_exist || isEmptyFileContent(compileCommandsPath) {
 				createFakeCCJson(dir, compileCommandsPath)
+			} else {
+				buildFailed = true
 			}
-			buildFailed = true
 		}
 	}
 
@@ -574,6 +568,11 @@ func FormatResultPath(allResults *pb.ResultsList, srcDir string) *pb.ResultsList
 		if !filepath.IsAbs(result.Path) {
 			result.Path = filepath.Join(srcDir, result.Path)
 		}
+		_, err := os.Stat(result.Path)
+		if err != nil {
+			glog.Errorf("invalid path %s from %s/%s: %v", result.Path, result.Ruleset, result.RuleId, err)
+			continue
+		}
 		for _, location := range result.Locations {
 			if !filepath.IsAbs(location.Path) {
 				location.Path = filepath.Join(srcDir, location.Path)
@@ -818,7 +817,7 @@ func GenerateReport(allResults *pb.ResultsList, srcDir, reportPath, lang string)
 			var errorMessage string
 			errorMessage, externalMessage, _ = strings.Cut(result.ErrorMessage, "\n")
 			var displayGuideline string
-			for n, guideline := range rulesets.GUIDELINES {
+			for n, guideline := range rs.GUIDELINES {
 				if strings.Contains(errorMessage, guideline) {
 					displayGuideline = n
 					break
@@ -828,7 +827,7 @@ func GenerateReport(allResults *pb.ResultsList, srcDir, reportPath, lang string)
 				glog.Errorf("cannot match rule set for %s", errorMessage)
 				continue
 			}
-			fullRuleName = rulesets.GetRuleFullName(displayGuideline, errorMessage)
+			fullRuleName = rs.GetRuleFullName(displayGuideline, errorMessage)
 			if fullRuleName == "" {
 				glog.Errorf("cannot match rule name for %s", errorMessage)
 				continue

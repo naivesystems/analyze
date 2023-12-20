@@ -50,11 +50,26 @@ var checkingStandards = []string{
 	"toy_rules",
 }
 
+func GetSemgrepBinPath() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		glog.Errorf("os.UserHomeDir: %v", err)
+		return "semgrep"
+	}
+	// suppose that semgrep has been installed in a virtual env called 'sandbox'
+	semgrepInSandbox := filepath.Join(homeDir, "sandbox", "bin", "semgrep")
+	_, err = os.Stat(semgrepInSandbox)
+	if err != nil {
+		glog.Errorf("%s: %v", semgrepInSandbox, err)
+		return "semgrep"
+	}
+	return semgrepInSandbox
+}
+
 func getCheckerConfig(projectBaseDir string) *proto.CheckerConfiguration {
 	checkerConfig := proto.CheckerConfiguration{
 		InferBin:          filepath.Join(projectBaseDir, "out", "bin", "infer"),
 		ClangBin:          filepath.Join(projectBaseDir, "bazel-bin", "external", "llvm-project", "clang", "clang"),
-		CodeCheckerBin:    "CodeChecker",
 		CppcheckBin:       filepath.Join(projectBaseDir, "third_party", "cppcheck", "cppcheck"),
 		PythonBin:         "python3",
 		ClangtidyBin:      filepath.Join(projectBaseDir, "bazel-bin", "external", "llvm-project", "clang-tools-extra", "clang-tidy"),
@@ -148,7 +163,6 @@ func NewOption(srcdir string, edition string, ignoreCpp bool, standard string) (
 		checkerConfig,
 		ignoreDirPatterns,
 		/*checkProgress=*/ true,
-		/*enableCodeChecker=*/ false,
 		ignoreCpp,
 		/*debug=*/ true,
 		/*limitMemory=*/ false,
@@ -173,7 +187,9 @@ func NewOption(srcdir string, edition string, ignoreCpp bool, standard string) (
 }
 
 func selectCheckingStandard() string {
-	_, filename, _, ok := runtime.Caller(3)
+	// 4: The number of stack frames to ascend (the number of caller layers)
+	// should be changed if the location of the caller function is changed.
+	_, filename, _, ok := runtime.Caller(4)
 	if !ok {
 		glog.Fatal("can not get caller information")
 	}
@@ -182,15 +198,17 @@ func selectCheckingStandard() string {
 			return e
 		}
 	}
-	// default gjb edition: 5369
+	// default gjb edition: 5369 (which will skip cpp files)
 	return checkingStandards[0]
 }
 
+// Note that this function is location sensitive due to selectCheckingStandard().
 func MakeTestOption(srcdir string) (*options.CheckOptions, error) {
 	return MakeTestOptionRealAdvance(srcdir, "c99")
 }
 
-// add this func to make sure every call to selectCheckingStandard() has 3 call layers
+// Add this func to make sure every call to selectCheckingStandard() has the
+// same call layers.
 func MakeTestOptionAdvance(srcdir string, standard string) (*options.CheckOptions, error) {
 	return MakeTestOptionRealAdvance(srcdir, standard)
 }
@@ -219,17 +237,6 @@ func ToTestResult(results *proto.ResultsList, err error) (*proto.ResultsList, er
 	}
 
 	return results, err
-}
-
-func ToRelPath(srcdir string, results *proto.ResultsList) error {
-	for _, result := range results.Results {
-		if rel, err := filepath.Rel(srcdir, result.Path); err != nil {
-			return err
-		} else {
-			result.Path = rel
-		}
-	}
-	return nil
 }
 
 func ConcatClangSystemHeader(options *string) {

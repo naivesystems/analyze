@@ -50,7 +50,7 @@ int rule_2_3(int argc, char** argv) {
   CommonOptionsParser& options_parser = expected_parser.get();
   vector<string> path_list = options_parser.getSourcePathList();
   if (path_list.size() != 1) {
-    llvm::errs() << "The number of filepath is not equal to 1";
+    errs() << "The number of filepath is not equal to 1";
     return 1;
   }
   ClangTool tool(options_parser.getCompilations(),

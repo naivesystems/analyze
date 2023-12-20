@@ -62,7 +62,7 @@ namespace libtooling {
 //   which writes to a file)
 // - does not raise any exception
 // We need to report on definition, so declaration is skipped.
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   finder_.addMatcher(
       // have no parameter whose type is a pointer type or reference type

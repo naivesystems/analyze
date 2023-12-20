@@ -42,10 +42,9 @@ void ReportError(string path, int line_number, ResultsList* results_list) {
 namespace googlecpp {
 namespace g1177 {
 namespace libtooling {
-class CastCallback : public ast_matchers::MatchFinder::MatchCallback {
+class CastCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     auto namespace_decl = hasAncestor(namespaceDecl().bind("r_ns"));
@@ -64,7 +63,7 @@ class CastCallback : public ast_matchers::MatchFinder::MatchCallback {
     finder->addMatcher(matcher, this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     SourceManager* sm = result.SourceManager;
     const auto* func_decl = result.Nodes.getNodeAs<FunctionDecl>("func");
     const auto* cxx_record = result.Nodes.getNodeAs<CXXRecordDecl>("record");
@@ -82,10 +81,10 @@ class CastCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   callback_ = new CastCallback;
   callback_->Init(result_list, &finder_);
 }

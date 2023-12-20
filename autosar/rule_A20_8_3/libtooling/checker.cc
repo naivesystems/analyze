@@ -37,7 +37,7 @@ void ReportError(string path, int line_number, string previous_loc, string loc,
                  ResultsList* results_list) {
   string error_message =
       "A std::shared_ptr shall be used to represent shared ownership.";
-  std::vector<std::string> locations{previous_loc, loc};
+  std::vector<string> locations{previous_loc, loc};
   AddMultipleLocationsResultToResultsList(results_list, path, line_number,
                                           error_message, locations);
 }
@@ -89,7 +89,7 @@ class Callback : public MatchFinder::MatchCallback {
 
  private:
   ResultsList* results_list_;
-  std::unordered_map<std::string, const DeclRefExpr*> pointer_map_;
+  std::unordered_map<string, const DeclRefExpr*> pointer_map_;
 };
 
 void Checker::Init(ResultsList* result_list) {

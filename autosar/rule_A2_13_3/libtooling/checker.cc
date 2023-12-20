@@ -31,10 +31,10 @@ using std::string;
 
 namespace {
 
-void ReportError(const Decl* decl, std::string error_message,
-                 const ast_matchers::MatchFinder::MatchResult& result,
+void ReportError(const Decl* decl, string error_message,
+                 const MatchFinder::MatchResult& result,
                  ResultsList* results_list_) {
-  std::string path =
+  string path =
       misra::libtooling_utils::GetFilename(decl, result.SourceManager);
   int line_number =
       misra::libtooling_utils::GetLine(decl, result.SourceManager);
@@ -45,10 +45,10 @@ void ReportError(const Decl* decl, std::string error_message,
                                line_number);
 }
 
-void ReportError(const Stmt* stmt, std::string error_message,
-                 const ast_matchers::MatchFinder::MatchResult& result,
+void ReportError(const Stmt* stmt, string error_message,
+                 const MatchFinder::MatchResult& result,
                  ResultsList* results_list_) {
-  std::string path =
+  string path =
       misra::libtooling_utils::GetFilename(stmt, result.SourceManager);
   int line_number =
       misra::libtooling_utils::GetLine(stmt, result.SourceManager);
@@ -72,10 +72,9 @@ auto isWideChar(const Type* type) -> bool {
   return type->isWideCharType();
 }
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         varDecl(unless(isExpansionInSystemHeader())).bind("value_decl"), this);
@@ -90,9 +89,8 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
-    std::string error_message =
-        absl::StrFormat("Type wchar_t shall not be used.");
+  void run(const MatchFinder::MatchResult& result) {
+    string error_message = absl::StrFormat("Type wchar_t shall not be used.");
 
     const ValueDecl* value_decl =
         result.Nodes.getNodeAs<ValueDecl>("value_decl");
@@ -116,10 +114,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

@@ -64,7 +64,7 @@ class CastCallback : public MatchFinder::MatchCallback {
     if (!Visitor.ShouldReport(aggressive_mode_)) {
       return;
     }
-    std::string error_message = absl::StrFormat(
+    string error_message = absl::StrFormat(
         "[C1602][misra-c2012-13.5]: Right hand operand may have persistent side effect, Location: %s",
         location);
     analyzer::proto::Result* pb_result =

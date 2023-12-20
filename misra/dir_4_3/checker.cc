@@ -47,9 +47,9 @@ class AsmFunctionCallback : public MatchFinder::MatchCallback {
   void run(const MatchFinder::MatchResult& result) override {
     const Stmt* mixed_asm = result.Nodes.getNodeAs<Stmt>("mixed_asm");
 
-    std::string error_message =
+    string error_message =
         "[C2306][misra-c2012-dir-4.3]: assembly code should be isolated";
-    std::string path =
+    string path =
         misra::libtooling_utils::GetFilename(mixed_asm, result.SourceManager);
     int line =
         misra::libtooling_utils::GetLine(mixed_asm, result.SourceManager);
@@ -83,9 +83,9 @@ class AsmCallback : public MatchFinder::MatchCallback {
       return;
     }
 
-    std::string error_message =
+    string error_message =
         "[C2306][misra-c2012-dir-4.3]: assembly code should be encapsulated";
-    std::string path =
+    string path =
         misra::libtooling_utils::GetFilename(asm_stmt, result.SourceManager);
     int line = misra::libtooling_utils::GetLine(asm_stmt, result.SourceManager);
     analyzer::proto::Result* pb_result =
@@ -101,7 +101,7 @@ class AsmCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   encapsulated_callback_ = new AsmCallback;
   encapsulated_callback_->Init(results_list_, &finder_);

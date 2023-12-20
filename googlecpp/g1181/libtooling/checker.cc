@@ -37,8 +37,7 @@ namespace {
 
 void ReportError(string path, int line_number, ResultsList* results_list) {
   string error_message = "Do not overload &&, ||, , (comma), or unary &";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }

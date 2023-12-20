@@ -36,9 +36,10 @@ import (
 	"naive.systems/analyzer/cruleslib/i18n"
 	"naive.systems/analyzer/cruleslib/stats"
 	"naive.systems/analyzer/misra/analyzer/analyzerinterface"
+	telemetry "naive.systems/analyzer/telemetry/client/sender"
 )
 
-var supportProjectType = map[string]analyzerinterface.ProjectType{"makefile": analyzerinterface.Make, "cmake": analyzerinterface.CMake, "keil": analyzerinterface.Keil, "qmake": analyzerinterface.QMake, "script": analyzerinterface.Script}
+var supportProjectType = map[string]analyzerinterface.ProjectType{"makefile": analyzerinterface.Make, "cmake": analyzerinterface.CMake, "keil": analyzerinterface.Keil, "qmake": analyzerinterface.QMake, "script": analyzerinterface.Script, "none": analyzerinterface.None}
 var supportIncludeStddef = map[string]bool{"pure": true, "armgcc": true, "none": true}
 
 func ConcatStringField(concatString string, stringField *string) *string {
@@ -63,9 +64,10 @@ func ParseProjectType(sharedOptions *SharedOptions) (analyzerinterface.ProjectTy
 func ProcessKeilProject(sharedOptions *SharedOptions) {
 	// Process keil project
 	convertCmd := exec.Command("python", "converter.py", "uvprojx", sharedOptions.GetSrcDir())
-	convertCmd.Dir = "/ProjectConverter/"
+	convertCmd.Dir = "/opt/naivesystems/projectconverter/"
 	glog.Info("executing: ", convertCmd.String())
 	if err := convertCmd.Run(); err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 		os.Exit(1)
 	}
@@ -76,6 +78,7 @@ func ProcessKeilProject(sharedOptions *SharedOptions) {
 	cmd := exec.Command("cmake", cmd_arr...)
 	tempDir, err := os.MkdirTemp("/tmp/", "")
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 		os.Exit(1)
 	}
@@ -84,6 +87,7 @@ func ProcessKeilProject(sharedOptions *SharedOptions) {
 	glog.Info("executing: ", cmd.String())
 	err = analyzerinterface.PrintCmdOutput(cmd)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 		os.Exit(1)
 	}
@@ -92,18 +96,21 @@ func ProcessKeilProject(sharedOptions *SharedOptions) {
 	dst := filepath.Join(sharedOptions.GetSrcDir(), "compile_commands.json")
 	fin, err := os.Open(src)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 		os.Exit(1)
 	}
 	defer fin.Close()
 	fout, err := os.Create(dst)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 		os.Exit(1)
 	}
 	defer fout.Close()
 	_, err = io.Copy(fout, fin)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 		os.Exit(1)
 	}
@@ -235,6 +242,7 @@ func ParseCheckerConfig(sharedOptions *SharedOptions, numWorkers int32, cpplines
 	parsedCheckerConfig := &pb.CheckerConfiguration{}
 	err := protojson.Unmarshal([]byte(sharedOptions.GetCheckerConfig()), parsedCheckerConfig)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal("parsing checker config: ", err)
 	}
 	// replace parsedCheckerConfig if some field set by standalone options
@@ -249,9 +257,6 @@ func ParseCheckerConfig(sharedOptions *SharedOptions, numWorkers int32, cpplines
 	}
 	if sharedOptions.GetClangtidyBin() != "" {
 		parsedCheckerConfig.ClangtidyBin = sharedOptions.GetClangtidyBin()
-	}
-	if sharedOptions.GetCodeCheckerBin() != "" {
-		parsedCheckerConfig.CodeCheckerBin = sharedOptions.GetCodeCheckerBin()
 	}
 	if sharedOptions.GetCppcheckBin() != "" {
 		parsedCheckerConfig.CppcheckBin = sharedOptions.GetCppcheckBin()
@@ -331,6 +336,9 @@ func CheckCodeLines(compileCommandsPath string, sharedOptions *SharedOptions, li
 	if err != nil {
 		return clines, cpplines, fmt.Errorf("failed to check header lines: %v", err)
 	}
+	telemetry.Send("lines of C code", "clines", clines)
+	telemetry.Send("lines of C++ code", "cpplines", cpplines)
+	telemetry.Send("lines of headers", "headerlines", headerlines)
 	if cpplines == 0 && clines == 0 && headerlines == 0 {
 		basic.PrintfWithTimeStamp(printer.Sprintf("%d lines of C code", clines))
 		basic.PrintfWithTimeStamp(printer.Sprintf("%d lines of C++ code", cpplines))

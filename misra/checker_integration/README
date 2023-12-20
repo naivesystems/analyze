@@ -13,6 +13,6 @@ You can also test single rule by using Makefile (in checker_integration/):
 make check_22_1 compile_commands_path=../../../misra_c_2012/rule_22_1/bad/bad1/compile_commands.json \
 
 If you want to customize your checker binaries instead of using default config, you can add a parameter like this:
--checker_config='{"csa_system_lib_options":"-isystem /usr/include -isystem /usr/lib/gcc/x86_64-redhat-linux/11/include/","infer_bin":"infer","clang_bin":"clang","code_checker_bin":"CodeChecker","cppcheck_bin":"third_party/cppcheck/cppcheck","python_bin":"python"}'
+-checker_config='{"csa_system_lib_options":"-isystem /usr/include -isystem /usr/lib/gcc/x86_64-redhat-linux/11/include/","infer_bin":"infer","clang_bin":"clang","cppcheck_bin":"third_party/cppcheck/cppcheck","python_bin":"python"}'
 
 For CSA checker, csa_system_lib_options defines the path of system library which may differ between operating systems.

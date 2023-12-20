@@ -26,6 +26,9 @@ using Rule = podman_image::bigmain::Rule;
 
 int main(int argc, char** argv) {
   std::vector<Rule*>& all_rules = Rule::GetAllRules();
+  if (all_rules.size() == 1) {
+    return all_rules[0]->Run(argc, argv);
+  }
   for (Rule* rule : all_rules) {
     int r;
     if (rule->Entrypoint(argc, argv, &r)) return r;

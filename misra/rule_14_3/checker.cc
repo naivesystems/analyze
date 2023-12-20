@@ -54,7 +54,7 @@ class AssignOpCallback : public MatchFinder::MatchCallback {
       return;
     }
 
-    std::string error_message =
+    string error_message =
         "[C1702][misra-c2012-14.3]: violation of misra-c2012-14.3";
     analyzer::proto::Result* pb_result = AddResultToResultsList(
         results_list_, libtooling_utils::GetFilename(assign, source_manager),
@@ -68,7 +68,7 @@ class AssignOpCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new AssignOpCallback;
   callback_->Init(results_list_, &finder_);

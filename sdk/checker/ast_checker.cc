@@ -1,0 +1,67 @@
+/*
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#include "sdk/checker/ast_checker.h"
+
+#include <clang/Tooling/CommonOptionsParser.h>
+#include <clang/Tooling/Tooling.h>
+#include <glog/logging.h>
+#include <llvm/Support/CommandLine.h>
+
+#include "misra/libtooling_utils/libtooling_utils.h"
+#include "misra/proto_util.h"
+
+using namespace clang;
+using namespace llvm;
+
+extern cl::OptionCategory ns_libtooling_checker;
+extern cl::opt<std::string> results_path;
+
+namespace sdk {
+namespace checker {
+
+int ASTChecker::Run(int argc, char** argv) {
+  google::InitGoogleLogging(argv[0]);
+  gflags::AllowCommandLineReparsing();
+  int gflag_argc = argc;
+  int libtooling_argc = argc;
+  misra::libtooling_utils::SplitArg(&gflag_argc, &libtooling_argc, argc, argv);
+  const char** const_argv = const_cast<const char**>(argv);
+  gflags::ParseCommandLineFlags(&gflag_argc, &argv, false);
+
+  auto ep = tooling::CommonOptionsParser::create(
+      libtooling_argc, &const_argv[argc - libtooling_argc],
+      ns_libtooling_checker);
+  if (!ep) {
+    errs() << ep.takeError();
+    return 1;
+  }
+  tooling::CommonOptionsParser& op = ep.get();
+  tooling::ClangTool tool(op.getCompilations(), op.getSourcePathList());
+
+  callback_->Init(&results_list_, &finder_);
+  int status = tool.run(tooling::newFrontendActionFactory(&finder_).get());
+  LOG(INFO) << name_ << " libtooling status: " << status;
+  if (misra::proto_util::GenerateProtoFile(results_list_, results_path).ok()) {
+    LOG(INFO) << name_ << " check done";
+  }
+  return 0;
+}
+
+}  // namespace checker
+}  // namespace sdk

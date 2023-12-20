@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "misra_cpp_2008/rule_14_5_1/libtooling/checker.h"
 
@@ -124,7 +136,7 @@ class GenericFDCallback : public MatchFinder::MatchCallback {
 
   void run(const MatchFinder::MatchResult& result) override {
     const FunctionDecl* fd_ = result.Nodes.getNodeAs<FunctionDecl>("fd");
-    std::string path_ =
+    string path_ =
         misra::libtooling_utils::GetFilename(fd_, result.SourceManager);
     int line_number_ =
         misra::libtooling_utils::GetLine(fd_, result.SourceManager);
@@ -156,10 +168,10 @@ class GenericFDCallback : public MatchFinder::MatchCallback {
                    string loc2) {
     string error_message =
         "非成员泛型函数只能在不是关联命名空间的命名空间中声明";
-    std::vector<std::string> locations{loc1, loc2};
+    std::vector<string> locations{loc1, loc2};
     analyzer::proto::Result* pb_result =
-        misra::proto_util::AddMultipleLocationsResultToResultsList(
-            results_list_, filename, line, error_message, locations);
+        AddMultipleLocationsResultToResultsList(results_list_, filename, line,
+                                                error_message, locations);
     pb_result->set_error_kind(
         analyzer::proto::Result_ErrorKind_MISRA_CPP_2008_RULE_14_5_1);
     pb_result->set_name(name);

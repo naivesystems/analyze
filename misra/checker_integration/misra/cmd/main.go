@@ -39,7 +39,6 @@ func main() {
 		`{"csa_system_lib_options":"-isystem /usr/lib/gcc/x86_64-redhat-linux/11/include/",
 		  "infer_bin":"infer",
 		  "clang_bin":"bazel-bin/external/llvm-project/clang/clang",
-		  "code_checker_bin":"CodeChecker",
 		  "cppcheck_bin":"third_party/cppcheck/cppcheck",
 		  "python_bin":"python3",
 		  "clangtidy_bin":"clang-tidy",

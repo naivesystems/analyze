@@ -67,13 +67,13 @@ int g1188(int argc, char** argv) {
       libtooling_argc, &const_argv[argc - libtooling_argc],
       ns_libtooling_checker);
   if (!ep) {
-    llvm::errs() << ep.takeError();
+    errs() << ep.takeError();
     return 1;
   }
   tooling::CommonOptionsParser& op = ep.get();
   tooling::ClangTool tool(op.getCompilations(), op.getSourcePathList());
 
-  analyzer::proto::ResultsList all_results;
+  ResultsList all_results;
 
   googlecpp::g1188::libtooling::Checker checker;
   checker.Init(&all_results);

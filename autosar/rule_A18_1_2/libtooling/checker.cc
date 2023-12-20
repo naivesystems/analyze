@@ -35,12 +35,11 @@ static bool isUsingStd = false;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "The std::vector<bool> specialization shall not be used.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -53,17 +52,16 @@ namespace libtooling {
 
 class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         valueDecl(unless(isExpansionInSystemHeader())).bind("vd"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const ValueDecl* vd = result.Nodes.getNodeAs<ValueDecl>("vd");
     if (vd) {
-      std::string str = TypeName::getFullyQualifiedName(
+      string str = TypeName::getFullyQualifiedName(
           vd->getType(), *result.Context,
           PrintingPolicy(result.Context->getLangOpts()), true);
       if (str.find("std::vector<bool>") != string::npos) {
@@ -76,10 +74,10 @@ class Callback : public MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

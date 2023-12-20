@@ -33,10 +33,9 @@ using analyzer::proto::ResultsList;
 
 namespace {
 
-void ReportError(std::string name, QualType destination, QualType source,
-                 string loc, std::string path, int line_number,
-                 ResultsList* results_list) {
-  std::string error_message = absl::StrFormat(
+void ReportError(string name, QualType destination, QualType source, string loc,
+                 string path, int line_number, ResultsList* results_list) {
+  string error_message = absl::StrFormat(
       "[C1404][misra-c2012-11.6]: Conversions violation of misra-c2012-11.6\n"
       "source object type: %s\n"
       "destination object type: %s\n"
@@ -99,11 +98,11 @@ class CastCallback : public MatchFinder::MatchCallback {
     if (libtooling_utils::IsInSystemHeader(ce, context)) {
       return;
     }
-    std::string path = libtooling_utils::GetFilename(ce, result.SourceManager);
+    string path = libtooling_utils::GetFilename(ce, result.SourceManager);
     int line_number = libtooling_utils::GetLine(ce, result.SourceManager);
     QualType destination_type = ce->getType();
     QualType source_type = ce->getSubExpr()->getType();
-    std::string source_name = libtooling_utils::GetExprName(
+    string source_name = libtooling_utils::GetExprName(
         ce->getSubExpr(), result.SourceManager, context);
     ReportError(source_name, destination_type, source_type,
                 libtooling_utils::GetLocation(ce, result.SourceManager), path,
@@ -114,7 +113,7 @@ class CastCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new CastCallback;
   callback_->Init(results_list_, &finder_);

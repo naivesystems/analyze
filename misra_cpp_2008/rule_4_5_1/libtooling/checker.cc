@@ -30,10 +30,9 @@ using namespace llvm;
 namespace misra_cpp_2008 {
 namespace rule_4_5_1 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         binaryOperator(hasEitherOperand(castExpr(
@@ -49,7 +48,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Expr* e = result.Nodes.getNodeAs<Expr>("op");
     string error_message =
         "bool类型的表达式不得用作内建运算符的操作数，除了赋值运算符=，逻辑运算符&&、||、!，相等运算符==、!=，一元运算符&和条件运算符";

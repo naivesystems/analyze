@@ -41,7 +41,7 @@ void ReportError(string path, int line_number, ResultsList* results_list) {
 }
 
 void CheckInMainFile(const Decl* decl, SourceManager* SM,
-                     analyzer::proto::ResultsList* results_list_,
+                     ResultsList* results_list_,
                      const std::string& main_filename,
                      const std::unordered_set<std::string> header_files) {
   std::string filename = misra::libtooling_utils::GetFilename(decl, SM);
@@ -54,7 +54,7 @@ void CheckInMainFile(const Decl* decl, SourceManager* SM,
 
 void CheckTransitivelyIncluded(const string& filename, int line,
                                const Decl* decl, SourceManager* SM,
-                               analyzer::proto::ResultsList* results_list_,
+                               ResultsList* results_list_,
                                const std::string& main_filename,
                                unordered_set<std::string>& header_files) {
   // Get the file path of the declaration to verify that the declaration is
@@ -78,8 +78,7 @@ namespace libtooling {
 std::string main_filename{};
 unordered_set<std::string> header_files;
 
-void PPCheck::Init(analyzer::proto::ResultsList* results_list,
-                   SourceManager* source_manager) {
+void PPCheck::Init(ResultsList* results_list, SourceManager* source_manager) {
   results_list_ = results_list;
   source_manager_ = source_manager;
 }
@@ -137,8 +136,7 @@ AST_MATCHER(VarDecl, isExternalFirstDecl) {
   return Node.isFirstDecl() && Node.hasExternalStorage();
 }
 
-void Callback::Init(analyzer::proto::ResultsList* results_list,
-                    ast_matchers::MatchFinder* finder) {
+void Callback::Init(ResultsList* results_list, MatchFinder* finder) {
   results_list_ = results_list;
 
   // There are two situations that should not occur in .cc files.
@@ -192,7 +190,7 @@ void Callback::Init(analyzer::proto::ResultsList* results_list,
   finder->addMatcher(m1, this);
 }
 
-void Callback::run(const ast_matchers::MatchFinder::MatchResult& result) {
+void Callback::run(const MatchFinder::MatchResult& result) {
   auto context = result.Context;
   auto SM = result.SourceManager;
   if (const auto* external_first_var =
@@ -254,7 +252,7 @@ void Callback::run(const ast_matchers::MatchFinder::MatchResult& result) {
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

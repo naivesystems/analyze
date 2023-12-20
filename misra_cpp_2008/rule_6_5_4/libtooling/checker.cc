@@ -31,10 +31,9 @@ using namespace llvm;
 namespace misra_cpp_2008 {
 namespace rule_6_5_4 {
 namespace libtooling {
-class ForStmtCallback : public ast_matchers::MatchFinder::MatchCallback {
+class ForStmtCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     // match illegal loop-counter assignment
@@ -118,7 +117,7 @@ class ForStmtCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Stmt* for_stmt = result.Nodes.getNodeAs<Stmt>("for_stmt");
     const DeclRefExpr* modify_expr =
         result.Nodes.getNodeAs<DeclRefExpr>("modify_expr");

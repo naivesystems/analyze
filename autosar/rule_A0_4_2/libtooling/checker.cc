@@ -45,10 +45,9 @@ namespace autosar {
 namespace rule_A0_4_2 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         functionDecl(unless(isExpansionInSystemHeader())).bind("func"), this);
@@ -58,7 +57,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
                        this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     auto checkTypeAndReport = [&result, this](const QualType type,
                                               const Decl* decl) {
       if (!type->isSpecificBuiltinType(BuiltinType::LongDouble)) return;
@@ -78,10 +77,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

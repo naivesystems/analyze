@@ -47,7 +47,6 @@ func main() {
 		`{"csa_system_lib_options":"-isystem /usr/lib/gcc/x86_64-redhat-linux/11/include/",
 		  "infer_bin":"infer",
 		  "clang_bin":"bazel-bin/external/llvm-project/clang/clang",
-		  "code_checker_bin":"CodeChecker",
 		  "cppcheck_bin":"third_party/cppcheck/cppcheck",
 		  "python_bin":"python3",
 		  "clangtidy_bin":"clang-tidy",
@@ -58,7 +57,6 @@ func main() {
 		"Checker configuration in JSON format")
 	jsonOptions := flag.String("json_options", "{}", "Json options for the analyzer.")
 	checkProgress := flag.Bool("check_progress", true, "Show the checking progress")
-	enableCodeChecker := flag.Bool("enable_codechecker", false, "Use CodeChecker to perform CTU pre-analysis for CSA")
 	var ignoreDirPatterns analyzerinterface.ArrayFlags
 	flag.Var(&ignoreDirPatterns, "ignore_dir", "Shell file name pattern to a directory that will be ignored")
 	flag.Parse()
@@ -117,7 +115,6 @@ func main() {
 		*resultsDir,
 		parsedCheckerConfig,
 		*checkProgress,
-		*enableCodeChecker,
 		numWorkers,
 		/*ignoreDirPatterns=*/ []string{},
 		/*lang=*/ "zh",

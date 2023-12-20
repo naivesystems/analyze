@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "misra_cpp_2008/rule_2_13_5/libtooling/checker.h"
@@ -23,15 +35,14 @@ namespace misra_cpp_2008 {
 namespace rule_2_13_5 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(stringLiteral().bind("lit"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const StringLiteral* lit = result.Nodes.getNodeAs<StringLiteral>("lit");
     unsigned int tok_num = lit->getNumConcatenated();
     bool first_is_wide =
@@ -41,7 +52,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
       if (first_is_wide !=
           SourceIsWide(lit->getStrTokenLoc(i), *result.SourceManager,
                        result.Context->getLangOpts(), result.Context)) {
-        std::string error_message = "不得将宽字符串字面量和窄字符串字面量串接";
+        string error_message = "不得将宽字符串字面量和窄字符串字面量串接";
         analyzer::proto::Result* pb_result = AddResultToResultsList(
             results_list_,
             misra::libtooling_utils::GetFilename(lit, result.SourceManager),

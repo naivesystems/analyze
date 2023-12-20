@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "misra_cpp_2008/rule_8_5_2/libtooling/checker.h"
@@ -21,8 +33,7 @@ namespace {
 void ReportError(string path, int line_number, ResultsList* results_list) {
   string error_message =
       "在数组和结构的非零初始化中，应使用大括号来指示和匹配结构";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
 }
 
 }  // namespace
@@ -31,7 +42,7 @@ namespace misra_cpp_2008 {
 namespace rule_8_5_2 {
 namespace libtooling {
 
-class ListInitCallback : public ast_matchers::MatchFinder::MatchCallback {
+class ListInitCallback : public MatchFinder::MatchCallback {
   enum ZeroInitializationType {
     NON_ZERO = 0,
     EMPTY_INIT,
@@ -127,14 +138,13 @@ class ListInitCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(initListExpr(unless(hasAncestor(initListExpr())))
                            .bind("top_level_init_list"),
                        this);
   }
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     auto top_level_init_list =
         result.Nodes.getNodeAs<InitListExpr>("top_level_init_list");
     if (!isMatchableToDeclStructure(top_level_init_list)) {
@@ -148,10 +158,10 @@ class ListInitCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new ListInitCallback;
   callback_->Init(results_list_, &finder_);

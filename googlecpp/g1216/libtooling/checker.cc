@@ -37,8 +37,7 @@ namespace {
 
 void ReportError(string path, int line_number, ResultsList* results_list) {
   string error_message = "Don't use nonstandard extensions";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -120,7 +119,7 @@ void DeclCallback::run(const MatchFinder::MatchResult& result) {
   }
 }
 
-void ASTChecker::Init(analyzer::proto::ResultsList* results_list) {
+void ASTChecker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   DeclarationMatcher attr_matcher =
       decl(unless(isExpansionInSystemHeader())).bind("decl");

@@ -29,21 +29,20 @@ using namespace clang::ast_matchers;
 namespace misra_cpp_2008 {
 namespace rule_7_2_1 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
   // check the case to find if we cast to an enum type
   // rule: 底层类型为enum的表达式的值必须与该枚举的枚举器相对应
   // if the values not corresponding to the enumerators of the enumeration,
   // there must exists a type cast in CXX.
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         castExpr(unless(hasCastKind(CK_LValueToRValue))).bind("castToEnum"),
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Expr* cast = result.Nodes.getNodeAs<Expr>("castToEnum");
     if (!cast) {
       return;

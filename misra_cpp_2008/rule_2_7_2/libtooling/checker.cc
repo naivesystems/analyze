@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "misra_cpp_2008/rule_2_7_2/libtooling/checker.hh"
@@ -76,8 +88,7 @@ void CheckCommentConsumer::ReportError(ASTContext& context,
       loc, &context.getSourceManager());
   std::string error_message = "不得使用C语言风格的注释将代码段“注释掉”";
   analyzer::proto::Result* pb_result =
-      misra::proto_util::AddResultToResultsList(results_list_, path, line,
-                                                error_message);
+      AddResultToResultsList(results_list_, path, line, error_message);
   pb_result->set_error_kind(
       analyzer::proto::Result_ErrorKind_MISRA_CPP_2008_RULE_2_7_2);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,

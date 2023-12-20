@@ -1,0 +1,5 @@
+results {
+  path: "test.c"
+  line_number: 9
+  error_message: "find_alloca.cocci: alloca() should not be used"
+}

@@ -1,0 +1,9 @@
+rules:
+- id: dynamic-heap-memory
+  patterns:
+    - pattern-either:
+      - pattern: new $TYPE;
+      - pattern: delete $POINT;
+  message: Dynamic heap memory allocation shall not be used.
+  languages: [cpp]
+  severity: ERROR

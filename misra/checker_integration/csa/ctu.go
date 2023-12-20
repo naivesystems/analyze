@@ -21,71 +21,24 @@ package csa
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"reflect"
 	"strings"
 
 	"github.com/golang/glog"
 	"github.com/google/shlex"
-	"gopkg.in/yaml.v2"
 	pb "naive.systems/analyzer/analyzer/proto"
 	"naive.systems/analyzer/misra/analyzer/analyzerinterface"
 	"naive.systems/analyzer/misra/checker_integration/compilecommand"
 )
 
-// Use CodeChecker to generate needed extra arguments for CTU analysis from given
-// compile_commands.json, including externalDefMap.txt & invocation-list.yml .
-func GenerateCTUExtraArgumentsFromCodeChecker(compileCommandsPath, resultsDir string, config *pb.CheckerConfiguration) error {
-	cmd_arr := []string{"analyze", "--ctu-collect", "--ctu-ast-mode", "parse-on-demand"}
-	cmd_arr = append(cmd_arr, "-o", resultsDir) // TODO: Replace with a configurable path
-	cmd_arr = append(cmd_arr, compileCommandsPath)
-	cmd := exec.Command(config.CodeCheckerBin, cmd_arr...)
-	glog.Info("executing: ", cmd.String())
-	if out, err := cmd.CombinedOutput(); err != nil {
-		glog.Errorf("failed to execute codechecker, reported: \n%s", string(out))
-		return err
-	}
-	// Inject CSA System Lib Options & GCC Predefined Macros into all `/ctu-dir/*/invocation-list.yml``
-	invocationListPattern := filepath.Join(resultsDir, "ctu-dir", "*", "invocation-list.yml")
-	matches, err := filepath.Glob(invocationListPattern)
-	if err != nil {
-		return fmt.Errorf("filepath.Glob: %v", err)
-	}
-	for _, match := range matches {
-		invocations := make(map[string][]string)
-		contents, err := os.ReadFile(match)
-		if err != nil {
-			glog.Errorf("os.ReadFile: %v", err)
-			continue
-		}
-		err = yaml.Unmarshal(contents, &invocations)
-		if err != nil {
-			glog.Errorf("yaml.Unmarshal: %v", err)
-			continue
-		}
-		for k := range invocations {
-			invocations[k] = append(invocations[k], strings.Fields(config.CsaSystemLibOptions)...)
-			invocations[k] = append(invocations[k], ParseGccPredefinedMacros(config.GetGccPredefinedMacros(), false)...)
-		}
-		contents, err = yaml.Marshal(invocations)
-		if err != nil {
-			glog.Errorf("yaml.Unmarshal: %v", err)
-			continue
-		}
-		err = os.WriteFile(match, contents, os.ModePerm)
-		if err != nil {
-			glog.Errorf("os.WriteFile: %v", err)
-		}
-	}
-	return nil
-}
-
 // BuildAction contains info extracted from compile command.
 type BuildAction struct {
-	Command compilecommand.CompileCommand
-	Arch    string // the processor architecture, e.g., 'x86_64'
-	Target  string // the target hardware platform, e.g.,'x86_64-redhat-linux'
+	Command compilecommand.CompileCommand `json:"command"`
+	// the processor architecture, e.g., 'x86_64'
+	Arch string `json:"arch"`
+	// the target hardware platform, e.g.,'x86_64-redhat-linux'
+	Target string `json:"target"`
 }
 
 // To prepare unique entrance files for CSA.

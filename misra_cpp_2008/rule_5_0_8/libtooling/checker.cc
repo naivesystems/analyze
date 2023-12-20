@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "misra_cpp_2008/rule_5_0_8/libtooling/checker.h"
@@ -63,9 +75,8 @@ auto explicitCastForCValue(const T& matcher) {
           .bind("cast_expr"));
 }
 
-void CheckCvalueCallback::Init(std::string rule_name,
-                               analyzer::proto::ResultsList* results_list,
-                               ast_matchers::MatchFinder* finder) {
+void CheckCvalueCallback::Init(string rule_name, ResultsList* results_list,
+                               MatchFinder* finder) {
   results_list_ = results_list;
   check_name = rule_name;
 
@@ -102,8 +113,7 @@ void CheckCvalueCallback::Init(std::string rule_name,
                      this);
 }
 
-void CheckCvalueCallback::run(
-    const ast_matchers::MatchFinder::MatchResult& result) {
+void CheckCvalueCallback::run(const MatchFinder::MatchResult& result) {
   const ASTContext& ctx = *result.Context;
   const ExplicitCastExpr* cast_expr_ =
       result.Nodes.getNodeAs<ExplicitCastExpr>("cast_expr");
@@ -174,8 +184,7 @@ bool CheckCvalueCallback::check509(const clang::QualType dest_type,
   return false;
 }
 
-void Checker::Init(std::string rule_name,
-                   analyzer::proto::ResultsList* result_list) {
+void Checker::Init(string rule_name, ResultsList* result_list) {
   results_list_ = result_list;
   record_callback_ = new CheckCvalueCallback;
   record_callback_->Init(rule_name, result_list, &finder_);

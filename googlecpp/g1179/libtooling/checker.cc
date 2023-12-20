@@ -61,7 +61,7 @@ void ReportError(string path, int line_number, ResultsList* results_list) {
 }
 void ReportGenral(
     unordered_map<int64_t, unordered_set<OpLoc, OpLocHasher>>& op_map,
-    int upper, analyzer::proto::ResultsList* results_list_) {
+    int upper, ResultsList* results_list_) {
   for (auto& op : op_map) {
     if (op.second.size() != 0 && op.second.size() != upper) {
       for (auto& ele : op.second) {
@@ -125,10 +125,9 @@ namespace googlecpp {
 namespace g1179 {
 namespace libtooling {
 
-class BitwiseCallback : public ast_matchers::MatchFinder::MatchCallback {
+class BitwiseCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // we divide the operators into the following parts, based on
     // https://en.cppreference.com/w/cpp/language/operators
@@ -205,7 +204,7 @@ class BitwiseCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     SourceManager* source_manager = result.SourceManager;
     auto* bitwise_fd1 = result.Nodes.getNodeAs<FunctionDecl>("b1");
     auto* bitwise_fd2 = result.Nodes.getNodeAs<FunctionDecl>("b2");
@@ -233,13 +232,12 @@ class BitwiseCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-class ArraySubcriptCallback : public ast_matchers::MatchFinder::MatchCallback {
+class ArraySubcriptCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // we divide the operators into the following parts, based on
     // https://en.cppreference.com/w/cpp/language/operators
@@ -258,7 +256,7 @@ class ArraySubcriptCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     SourceManager* source_manager = result.SourceManager;
     auto* as_fd = result.Nodes.getNodeAs<CXXMethodDecl>("as");
     auto* record = result.Nodes.getNodeAs<CXXRecordDecl>("record");
@@ -267,13 +265,12 @@ class ArraySubcriptCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-class CompareCallback : public ast_matchers::MatchFinder::MatchCallback {
+class CompareCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // we divide the operators into the following parts, based on
     // https://en.cppreference.com/w/cpp/language/operators
@@ -302,7 +299,7 @@ class CompareCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     SourceManager* source_manager = result.SourceManager;
     auto* compare_fd1 = result.Nodes.getNodeAs<FunctionDecl>("c1");
     auto* compare_fd2 = result.Nodes.getNodeAs<FunctionDecl>("c2");
@@ -319,13 +316,12 @@ class CompareCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-class BinopArithCallback : public ast_matchers::MatchFinder::MatchCallback {
+class BinopArithCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // we divide the operators into the following parts, based on
     // https://en.cppreference.com/w/cpp/language/operators
@@ -380,7 +376,7 @@ class BinopArithCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     SourceManager* source_manager = result.SourceManager;
     auto* binary_fd1 = result.Nodes.getNodeAs<FunctionDecl>("binary_fd1");
     auto* binary_fd2 = result.Nodes.getNodeAs<FunctionDecl>("binary_fd2");
@@ -416,7 +412,7 @@ class BinopArithCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
 void Checker::Run() {
@@ -435,7 +431,7 @@ void Checker::Run() {
   ReportGenral(bitwise_rshift_map_, rshift.size(), results_list_);
 }
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   binop_callback_ = new BinopArithCallback;
   binop_callback_->Init(results_list_, &finder_);

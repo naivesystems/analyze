@@ -35,12 +35,13 @@ type SourceFuncList []SourceFunc
 const emptyString = ""
 
 type CheckRule struct {
-	Name        string
-	JSONOptions JSONOption
+	Name        string     `json:"name"`
+	JSONOptions JSONOption `json:"jsonOptions"`
 }
 
 type JSONOption struct {
 	CaseSensitive      *bool                  `json:"case-sensitive,omitempty" yaml:"-"`
+	Misra2023          *bool                  `json:"misra-2023,omitempty" yaml:"-"`
 	Limit              *int                   `json:"limit,omitempty" yaml:"-"`
 	Standard           string                 `json:"standard,omitempty" yaml:"-"`
 	MaxLoop            *int                   `json:"max-loop,omitempty" yaml:"-"`
@@ -55,9 +56,9 @@ type JSONOption struct {
 	MaximumAllowedSize *int `json:"maximum-allowed-size,omitempty" yaml:"-"`
 	// CSAAnalyzerInliningMode determines the heuristic used to select functions for inlining.
 	// This can take on two values as defined in third_party/llvm-project/clang/include/clang/StaticAnalyzer/Core/Analyses.def:
-	// 1. all: analyze all functions as top-level.
-	// 2. noredundancy: avoid analyzing a function that has already been inlined.
-	CSAAnalyzerInliningMode            *string  `json:"csa-analyzer-inlining-mode,omitempty" yaml:"-"`
+	// 1. true represents all mode, which analyzes all functions as top-level.
+	// 2. false (default) represents noredundancy mode, which avoids analyzing a function that has already been inlined.
+	CSAAnalyzerInliningMode            *bool    `json:"csa-analyzer-inlining-mode,omitempty" yaml:"-"`
 	UseInfer                           bool     `json:"use-infer,omitempty" yaml:"-"`
 	UseCSA                             bool     `json:"use-csa,omitempty" yaml:"-"`
 	UseZ3                              string   `json:"use-z3,omitempty" yaml:"-"`
@@ -89,6 +90,7 @@ type JSONOption struct {
 	BlockIDLimit                       *int     `json:"block-id-limit,omitempty" yaml:"-"`          //misra_c_2012/rule_1_1
 	NestedDeclLimit                    *int     `json:"nested-decl-limit,omitempty" yaml:"-"`       //misra_c_2012/rule_1_1
 	ModifyDeclLimit                    *int     `json:"modify-decl-limit,omitempty" yaml:"-"`       //misra_c_2012/rule_1_1
+	ErrorMessage                       *string  `json:"error-message,omitempty" yaml:"-"`           //coccinelle
 }
 
 type FilterAndSinkFunc struct {
@@ -175,6 +177,9 @@ func (jsonOption JSONOption) GenerateTaintAnalyzerConf(reportDir string, yamlCon
 func (jsonOption *JSONOption) Update(newOption JSONOption) {
 	if newOption.CaseSensitive != nil {
 		jsonOption.CaseSensitive = newOption.CaseSensitive
+	}
+	if newOption.Misra2023 != nil {
+		jsonOption.Misra2023 = newOption.Misra2023
 	}
 	if newOption.Limit != nil {
 		jsonOption.Limit = newOption.Limit

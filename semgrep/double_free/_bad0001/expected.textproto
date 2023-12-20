@@ -1,0 +1,5 @@
+results {
+  path: "test.c"
+  line_number: 5
+  error_message: "[double-free]: Variable 'a' was freed twice. This can lead to undefined behavior."
+}

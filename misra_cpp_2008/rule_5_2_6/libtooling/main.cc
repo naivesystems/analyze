@@ -50,13 +50,13 @@ int rule_5_2_6(int argc, char** argv) {
       libtooling_argc, &const_argv[argc - libtooling_argc],
       ns_libtooling_checker);
   if (!ep) {
-    llvm::errs() << ep.takeError();
+    errs() << ep.takeError();
     return 1;
   }
   tooling::CommonOptionsParser& options_parser = ep.get();
   vector<string> path_list = options_parser.getSourcePathList();
   if (path_list.size() != 1) {
-    llvm::errs() << "The number of filepath is not equal to 1";
+    errs() << "The number of filepath is not equal to 1";
     return 1;
   }
   tooling::ClangTool tool(

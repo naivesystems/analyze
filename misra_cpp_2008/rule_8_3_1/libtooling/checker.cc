@@ -76,11 +76,11 @@ class Callback : public MatchFinder::MatchCallback {
       auto base_char_range = Lexer::makeFileCharRange(
           CharSourceRange::getTokenRange(base_param_arr[i]->getSourceRange()),
           *result.SourceManager, result.Context->getLangOpts());
-      std::string cur_str =
+      string cur_str =
           Lexer::getSourceText(cur_char_range, *result.SourceManager,
                                result.Context->getLangOpts())
               .str();
-      std::string base_str =
+      string base_str =
           Lexer::getSourceText(base_char_range, *result.SourceManager,
                                result.Context->getLangOpts())
               .str();

@@ -34,9 +34,11 @@ all:
 	$(MAKE) out/bin/infer
 
 PRUNE_AND_FIND := find . \( -path ./third_party \
+-o -path ./build/output \
 -o -path ./clang-tidy \
 -o -path ./misra_c_2012 \
 -o -path ./out \
+-o -path ./podman_image/tmpWorkSpace \
 -o -path ./vm \
 -o -path ./vscode/nsa-result-highlight/analyze-demo \
 -o -path '*/_bad0*' -o -path '*/_good00*' \

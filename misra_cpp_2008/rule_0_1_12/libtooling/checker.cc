@@ -61,7 +61,7 @@ class Callback : public MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const CXXMethodDecl* fd = result.Nodes.getNodeAs<CXXMethodDecl>("bad_md");
 
     // skip system header
@@ -126,12 +126,12 @@ class Callback : public MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   std::unordered_map<std::string, vector<MethodInfo>> checked_fd_;
   std::unordered_map<std::string, vector<int>> param_use_count_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   callback_ = new Callback;
   callback_->Init(result_list, &finder_);
 }

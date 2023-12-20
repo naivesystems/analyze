@@ -34,6 +34,7 @@ func checkFileNameExtension(buildActions *[]csa.BuildAction) (*pb.ResultsList, e
 		if !strings.HasSuffix(path, ".cpp") {
 			results.Results = append(results.Results, &pb.Result{
 				Path:         path,
+				LineNumber:   1,
 				ErrorMessage: "Implementation files, that are defined locally in the project, should have a file name extension of \".cpp\".",
 			})
 		}

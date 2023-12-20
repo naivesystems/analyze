@@ -8,7 +8,6 @@ add_clang_library(clangStaticAnalyzerCheckers
   AnalyzerStatsChecker.cpp
   ArrayBoundChecker.cpp
   ArrayBoundCheckerV2.cpp
-  autosar-A0_4_4-MathErrorChecker.cpp
   BasicObjCFoundationChecks.cpp
   BlockInCriticalSectionChecker.cpp
   BoolAssignmentChecker.cpp
@@ -29,10 +28,6 @@ add_clang_library(clangStaticAnalyzerCheckers
   CloneChecker.cpp
   ContainerModeling.cpp
   ConversionChecker.cpp
-  cwe-120-CStringChecker.cpp
-  cwe-121-ArrayBoundCheckerV2.cpp
-  cwe-124-127-BufferUnderAccessChecker.cpp
-  cwe-126-BuferOverAccessChecker.cpp
   CXXSelfAssignmentChecker.cpp
   DeadStoresChecker.cpp
   DebugCheckers.cpp
@@ -53,10 +48,6 @@ add_clang_library(clangStaticAnalyzerCheckers
   FuchsiaHandleChecker.cpp
   GCDAntipatternChecker.cpp
   GenericTaintChecker.cpp
-  misra-cxx-2008-R-0_1_2-Unreachable.cpp
-  misra-cxx-2008-R-0_1_6-DUDataflow.cpp
-  misra-cxx-2008-R-5_2_7-pointerCast.cpp
-  misra-cxx-2008-R-15_5_2-ExceptionThrow.cpp
   GTestChecker.cpp
   IdenticalExprChecker.cpp
   InnerPointerChecker.cpp
@@ -76,21 +67,6 @@ add_clang_library(clangStaticAnalyzerCheckers
   MismatchedIteratorChecker.cpp
   MmapWriteExecChecker.cpp
   MIGChecker.cpp
-  misrac-2012-11_5-VoidToObjectPtr.cpp
-  misrac-2012-12_2-ShiftOp.cpp
-  misrac-2012-13_2-VarUnsequencedAccess.cpp
-  misrac-2012-18_2-PointerSub.cpp
-  misrac-2012-18_3-PointerComp.cpp
-  misrac-2012-21_13-CtypeChecker.cpp
-  misrac-2012-21_14-MemcmpChecker.cpp
-  misrac-2012-21_19-ConstReturnPointerChecker.cpp
-  misrac-2012-21_20-DeprecatedResourceChecker.cpp
-  misrac-2012-22_3-OpenFileChecker.cpp
-  misrac-2012-22_4-WriteReadOnlyChecker.cpp
-  misrac-2012-22_5-FileDereferenceChecker.cpp
-  misrac-2012-22_6-UseClosedFileChecker.cpp
-  misrac-2012-22_7-EOFComparisonChecker.cpp
-  misrac-2012-d4_14-TaintCheck.cpp
   MoveChecker.cpp
   MPI-Checker/MPIBugReporter.cpp
   MPI-Checker/MPIChecker.cpp

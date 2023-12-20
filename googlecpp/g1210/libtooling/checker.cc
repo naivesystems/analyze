@@ -35,8 +35,7 @@ void ReportError(string path, int line_number,
                  analyzer::proto::ResultsList* results_list) {
   string error_message =
       "Use capture by value explicitly or capture by reference for non-static class members in non-static member functions";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }

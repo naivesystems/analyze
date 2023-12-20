@@ -565,6 +565,46 @@ var misraCppIssueCodeMap = map[string]string{
 	"rule_27_0_1": "CXX5671",
 }
 
+var certIssueCodeMap = map[string]string{
+	"cert_dcl21_cpp": "T0711",
+	"cert_dcl50_cpp": "T0713",
+	"cert_dcl58_cpp": "T0716",
+	"cert_env33_c":   "T0718",
+	"cert_err33_c":   "T0720",
+	"cert_err34_c":   "T0721",
+	"cert_err52_cpp": "T0722",
+	"cert_err58_cpp": "T0723",
+	"cert_err60_cpp": "T0724",
+	"cert_flp30_c":   "T0728",
+	"cert_mem57_cpp": "T0730",
+	"cert_msc50_cpp": "T0733",
+	"cert_msc30_c":   "T0731",
+	"cert_msc51_cpp": "T0734",
+	"cert_msc32_c":   "T0732",
+	"cert_oop57_cpp": "T0737",
+	"cert_oop58_cpp": "T0738",
+	"cert_con54_cpp": "T0708",
+	"cert_con36_c":   "T0707",
+	"cert_dcl03_c":   "T0709",
+	"cert_dcl16_c":   "T0710",
+	"cert_dcl37_c":   "T0712",
+	"cert_dcl51_cpp": "T0714",
+	"cert_dcl54_cpp": "T0715",
+	"cert_dcl59_cpp": "T0717",
+	"cert_err61_cpp": "T0725",
+	"cert_err09_cpp": "T0719",
+	"cert_exp42_c":   "T0726",
+	"cert_flp37_c":   "T0729",
+	"cert_fio38_c":   "T0727",
+	"cert_sig30_c":   "T0741",
+	"cert_msc54_cpp": "T0741",
+	"cert_oop11_cpp": "T0735",
+	"cert_oop54_cpp": "T0736",
+	"cert_pos44_c":   "T0739",
+	"cert_pos47_c":   "T0740",
+	"cert_str34_c":   "T0742",
+}
+
 func GetIssueCode(edition string, ruleName string) string {
 	switch edition {
 	case "gjb5369":
@@ -582,6 +622,12 @@ func GetIssueCode(edition string, ruleName string) string {
 	case "misra_cpp_2008":
 		if _, exist := misraCppIssueCodeMap[ruleName]; exist {
 			return misraCppIssueCodeMap[ruleName]
+		} else {
+			return ""
+		}
+	case "cert":
+		if _, exist := certIssueCodeMap[ruleName]; exist {
+			return certIssueCodeMap[ruleName]
 		} else {
 			return ""
 		}

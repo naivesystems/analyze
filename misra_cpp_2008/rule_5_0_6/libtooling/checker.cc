@@ -60,10 +60,9 @@ namespace misra_cpp_2008 {
 namespace rule_5_0_6 {
 namespace libtooling {
 
-class IntegerCallback : public ast_matchers::MatchFinder::MatchCallback {
+class IntegerCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         implicitCastExpr(
@@ -78,7 +77,7 @@ class IntegerCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     ASTContext* context = result.Context;
     ImplicitCastExpr const* cast =
         result.Nodes.getNodeAs<ImplicitCastExpr>("cast");
@@ -132,10 +131,9 @@ class IntegerCallback : public ast_matchers::MatchFinder::MatchCallback {
   analyzer::proto::ResultsList* results_list_;
 };
 
-class FloatCallback : public ast_matchers::MatchFinder::MatchCallback {
+class FloatCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         implicitCastExpr(
@@ -147,7 +145,7 @@ class FloatCallback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     ASTContext* context = result.Context;
     ImplicitCastExpr const* cast =
         result.Nodes.getNodeAs<ImplicitCastExpr>("cast");

@@ -21,7 +21,7 @@ class UVPROJXProject(object):
     def parseProject(self):
         """ Parses EWP project file for project settings
         """
-        self.project['name'] = self.root.Targets.Target.TargetName
+        self.project['name'] = self.root.Targets.Target.TargetName.text.replace(" ", "-")
         self.project['chip'] = str(self.root.Targets.Target.TargetOption.TargetCommonOption.Device)
         self.project['incs'] = self.root.Targets.Target.TargetOption.TargetArmAds.Cads.VariousControls.IncludePath.text.split(';')
         self.project['mems'] = self.root.Targets.Target.TargetOption.TargetCommonOption.Cpu
@@ -39,7 +39,9 @@ class UVPROJXProject(object):
                                 s = s.replace('/', '\\')
                             elif os.path.sep == '/':
                                 s = s.replace('\\', '/')
-                        self.project['srcs'].append(s.replace('..', self.path, 1))
+                        if not os.path.isabs(s):
+                            s = os.path.join(self.path, s)
+                        self.project['srcs'].append(s)
 
         for i in range(0, len(self.project['incs'])):
             s = str(self.project['incs'][i])
@@ -48,8 +50,9 @@ class UVPROJXProject(object):
                     s = s.replace('/', '\\')
                 elif os.path.sep == '/':
                     s = s.replace('\\', '/')
-
-            self.project['incs'][i] = s.replace('..', self.path, 1)
+            if not os.path.isabs(s):
+                s = os.path.join(self.path, s)
+            self.project['incs'][i] = s
 
         self.project['files'] = []
         i = 0

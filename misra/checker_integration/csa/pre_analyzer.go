@@ -50,6 +50,7 @@ import (
 	"naive.systems/analyzer/cruleslib/i18n"
 	"naive.systems/analyzer/cruleslib/stats"
 	"naive.systems/analyzer/misra/utils"
+	telemetry "naive.systems/analyzer/telemetry/client/sender"
 )
 
 var (
@@ -345,8 +346,9 @@ func PerformPreAnalysis(ctuDir string, actions *[]csaBuildAction, config *pb.Che
 	tasks := make(chan csaBuildAction, numWorkers)
 	arches := make(chan string, taskNumbers)
 	results := make(chan map[string][]string, taskNumbers)
+	telemetry.Send("Starting generating CTU information", "start", start, "config", config)
 	if checkProgress {
-		basic.PrintfWithTimeStamp(printer.Sprintf("Starting generating CTU infomation"))
+		basic.PrintfWithTimeStamp(printer.Sprintf("Starting generating CTU information"))
 	}
 	for i := 0; i < int(numWorkers); i++ {
 		go getFuncAstListByArch(tasks, arches, results, ctuDir, config)
@@ -369,17 +371,20 @@ func PerformPreAnalysis(ctuDir string, actions *[]csaBuildAction, config *pb.Che
 		}
 		performPreAnalysisLock.Unlock()
 		finishedTaskNumbers++
+		percent := basic.GetPercentString(int(finishedTaskNumbers), taskNumbers)
+		stats.WriteProgress(filepath.Dir(ctuDir), stats.CTU, percent, start)
+		percent += "%"
+		telemetry.Send("CTU information generated", "taskNumbers", taskNumbers, "finishedTaskNumbers", finishedTaskNumbers, "taskNumbers", taskNumbers)
 		if checkProgress {
-			percent := basic.GetPercentString(int(finishedTaskNumbers), taskNumbers)
-			stats.WriteProgress(filepath.Dir(ctuDir), stats.CTU, percent, start)
-			percent += "%"
 			basic.PrintfWithTimeStamp(printer.Sprintf("%s CTU information generated (%v/%v)", percent, finishedTaskNumbers, taskNumbers))
 		}
 	}
 
 	elapsed := time.Since(start)
+	timeUsed := basic.FormatTimeDuration(elapsed)
+	telemetry.Send("CTU information generated", "start", start, "elapsed", elapsed, "timeUsed", timeUsed)
+	telemetry.Send("Starting writing CTU information")
 	if checkProgress {
-		timeUsed := basic.FormatTimeDuration(elapsed)
 		basic.PrintfWithTimeStamp(printer.Sprintf("CTU information generated successfully [%s]", timeUsed))
 		basic.PrintfWithTimeStamp(printer.Sprintf("Starting writing CTU information"))
 	}
@@ -390,8 +395,9 @@ func PerformPreAnalysis(ctuDir string, actions *[]csaBuildAction, config *pb.Che
 	}
 	// TODO: perform pre-analysis in a multi-processing way
 	mergeElapsed := time.Since(mergeStart)
+	timeUsed = basic.FormatTimeDuration(mergeElapsed)
+	telemetry.Send("Writing CTU information completed", "start", start, "mergeElapsed", mergeElapsed, "timeUsed", timeUsed)
 	if checkProgress {
-		timeUsed := basic.FormatTimeDuration(mergeElapsed)
 		basic.PrintfWithTimeStamp(printer.Sprintf("Writing CTU information completed [%s]", timeUsed))
 	}
 }

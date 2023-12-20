@@ -39,27 +39,26 @@ type CheckOptions struct {
 }
 
 type EnvOptions struct {
-	ResultsDir                  string
-	BuildActions                *[]csa.BuildAction
-	CheckerConfig               *pb.CheckerConfiguration
-	IgnoreDirPatterns           analyzerinterface.ArrayFlags
-	CheckProgress               bool
-	EnableCodeChecker           bool
-	DumpErrors                  map[string]string
-	Debug                       bool
-	AvailMemRatio               float64
-	LimitMemory                 bool
-	NumWorkers                  int32
-	IsDev                       bool
-	TimeoutNormal               int
-	TimeoutOom                  int
-	Lang                        string
-	OnlyCppcheck                bool
-	DisableParallelismInChecker bool
+	ResultsDir                  string                       `json:"resultsDir"`
+	BuildActions                *[]csa.BuildAction           `json:"buildActions,omitempty"`
+	CheckerConfig               *pb.CheckerConfiguration     `json:"checkerConfig,omitempty"`
+	IgnoreDirPatterns           analyzerinterface.ArrayFlags `json:"ignoreDirPatterns,omitempty"`
+	CheckProgress               bool                         `json:"checkProgress"`
+	DumpErrors                  map[string]string            `json:"dumpErrors,omitempty"`
+	Debug                       bool                         `json:"debug"`
+	AvailMemRatio               float64                      `json:"availMemRatio"`
+	LimitMemory                 bool                         `json:"limitMemory"`
+	NumWorkers                  int32                        `json:"numWorkers"`
+	IsDev                       bool                         `json:"isDev"`
+	TimeoutNormal               int                          `json:"timeoutNormal"`
+	TimeoutOom                  int                          `json:"timeoutOom"`
+	Lang                        string                       `json:"lang"`
+	OnlyCppcheck                bool                         `json:"onlyCppcheck"`
+	DisableParallelismInChecker bool                         `json:"disableParallelismInChecker"`
 
-	LogDir string
+	LogDir string `json:"logDir"`
 
-	CheckerPathsMap map[string]string
+	CheckerPathsMap map[string]string `json:"checkerPathsMap,omitempty"`
 }
 
 type RuleSpecificOptions struct {
@@ -107,7 +106,6 @@ func NewEnvOptions(
 	checkerConfig *pb.CheckerConfiguration,
 	ignoreDirPatterns analyzerinterface.ArrayFlags,
 	checkProgress bool,
-	enableCodeChecker bool,
 	ignoreCpp bool,
 	debug bool,
 	limitMemory bool,
@@ -125,7 +123,6 @@ func NewEnvOptions(
 	envOptions.BuildActions = &[]csa.BuildAction{}
 	envOptions.CheckerConfig = checkerConfig
 	envOptions.CheckProgress = checkProgress
-	envOptions.EnableCodeChecker = enableCodeChecker
 	envOptions.IgnoreDirPatterns = ignoreDirPatterns
 	envOptions.Debug = debug
 	envOptions.CheckerPathsMap = checkerPathsMap
@@ -183,7 +180,6 @@ func NewEnvOptions(
 		envOptions.ResultsDir,
 		envOptions.CheckerConfig,
 		envOptions.CheckProgress,
-		envOptions.EnableCodeChecker,
 		envOptions.NumWorkers,
 		envOptions.IgnoreDirPatterns,
 		envOptions.Lang,
@@ -217,7 +213,6 @@ func NewEnvOptionsFromShared(
 		checkerConfig,
 		sharedOptions.GetIgnoreDirPatterns(),
 		sharedOptions.GetCheckProgress(),
-		sharedOptions.GetEnableCodeChecker(),
 		ignoreCpp,
 		sharedOptions.GetDebugMode(),
 		sharedOptions.GetLimitMemory(),

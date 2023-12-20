@@ -53,12 +53,11 @@ typedef std::priority_queue<StreamInfo, std::vector<StreamInfo>, Compare>
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "Alternate input and output operations on a file stream shall not be used without an intervening flush or position call.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -71,8 +70,7 @@ namespace libtooling {
 
 class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     clang::ast_matchers::internal::BindableMatcher<clang::Stmt> fstream =
         declRefExpr(
@@ -126,7 +124,7 @@ class Callback : public MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const VarDecl* fstream = result.Nodes.getNodeAs<VarDecl>("fstream");
     const VarDecl* ptr_FILE = result.Nodes.getNodeAs<VarDecl>("ptr_FILE");
     int64_t id;
@@ -140,7 +138,7 @@ class Callback : public MatchFinder::MatchCallback {
     }
     const Stmt* ostream = result.Nodes.getNodeAs<Stmt>("ostream");
     if (ostream != nullptr) {
-      std::string path =
+      string path =
           misra::libtooling_utils::GetFilename(ostream, result.SourceManager);
       int line_number =
           misra::libtooling_utils::GetLine(ostream, result.SourceManager);
@@ -149,7 +147,7 @@ class Callback : public MatchFinder::MatchCallback {
     }
     const Stmt* istream = result.Nodes.getNodeAs<Stmt>("istream");
     if (istream != nullptr) {
-      std::string path =
+      string path =
           misra::libtooling_utils::GetFilename(istream, result.SourceManager);
       int line_number =
           misra::libtooling_utils::GetLine(istream, result.SourceManager);
@@ -158,7 +156,7 @@ class Callback : public MatchFinder::MatchCallback {
     }
     const Stmt* position = result.Nodes.getNodeAs<Stmt>("position");
     if (position != nullptr) {
-      std::string path =
+      string path =
           misra::libtooling_utils::GetFilename(position, result.SourceManager);
       int line_number =
           misra::libtooling_utils::GetLine(position, result.SourceManager);
@@ -188,11 +186,11 @@ class Callback : public MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   std::unordered_map<int64_t, stream_queue> stream_map_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

@@ -49,11 +49,10 @@ message Definitions {
 }
 
 message CheckerConfiguration {
-  // System library options for CSA checker.
   string csa_system_lib_options = 1;
   string infer_bin = 2;
   string clang_bin = 3;
-  string code_checker_bin = 4;
+  reserved 4;
   string cppcheck_bin = 5;
   string python_bin = 6;
   string clangtidy_bin = 7;
@@ -65,4 +64,5 @@ message CheckerConfiguration {
   string clangmapping_bin = 13;
   int64 infer_jobs = 14;
   string cpplint_script = 15;
+  reserved 16;
 }

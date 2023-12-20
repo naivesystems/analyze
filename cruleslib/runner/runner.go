@@ -19,7 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package runner
 
 import (
+	"bufio"
 	"container/list"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -38,6 +40,7 @@ import (
 	"github.com/golang/glog"
 	"golang.org/x/text/message"
 	"google.golang.org/protobuf/proto"
+	"gopkg.in/yaml.v2"
 	pb "naive.systems/analyzer/analyzer/proto"
 	"naive.systems/analyzer/cruleslib/basic"
 	"naive.systems/analyzer/cruleslib/filter"
@@ -46,10 +49,12 @@ import (
 	"naive.systems/analyzer/cruleslib/options"
 	"naive.systems/analyzer/cruleslib/severity"
 	"naive.systems/analyzer/cruleslib/stats"
+	"naive.systems/analyzer/diff"
 	"naive.systems/analyzer/misra/analyzer"
 	"naive.systems/analyzer/misra/analyzer/analyzerinterface"
 	"naive.systems/analyzer/misra/checker_integration"
 	"naive.systems/analyzer/misra/checker_integration/checkrule"
+	"naive.systems/analyzer/misra/checker_integration/clangformat"
 	"naive.systems/analyzer/misra/checker_integration/clangsema"
 	"naive.systems/analyzer/misra/checker_integration/cppcheck"
 	"naive.systems/analyzer/misra/checker_integration/cpplint"
@@ -58,6 +63,7 @@ import (
 	"naive.systems/analyzer/misra/checker_integration/infer"
 	"naive.systems/analyzer/misra/checker_integration/libtooling"
 	"naive.systems/analyzer/misra/checker_integration/misra"
+	telemetry "naive.systems/analyzer/telemetry/client/sender"
 )
 
 // The task for Runner to run in parallels
@@ -104,12 +110,14 @@ func modifyResult(result *analyzerResult) {
 		// autosar/rule_AX_X_X -> [AX_X_X][autosar-AX.X.X]
 		// autosar/rule_MX_X_X -> [MX_X_X][autosar-MX.X.X]
 		// cwe/cwe_401 -> [CWE_401][cwe-cwe_401]
+		// cert/cert_dcl21_cpp -> [T0711][cert_dcl21_cpp]
 		edition := strings.Split(result.rule, "/")[0]
 		ruleName := strings.Split(result.rule, "/")[1]
 		ruleStr := strings.Join(strings.Split(ruleName, "_")[1:], ".")
 		issueCode := issuecode.GetIssueCode(edition, ruleName)
 		if issueCode == "" {
-			if edition == "misra_cpp_2008" || strings.HasPrefix(edition, "gjb") {
+			if edition == "misra_cpp_2008" || strings.HasPrefix(edition, "gjb") ||
+				edition == "cert" {
 				glog.Warning("There is no available issue code for ", result.rule)
 				// mock for the issue code parsing of the vscode extension
 				issueCode = "-"
@@ -120,12 +128,13 @@ func modifyResult(result *analyzerResult) {
 				r.ErrorMessage = fmt.Sprintf("[%s][%s-%s]: %s", strings.ToUpper(ruleName), edition, ruleName, r.ErrorMessage)
 			}
 		}
-		issueCode = "[" + issueCode + "]"
 		if edition == "misra_cpp_2008" {
-			r.ErrorMessage = issueCode + "[misra-cpp2008-" + ruleStr + "]: " + r.ErrorMessage
+			r.ErrorMessage = fmt.Sprintf("[%s][misra-cpp2008-%s]: %s", issueCode, ruleStr, r.ErrorMessage)
 		} else if strings.HasPrefix(edition, "gjb") {
 			subEdition := strings.TrimPrefix(edition, "gjb")
-			r.ErrorMessage = issueCode + "[gjb-" + subEdition + "-" + ruleStr + "]: " + r.ErrorMessage
+			r.ErrorMessage = fmt.Sprintf("[%s][gjb-%s-%s]: %s", issueCode, subEdition, ruleStr, r.ErrorMessage)
+		} else if edition == "cert" {
+			r.ErrorMessage = fmt.Sprintf("[%s][%s]: %s", issueCode, ruleName, r.ErrorMessage)
 		}
 		r.Ruleset = edition
 		r.RuleId = ruleName
@@ -175,6 +184,7 @@ func NewParaTaskRunner(numWorkers int32, taskNums int, showProgress bool, lang s
 	printer := i18n.GetPrinter(lang)
 	if numWorkers == 0 {
 		numWorkers = int32(runtime.NumCPU())
+		telemetry.Send("Use CPU(s)", "numWorkers", numWorkers)
 		if showProgress {
 			basic.PrintfWithTimeStamp(printer.Sprintf("Use %d CPU(s)", numWorkers))
 		}
@@ -204,6 +214,7 @@ func NewParaTaskRunner(numWorkers int32, taskNums int, showProgress bool, lang s
 			select {
 			case <-sigs:
 				// if recived a SIGINT, stop collector and analyze rule loop
+				telemetry.Send("Ctrl C Pressed. Stop analysis")
 				if paraRunner.showProgress {
 					basic.PrintfWithTimeStamp("Ctrl C Pressed. Stop analysis")
 				}
@@ -321,6 +332,7 @@ func RunMisraAnalyze(srcdir string, misraCheckRules []checkrule.CheckRule, check
 	}
 	filteredCompileCommandsFolder, err := analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(compileCommandsPath)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(: %v", err)
 	}
 	defer os.RemoveAll(filteredCompileCommandsFolder)
@@ -417,6 +429,7 @@ func RunInfer(srcdir string, inferPlugin string, checkOptions *options.CheckOpti
 	}
 	filteredCompileCommandsFolder, err := analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(compileCommandsPath)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile: %v", err)
 	}
 	defer os.RemoveAll(filteredCompileCommandsFolder)
@@ -491,6 +504,7 @@ func RunLibtoolingWithExtraArgs(srcdir string, ruleName string, extraArgsStr str
 	}
 	filteredCompileCommandsFolder, err := analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(compileCommandsPath)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(: %v", err)
 	}
 	defer os.RemoveAll(filteredCompileCommandsFolder)
@@ -616,6 +630,21 @@ func RunCpplint(srcdir, filter string, opts *options.CheckOptions) ([]cpplint.Re
 	return runner.Run(srcdir, filter)
 }
 
+func RunClangFormat(srcdir, style, compileCommandsPath string, opts *options.CheckOptions) ([]clangformat.Report, error) {
+	srcs, err := analyzer.ListSourceFiles(compileCommandsPath, opts.EnvOption.IgnoreDirPatterns)
+	if err != nil {
+		glog.Errorf("analyzer list source files error: %v", err)
+		return nil, err
+	}
+	runner := &clangformat.Runner{
+		TaskName:      filepath.Base(opts.EnvOption.ResultsDir),
+		LimitMemory:   opts.EnvOption.LimitMemory,
+		TimeoutNormal: opts.EnvOption.TimeoutNormal,
+		TimeoutOom:    opts.EnvOption.TimeoutOom,
+	}
+	return runner.Run(srcs, style)
+}
+
 func RunClangSema(srcdir, cmd_arg string, opts *options.CheckOptions) ([]clangsema.Diagnostic, error) {
 	// TODO: pass compileCommandsPath as function arguments
 	compileCommandsPath := options.GetCompileCommandsPath(srcdir)
@@ -644,6 +673,7 @@ func RunClangTidy(srcdir string, cmd_arg []string, opts *options.CheckOptions) (
 	}
 	filteredCompileCommandsFolder, err := analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(compileCommandsPath)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(: %v", err)
 	}
 	defer os.RemoveAll(filteredCompileCommandsFolder)
@@ -771,6 +801,190 @@ func RunHeaderCompile(srcdir string, ruleName string, checkOptions *options.Chec
 				LineNumber: 1,
 			})
 		}
+	}
+	return results, nil
+}
+
+func checkSingleCoccinelleRule(srcDir, ruleName, rulePath string, JSONOptions checkrule.JSONOption) (*pb.ResultsList, error) {
+	cmd := exec.Command("spatch", "--sp-file", rulePath, "--dir", srcDir, "--include-headers", "-U", "0")
+	glog.Info("executing: ", cmd.String())
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %v\n%s", cmd.String(), err, string(out))
+	}
+	p, err := diff.Parse(string(out))
+	if err != nil {
+		return nil, fmt.Errorf("diff.Parse: %v\n%s", err, string(out))
+	}
+	errorMessage := ruleName
+	if JSONOptions.ErrorMessage != nil && *JSONOptions.ErrorMessage != "" {
+		errorMessage = fmt.Sprintf("%s: %s", ruleName, *JSONOptions.ErrorMessage)
+	}
+	results := &pb.ResultsList{}
+	for _, file := range p.Files {
+		for _, hunk := range file.Hunks {
+			path := file.OldName
+			if !filepath.IsAbs(path) {
+				path = filepath.Join(srcDir, path)
+			}
+			result := &pb.Result{
+				Path:         path,
+				LineNumber:   int32(hunk.OldPos),
+				ErrorMessage: errorMessage,
+			}
+			results.Results = append(results.Results, result)
+		}
+	}
+	return results, nil
+}
+
+func readFileLines(filename, suffix string) ([]checkrule.CheckRule, error) {
+	_, err := os.Stat(filename)
+	if err != nil {
+		return nil, err
+	}
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	checkRules := make([]checkrule.CheckRule, 0)
+	for scanner.Scan() {
+		line := scanner.Text()
+		rulePath, jsonOptionStr, exists := strings.Cut(line, suffix)
+		if !exists {
+			return nil, fmt.Errorf("%s does not contain a valid rule file with suffix %s", line, suffix)
+		}
+		ruleName := rulePath + suffix
+		jsonOptionStr = strings.TrimSpace(jsonOptionStr)
+		if jsonOptionStr == "" {
+			jsonOptionStr = "{}"
+		}
+		checkRule, err := checkrule.MakeCheckRule(ruleName, jsonOptionStr)
+		if err != nil {
+			return nil, err
+		}
+		checkRules = append(checkRules, *checkRule)
+	}
+	return checkRules, nil
+}
+
+func RunCoccinelle(srcDir, configDir string) (*pb.ResultsList, error) {
+	results := &pb.ResultsList{}
+	rulesPath := filepath.Join(configDir, "cocci_rules")
+	// cocci_rules format:
+	// find_alloca.cocci {"error-message": "SOME MESSAGE"}
+	rules, err := readFileLines(rulesPath, ".cocci")
+	if err != nil {
+		return results, fmt.Errorf("failed to read file lines: %s: %v", rulesPath, err)
+	}
+	for _, rule := range rules {
+		rulePath := rule.Name
+		if !filepath.IsAbs(rulePath) {
+			rulePath = filepath.Join(configDir, rulePath)
+		}
+		_, err := os.Stat(rulePath)
+		if err != nil {
+			return results, fmt.Errorf("os.Stat: %s: %v", rulePath, err)
+		}
+		ruleName := filepath.Base(rulePath)
+		singleRuleResults, err := checkSingleCoccinelleRule(srcDir, ruleName, rulePath, rule.JSONOptions)
+		if err != nil {
+			glog.Errorf("check %s: %v", ruleName, err)
+			continue
+		}
+		results.Results = append(results.Results, singleRuleResults.Results...)
+	}
+	return results, nil
+}
+
+type SemgrepResult struct {
+	// pick useful fields in output results
+	Results []struct {
+		CheckID string `json:"check_id"`
+		Extra   struct {
+			Message string `json:"message"`
+		} `json:"extra"`
+		Path  string `json:"path"`
+		Start struct {
+			Line int `json:"line"`
+		} `json:"start"`
+	} `json:"results"`
+}
+
+func checkSingleSemgrepRule(semgrepBin, srcDir, ruleName, rulePath string) (*pb.ResultsList, error) {
+	cmd := exec.Command(semgrepBin, "--config", rulePath, srcDir, "--quiet", "--json")
+	glog.Info("executing: ", cmd.String())
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %v\n%s", cmd.String(), err, string(out))
+	}
+	var semgrepResult SemgrepResult
+	err = json.Unmarshal(out, &semgrepResult)
+	if err != nil {
+		return nil, fmt.Errorf("json.Unmarshal: %v", err)
+	}
+	results := &pb.ResultsList{}
+	for _, r := range semgrepResult.Results {
+		path := r.Path
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(srcDir, path)
+		}
+		result := &pb.Result{
+			Path:         path,
+			LineNumber:   int32(r.Start.Line),
+			ErrorMessage: fmt.Sprintf("[%s]: %s", ruleName, r.Extra.Message),
+		}
+		results.Results = append(results.Results, result)
+	}
+	return results, nil
+}
+
+type SemgrepRule struct {
+	ID        string   `yaml:"id"`
+	Message   string   `yaml:"message"`
+	Languages []string `yaml:"languages"`
+	Severity  string   `yaml:"severity"`
+}
+
+type SemgrepRulesConfig struct {
+	Rules []SemgrepRule `yaml:"rules"`
+}
+
+func RunSemgrep(srcDir, configDir, semgrepBin string) (*pb.ResultsList, error) {
+	results := &pb.ResultsList{}
+	rulesPath := filepath.Join(configDir, "semgrep_rules")
+	rules, err := readFileLines(rulesPath, ".semgrep")
+	if err != nil {
+		return results, fmt.Errorf("failed to read file lines: %s: %v", rulesPath, err)
+	}
+	for _, rule := range rules {
+		rulePath := rule.Name
+		if !filepath.IsAbs(rulePath) {
+			rulePath = filepath.Join(configDir, rulePath)
+		}
+		_, err := os.Stat(rulePath)
+		if err != nil {
+			return results, fmt.Errorf("os.Stat: %s: %v", rulePath, err)
+		}
+		contents, err := os.ReadFile(rulePath)
+		if err != nil {
+			return results, fmt.Errorf("os.ReadFile: %s: %v", rulePath, err)
+		}
+		var config SemgrepRulesConfig
+		err = yaml.Unmarshal(contents, &config)
+		if err != nil {
+			return results, fmt.Errorf("yaml.Unmarshal: %s: %v", rulePath, err)
+		}
+		// Suppose only one rule is specified in the Semgrep rule file
+		ruleName := config.Rules[0].ID
+		singleRuleResults, err := checkSingleSemgrepRule(semgrepBin, srcDir, ruleName, rulePath)
+		if err != nil {
+			glog.Errorf("check %s: %v", rulePath, err)
+			continue
+		}
+		results.Results = append(results.Results, singleRuleResults.Results...)
 	}
 	return results, nil
 }
@@ -988,7 +1202,7 @@ func KeepNeededErrorByFilterTargetMsgInCSAReports(reportJson *csa.CSAReport, tar
 func CSAReportsToPBResults(reportJson *csa.CSAReport) *pb.ResultsList {
 	resultsList := &pb.ResultsList{}
 	if reportJson == nil || len(reportJson.Runs) == 0 {
-		return nil
+		return resultsList
 	}
 	for _, run := range reportJson.Runs {
 		results := run.Results
@@ -1006,7 +1220,7 @@ func CSAReportsToPBResults(reportJson *csa.CSAReport) *pb.ResultsList {
 func KeepNeededErrorByFilteringRuleIdInCSAReports(reportJson *csa.CSAReport, matchingRuleIdPattern string, newErrorMessage string, errKind pb.Result_ErrorKind) *pb.ResultsList {
 	resultsList := &pb.ResultsList{}
 	if reportJson == nil || len(reportJson.Runs) == 0 {
-		return nil
+		return resultsList
 	}
 	reg := regexp.MustCompile(matchingRuleIdPattern)
 	for _, run := range reportJson.Runs {

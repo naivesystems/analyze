@@ -71,7 +71,7 @@ class AssignOpCallback : public MatchFinder::MatchCallback {
       return;
     }
 
-    std::string error_message =
+    string error_message =
         "[C1603][misra-c2012-13.4]: Result of assignment operator should not "
         "be used";
     analyzer::proto::Result* pb_result = AddResultToResultsList(
@@ -87,7 +87,7 @@ class AssignOpCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new AssignOpCallback;
   callback_->Init(results_list_, &finder_);

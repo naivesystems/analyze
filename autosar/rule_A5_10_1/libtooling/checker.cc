@@ -32,12 +32,11 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "A pointer to member virtual function shall only be tested for equality with null-pointer-constant.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -58,10 +57,9 @@ bool isVirtualMemberFunctionPointer(const Expr* expr, const DeclRefExpr* ref) {
   return false;
 };
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(
@@ -73,7 +71,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const BinaryOperator* stmt = result.Nodes.getNodeAs<BinaryOperator>("stmt");
 
     const DeclRefExpr* left = result.Nodes.getNodeAs<DeclRefExpr>("left");
@@ -85,7 +83,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     if (left) {
       if (isVirtualMemberFunctionPointer(lhs, left)) {
         if (!isa<CXXNullPtrLiteralExpr>(rhs)) {
-          std::string path =
+          string path =
               misra::libtooling_utils::GetFilename(stmt, result.SourceManager);
           int line_number =
               misra::libtooling_utils::GetLine(stmt, result.SourceManager);
@@ -99,7 +97,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     if (right) {
       if (isVirtualMemberFunctionPointer(rhs, right)) {
         if (!isa<CXXNullPtrLiteralExpr>(lhs)) {
-          std::string path =
+          string path =
               misra::libtooling_utils::GetFilename(stmt, result.SourceManager);
           int line_number =
               misra::libtooling_utils::GetLine(stmt, result.SourceManager);
@@ -111,10 +109,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

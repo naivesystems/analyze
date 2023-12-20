@@ -46,7 +46,7 @@ namespace rule_A20_8_4 {
 namespace libtooling {
 
 struct Loc {
-  const std::string Path;
+  const string Path;
   const int LineNumber;
 };
 
@@ -128,7 +128,7 @@ class Callback : public MatchFinder::MatchCallback {
   std::unordered_map<string, PointerInfo> pointer_map_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

@@ -46,10 +46,9 @@ namespace googlecpp {
 namespace g1185 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(cxxMethodDecl(unless(isExpansionInSystemHeader()),
                                      anyOf(isInline(), isConstexpr()))
@@ -57,7 +56,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
                        this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const auto* func = result.Nodes.getNodeAs<FunctionDecl>("func");
     // Get the number of lines of a function
     auto* SM = result.SourceManager;
@@ -71,10 +70,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

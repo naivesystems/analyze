@@ -750,7 +750,8 @@ void PPCheck::MacroExpands(const Token& MacroNameTok, const MacroDefinition& MD,
   if (arg_count > limits_->macro_arg_limit &&
       !source_manager_->isInSystemHeader(sl))
     ReportMacroArgError(
-        limits_->macro_arg_limit, arg_count, MacroNameTok.getName(),
+        limits_->macro_arg_limit, arg_count,
+        MacroNameTok.getIdentifierInfo()->getName().str(),
         libtooling_utils::GetLocationFilename(sl, source_manager_),
         libtooling_utils::GetLocationLine(sl, source_manager_), results_list_);
 }

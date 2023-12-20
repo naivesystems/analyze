@@ -45,7 +45,7 @@ void ReportError(string filename, int line,
                                filename, line);
 }
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
   class QualTypeExt : public QualType {
    public:
     QualTypeExt(QualType qual_type) : QualType(qual_type){};
@@ -55,8 +55,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   };
 
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // Case 1: when the expression is used as the argument when calling a
     // function that is declared with T2 as parameter
@@ -120,7 +119,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     return type;
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     auto report = [&result, this](const Stmt* stmt) {
       std::string filename =
           misra::libtooling_utils::GetFilename(stmt, result.SourceManager);

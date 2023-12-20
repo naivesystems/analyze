@@ -32,13 +32,12 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
-                 ResultsList* results_list, string str = "") {
-  std::string error_message =
+void ReportError(const string& path, int line_number, ResultsList* results_list,
+                 string str = "") {
+  string error_message =
       "CV-qualifiers shall be placed on the right hand side of the type that is a typedef or a using name." +
       str;
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -49,10 +48,9 @@ namespace autosar {
 namespace rule_A7_1_3 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         valueDecl(
@@ -64,7 +62,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const ValueDecl* vd = result.Nodes.getNodeAs<ValueDecl>("vd");
     if (vd) {
       const QualType qt = vd->getType().getLocalUnqualifiedType();
@@ -85,10 +83,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

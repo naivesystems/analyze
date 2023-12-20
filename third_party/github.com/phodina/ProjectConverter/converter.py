@@ -49,16 +49,18 @@ if __name__ == '__main__':
         elif args.format == 'uvprojx':
             print('Looking for *.uvprojx file in ' + args.path)
             filename = find_file(args.path, '.uvprojx')
+            if not len(filename):
+                filename = find_file(args.path, '.uvproj')
             if len(filename):
                 print('Found project file: ' + filename)
-                project = uvprojxproject.UVPROJXProject(args.path, filename)
+                project = uvprojxproject.UVPROJXProject(os.path.dirname(filename), filename)
                 project.parseProject()
                 project.displaySummary()
 
                 cmakefile = cmake.CMake(project.getProject(), args.path)
                 cmakefile.populateCMake()
             else:
-                print('No project *.uvprojx file found')
+                print('No project *.uvprojx or *.uvproj file found')
         else:
             print ('No format specified')
     else:

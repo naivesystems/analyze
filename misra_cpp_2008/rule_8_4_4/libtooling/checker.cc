@@ -33,9 +33,8 @@ using analyzer::proto::ResultsList;
 
 namespace {
 
-void ReportError(std::string filename, int line_number,
-                 ResultsList* results_list) {
-  std::string error_message =
+void ReportError(string filename, int line_number, ResultsList* results_list) {
+  string error_message =
       absl::StrFormat("函数标识符要么用于调用函数，要么以 & 开头");
   analyzer::proto::Result* pb_result = AddResultToResultsList(
       results_list, filename, line_number, error_message);
@@ -110,7 +109,7 @@ class FuncIdentifierCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new FuncIdentifierCallback;
   callback_->Init(results_list_, &finder_);

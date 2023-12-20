@@ -25,51 +25,50 @@ import (
 )
 
 type SharedOptions struct {
-	AddLineHash                 *bool
-	AllowBuildFail              *bool
-	AvailMemRatio               *float64
-	CheckProgress               *bool
-	CheckerConfig               *string
-	CheckerPathRoot             *string
-	ClangBin                    *string
-	ClangmappingBin             *string
-	ClangqueryBin               *string
-	ClangtidyBin                *string
-	CmakeCXXCompiler            *string
-	CmakeExportCompileCommands  *bool
-	CodeCheckerBin              *string
-	ConfigDir                   *string
-	CppcheckBin                 *string
-	CpplintScript               *string
-	CsaSystemLibOptions         *string
-	DebugMode                   *bool
-	EnableCodeChecker           *bool
-	GccPredefinedMacros         *string
-	IgnoreDirPatterns           analyzerinterface.ArrayFlags
-	IncludeStddef               *string
-	InferBin                    *string
-	InferExtraOptions           *string
-	InferJobs                   *int64
-	KeepBuildActionPercent      *float64
-	Lang                        *string
-	LimitMemory                 *bool
-	MisraCheckerPath            *string
-	ProjectName                 *string
-	ProjectType                 *string
-	PythonBin                   *string
-	QmakeBin                    *string
-	QtProPath                   *string
-	ResultsDir                  *string
-	ScriptContents              *string
-	ShowJsonResults             *bool
-	ShowLineNumber              *bool
-	ShowResults                 *bool
-	ShowResultsCount            *bool
-	SkipBearMake                *bool
-	SrcDir                      *string
-	TimeoutNormal               *int
-	TimeoutOom                  *int
-	DisableParallelismInChecker *bool
+	AddLineHash                 *bool                        `json:"addLineHash,omitempty"`
+	AllowBuildFail              *bool                        `json:"allowBuildFail,omitempty"`
+	AvailMemRatio               *float64                     `json:"availMemRatio,omitempty"`
+	CheckProgress               *bool                        `json:"checkProgress,omitempty"`
+	CheckerConfig               *string                      `json:"checkerConfig,omitempty"`
+	CheckerPathRoot             *string                      `json:"checkerPathRoot,omitempty"`
+	ClangBin                    *string                      `json:"clangBin,omitempty"`
+	ClangmappingBin             *string                      `json:"clangmappingBin,omitempty"`
+	ClangqueryBin               *string                      `json:"clangqueryBin,omitempty"`
+	ClangtidyBin                *string                      `json:"clangtidyBin,omitempty"`
+	CmakeCXXCompiler            *string                      `json:"cmakeCXXCompiler,omitempty"`
+	CmakeExportCompileCommands  *bool                        `json:"cmakeExportCompileCommands,omitempty"`
+	ConfigDir                   *string                      `json:"configDir,omitempty"`
+	CppcheckBin                 *string                      `json:"cppcheckBin,omitempty"`
+	CpplintScript               *string                      `json:"cpplintScript,omitempty"`
+	CsaSystemLibOptions         *string                      `json:"csaSystemLibOptions,omitempty"`
+	DebugMode                   *bool                        `json:"debugMode,omitempty"`
+	GccPredefinedMacros         *string                      `json:"gccPredefinedMacros,omitempty"`
+	IgnoreDirPatterns           analyzerinterface.ArrayFlags `json:"ignoreDirPatterns,omitempty"`
+	IncludeStddef               *string                      `json:"includeStddef,omitempty"`
+	InferBin                    *string                      `json:"inferBin,omitempty"`
+	InferExtraOptions           *string                      `json:"inferExtraOptions,omitempty"`
+	InferJobs                   *int64                       `json:"inferJobs,omitempty"`
+	KeepBuildActionPercent      *float64                     `json:"keepBuildActionPercent,omitempty"`
+	Lang                        *string                      `json:"lang,omitempty"`
+	LimitMemory                 *bool                        `json:"limitMemory,omitempty"`
+	MisraCheckerPath            *string                      `json:"misraCheckerPath,omitempty"`
+	ProjectName                 *string                      `json:"projectName,omitempty"`
+	ProjectType                 *string                      `json:"projectType,omitempty"`
+	PythonBin                   *string                      `json:"pythonBin,omitempty"`
+	QmakeBin                    *string                      `json:"qmakeBin,omitempty"`
+	QtProPath                   *string                      `json:"qtProPath,omitempty"`
+	ResultsDir                  *string                      `json:"resultsDir,omitempty"`
+	ScriptContents              *string                      `json:"scriptContents,omitempty"`
+	SemgrepBin                  *string                      `json:"semgrepBin,omitempty"`
+	ShowJsonResults             *bool                        `json:"showJsonResults,omitempty"`
+	ShowLineNumber              *bool                        `json:"showLineNumber,omitempty"`
+	ShowResults                 *bool                        `json:"showResults,omitempty"`
+	ShowResultsCount            *bool                        `json:"showResultsCount,omitempty"`
+	SkipBearMake                *bool                        `json:"skipBearMake,omitempty"`
+	SrcDir                      *string                      `json:"srcDir,omitempty"`
+	TimeoutNormal               *int                         `json:"timeoutNormal,omitempty"`
+	TimeoutOom                  *int                         `json:"timeoutOom,omitempty"`
+	DisableParallelismInChecker *bool                        `json:"disableParallelismInChecker,omitempty"`
 }
 
 func (s SharedOptions) GetAddLineHash() bool {
@@ -120,10 +119,6 @@ func (s SharedOptions) GetCmakeExportCompileCommands() bool {
 	return *s.CmakeExportCompileCommands
 }
 
-func (s SharedOptions) GetCodeCheckerBin() string {
-	return *s.CodeCheckerBin
-}
-
 func (s SharedOptions) GetConfigDir() string {
 	return *s.ConfigDir
 }
@@ -142,10 +137,6 @@ func (s SharedOptions) GetCsaSystemLibOptions() string {
 
 func (s SharedOptions) GetDebugMode() bool {
 	return *s.DebugMode
-}
-
-func (s SharedOptions) GetEnableCodeChecker() bool {
-	return *s.EnableCodeChecker
 }
 
 func (s SharedOptions) GetGccPredefinedMacros() string {
@@ -272,6 +263,10 @@ func (s SharedOptions) SetSrcDir(srcdir string) {
 	*s.SrcDir = srcdir
 }
 
+func (s SharedOptions) GetSemgrepBin() string {
+	return *s.SemgrepBin
+}
+
 type DefaultOptionValues struct {
 	AddLineHash                 bool
 	AllowBuildFail              bool
@@ -285,13 +280,11 @@ type DefaultOptionValues struct {
 	ClangtidyBin                string
 	CmakeCXXCompiler            string
 	CmakeExportCompileCommands  bool
-	CodeCheckerBin              string
 	ConfigDir                   string
 	CppcheckBin                 string
 	CpplintScript               string
 	CsaSystemLibOptions         string
 	DebugMode                   bool
-	EnableCodeChecker           bool
 	GccPredefinedMacros         string
 	IgnoreDirPatterns           analyzerinterface.ArrayFlags
 	IncludeStddef               string
@@ -309,6 +302,7 @@ type DefaultOptionValues struct {
 	QtProPath                   string
 	ResultsDir                  string
 	ScriptContents              string
+	SemgrepBin                  string
 	ShowJsonResults             bool
 	ShowLineNumber              bool
 	ShowResults                 bool
@@ -326,10 +320,9 @@ var Defaults = DefaultOptionValues{
 	AvailMemRatio:  0.9,
 	CheckProgress:  true,
 	CheckerConfig: `{"csa_system_lib_options":"",
-		"infer_bin":"infer",
+		"infer_bin":"/opt/naivesystems/infer/bin/infer",
 		"clang_bin":"/opt/naivesystems/clang",
-		"code_checker_bin":"CodeChecker",
-		"cppcheck_bin":"/cppcheck/cppcheck",
+		"cppcheck_bin":"/opt/naivesystems/cppcheck/cppcheck",
 		"python_bin":"python3",
 		"clangtidy_bin":"/opt/naivesystems/clang-tidy",
 		"clangquery_bin":"/opt/naivesystems/clang-query",
@@ -337,7 +330,8 @@ var Defaults = DefaultOptionValues{
 		"infer_extra_options":"--max-nesting=3 --bo-field-depth-limit=6",
 		"clangmapping_bin":"/opt/naivesystems/clang-extdef-mapping",
 		"infer_jobs":8,
-		"cpplint_script":"/opt/naivesystems/cpplint.py"}`,
+		"cpplint_script":"/opt/naivesystems/cpplint.py",
+		"semgrep_bin": "semgrep"}`,
 	CheckerPathRoot:             "/opt/naivesystems/",
 	ClangBin:                    "",
 	ClangmappingBin:             "/opt/naivesystems/clang-extdef-mapping",
@@ -345,13 +339,11 @@ var Defaults = DefaultOptionValues{
 	ClangtidyBin:                "",
 	CmakeCXXCompiler:            "clang",
 	CmakeExportCompileCommands:  true,
-	CodeCheckerBin:              "",
 	ConfigDir:                   "/config",
 	CppcheckBin:                 "",
 	CpplintScript:               "/opt/naivesystems/cpplint.py",
 	CsaSystemLibOptions:         "",
 	DebugMode:                   false,
-	EnableCodeChecker:           false,
 	GccPredefinedMacros:         "",
 	IgnoreDirPatterns:           []string{"/src/output/**"},
 	IncludeStddef:               "pure",
@@ -369,6 +361,7 @@ var Defaults = DefaultOptionValues{
 	QtProPath:                   "",
 	ResultsDir:                  "/output",
 	ScriptContents:              "",
+	SemgrepBin:                  "semgrep",
 	ShowJsonResults:             true,
 	ShowLineNumber:              true,
 	ShowResults:                 false,
@@ -396,13 +389,11 @@ func NewSharedOptions() *SharedOptions {
 	option.ClangtidyBin = flag.String("clangtidy_bin", Defaults.ClangtidyBin, "Clang-tidy binary location")
 	option.CmakeCXXCompiler = flag.String("cmake_CXX_compiler", Defaults.CmakeCXXCompiler, "Path of a valid CXX compipler, default clang")
 	option.CmakeExportCompileCommands = flag.Bool("cmake_export_cc", Defaults.CmakeExportCompileCommands, "Directly generate compile commands from CMakeLists.txt")
-	option.CodeCheckerBin = flag.String("code_checker_bin", Defaults.CodeCheckerBin, "CodeChecker binary location")
 	option.ConfigDir = flag.String("config_dir", Defaults.ConfigDir, "Absolute path to a directory containing all configuration files")
 	option.CppcheckBin = flag.String("cppcheck_bin", Defaults.CppcheckBin, "Cppcheck binary location")
 	option.CpplintScript = flag.String("cpplint_script", Defaults.CpplintScript, "Cpplint script location")
 	option.CsaSystemLibOptions = flag.String("csa_system_lib_options", Defaults.CsaSystemLibOptions, "Include path for clang")
 	option.DebugMode = flag.Bool("debug_mode", Defaults.DebugMode, "Whether to display error information")
-	option.EnableCodeChecker = flag.Bool("enable_codechecker", Defaults.EnableCodeChecker, "Use CodeChecker to perform CTU pre-analysis for CSA")
 	option.GccPredefinedMacros = flag.String("gcc_predefined_macros", Defaults.GccPredefinedMacros, "Gcc predefiend macro arguments")
 	option.IncludeStddef = flag.String("include_stddef", Defaults.IncludeStddef, "How to include <stddef.h>. Support pure(using -include), armgcc(including from arm-none-eabi) and none")
 	option.InferBin = flag.String("infer_bin", Defaults.InferBin, "Infer binary location")
@@ -419,12 +410,13 @@ func NewSharedOptions() *SharedOptions {
 	option.QtProPath = flag.String("qt_pro_path", Defaults.QtProPath, "Path of the Qt project file relative to src_dir")
 	option.ResultsDir = flag.String("results_dir", Defaults.ResultsDir, "Absolute path to the directory of results files")
 	option.ScriptContents = flag.String("script_contents", Defaults.ScriptContents, "The contents of script to generate compile_commands.json")
+	option.SemgrepBin = flag.String("semgrep_bin", Defaults.SemgrepBin, "Semgrep binary location")
 	option.ShowJsonResults = flag.Bool("json_results", Defaults.ShowJsonResults, "Whether to output results in protojson format")
 	option.ShowLineNumber = flag.Bool("show_line_number", Defaults.ShowLineNumber, "Show line count infomation")
 	option.ShowResults = flag.Bool("show_results", Defaults.ShowResults, "Show results after the analysis")
 	option.ShowResultsCount = flag.Bool("show_results_count", Defaults.ShowResultsCount, "Show results count group by rules after the analysis")
 	option.SkipBearMake = flag.Bool("skip_bear_make", Defaults.SkipBearMake, "Skip running `bear -- make` to generate compilation database before the analysis")
-	option.SrcDir = flag.String("src_dir", Defaults.SrcDir, "Absolute path to the directory of code files")
+	option.SrcDir = flag.String("src_dir", Defaults.SrcDir, "Path to the directory of code files in the working environment. If it is a relative path, it will be converted to an absolute one which is relative to the current directory")
 	option.TimeoutNormal = flag.Int("timeout_normal", Defaults.TimeoutNormal, "Minutes of timeout for checking single rule. Default value is 90")
 	option.TimeoutOom = flag.Int("timeout_oom", Defaults.TimeoutOom, "Minutes of timeout for specific checkers when limit memory enabled. Default value is 30")
 	option.DisableParallelismInChecker = flag.Bool("disable_parallelism_in_checker", Defaults.DisableParallelismInChecker, "Disable the parallelism of checking multiple files")

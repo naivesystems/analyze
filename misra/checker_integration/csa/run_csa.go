@@ -130,7 +130,11 @@ func runSingleCSA(
 
 	csaAnalyzerInliningMode := jsonOptions.CSAAnalyzerInliningMode
 	if csaAnalyzerInliningMode != nil {
-		cmd_arr = append(cmd_arr, "-Xanalyzer", "-analyzer-inlining-mode="+*csaAnalyzerInliningMode)
+		csaAnalyzerInliningModeStr := "noredundancy"
+		if *csaAnalyzerInliningMode {
+			csaAnalyzerInliningModeStr = "all"
+		}
+		cmd_arr = append(cmd_arr, "-Xanalyzer", "-analyzer-inlining-mode="+csaAnalyzerInliningModeStr)
 	}
 
 	maxLoop := jsonOptions.MaxLoop

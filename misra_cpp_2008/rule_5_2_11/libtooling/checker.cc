@@ -32,10 +32,9 @@ using namespace clang::ast_matchers;
 namespace misra_cpp_2008 {
 namespace rule_5_2_11 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         functionDecl(hasOverloadedOperatorName(",")).bind("operator"), this);
@@ -45,7 +44,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         functionDecl(hasOverloadedOperatorName("||")).bind("operator"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     ASTContext* context = result.Context;
     FunctionDecl const* op = result.Nodes.getNodeAs<FunctionDecl>("operator");
 

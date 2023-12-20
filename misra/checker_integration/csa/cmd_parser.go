@@ -39,6 +39,7 @@ import (
 	"naive.systems/analyzer/cruleslib/stats"
 	"naive.systems/analyzer/misra/checker_integration/compilecommand"
 	"naive.systems/analyzer/misra/utils"
+	telemetry "naive.systems/analyzer/telemetry/client/sender"
 )
 
 type csaBuildAction struct {
@@ -663,6 +664,16 @@ func getTarget(commands []string, details *csaBuildAction) bool {
 		details.compilerTarget = commands[1]
 		return true
 	}
+	for _, t := range targets {
+		prefix := t + "="
+		if strings.HasPrefix(commands[0], prefix) {
+			compilerTarget := strings.TrimLeft(commands[0], prefix)
+			if compilerTarget != "" {
+				details.compilerTarget = compilerTarget
+				return true
+			}
+		}
+	}
 	return false
 }
 
@@ -953,6 +964,7 @@ func GetBuildActionsFromCompileCommands(resultsDir string, compilationDatabase *
 		percentStr := basic.GetPercentString(startedTaskNumbers, taskNumbers)
 		percent := percentStr + "%"
 		if action.lang == "" || action.actionType != COMPILE {
+			telemetry.Send("BuildAction preparation completed", "percent", percent, "startedTaskNumbers", startedTaskNumbers, "taskNumbers", taskNumbers)
 			if checkProgress {
 				basic.PrintfWithTimeStamp(printer.Sprintf("%s BuildAction preparation completed (%v/%v)", percent, startedTaskNumbers, taskNumbers))
 			}
@@ -965,6 +977,7 @@ func GetBuildActionsFromCompileCommands(resultsDir string, compilationDatabase *
 		} else if action.output < sourceFileToBuildActionMap[action.source].output {
 			sourceFileToBuildActionMap[action.source] = action
 		}
+		telemetry.Send("BuildAction preparation completed", "percent", percent, "startedTaskNumbers", startedTaskNumbers, "taskNumbers", taskNumbers)
 		if checkProgress {
 			basic.PrintfWithTimeStamp(printer.Sprintf("%s BuildAction preparation completed (%v/%v)", percent, startedTaskNumbers, taskNumbers))
 			stats.WriteProgress(resultsDir, stats.PP, percentStr, start)
@@ -982,8 +995,9 @@ func GetBuildActionsFromCompileCommands(resultsDir string, compilationDatabase *
 	}
 	glog.Info("GetBuildActionsFromCompileCommands: parsing commands done.")
 	elapsed := time.Since(start)
+	timeUsed := basic.FormatTimeDuration(elapsed)
+	telemetry.Send("BuildAction preparation completed", "start", start, "elapsed", elapsed, "timeUsed", timeUsed)
 	if checkProgress {
-		timeUsed := basic.FormatTimeDuration(elapsed)
 		basic.PrintfWithTimeStamp(printer.Sprintf("BuildAction preparation completed [%s]", timeUsed))
 	}
 	return &BuildActions

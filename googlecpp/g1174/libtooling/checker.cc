@@ -53,10 +53,9 @@ set<pair<std::string, std::string>> protected_use_set;
 // const CXXMethodDecl*
 unordered_map<std::string, pair<string, int>> protected_name_location;
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     auto protectedFunctionDefinitionMatcher =
         cxxRecordDecl(
@@ -74,7 +73,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     finder->addMatcher(protectedFunctionUseMatcher, this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     if (const auto* protected_decl =
             result.Nodes.getNodeAs<CXXMethodDecl>("protecteddecl")) {
       const auto* class_decled =
@@ -113,7 +112,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
 void Checker::Run() const {
@@ -130,7 +129,7 @@ void Checker::Run() const {
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

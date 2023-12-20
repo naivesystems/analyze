@@ -33,9 +33,9 @@ using analyzer::proto::ResultsList;
 
 namespace {
 
-void ReportError(QualType destination, QualType source, string loc,
-                 std::string path, int line_number, ResultsList* results_list) {
-  std::string error_message = absl::StrFormat(
+void ReportError(QualType destination, QualType source, string loc, string path,
+                 int line_number, ResultsList* results_list) {
+  string error_message = absl::StrFormat(
       "[C0403][misra-c2012-21.18]: size_t value invalid as function argument.\n"
       "source pointer object type: %s\n"
       "destination object type: %s\n"
@@ -78,7 +78,7 @@ class SizetCallback : public MatchFinder::MatchCallback {
         clang::Expr::EvalResult rint;
         third_arg->EvaluateAsInt(rint, *context);
         if (rint.Val.isInt() && rint.Val.getInt() < 0) {
-          std::string path =
+          string path =
               libtooling_utils::GetFilename(third_arg, result.SourceManager);
           int line_number =
               libtooling_utils::GetLine(third_arg, result.SourceManager);
@@ -96,7 +96,7 @@ class SizetCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new SizetCallback;
   callback_->Init(results_list_, &finder_);

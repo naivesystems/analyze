@@ -76,14 +76,13 @@ namespace googlecpp {
 namespace g1204 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
   int maxAllowedReturnNum;
   int maxAllowedFuncLine;
 
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder, int maxAllowedReturnNum,
-            int maxAllowedFuncLine) {
+  void Init(ResultsList* results_list, MatchFinder* finder,
+            int maxAllowedReturnNum, int maxAllowedFuncLine) {
     results_list_ = results_list;
     // It will also catch lambda functions
     finder->addMatcher(functionDecl().bind("func"), this);
@@ -91,7 +90,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     this->maxAllowedFuncLine = maxAllowedFuncLine;
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     if (const auto* func = result.Nodes.getNodeAs<FunctionDecl>("func")) {
       if (misra::libtooling_utils::IsInSystemHeader(func, result.Context))
         return;
@@ -115,11 +114,11 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list,
-                   int maxAllowedReturnNum, int maxAllowedFuncLine) {
+void Checker::Init(ResultsList* results_list, int maxAllowedReturnNum,
+                   int maxAllowedFuncLine) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_, maxAllowedReturnNum,

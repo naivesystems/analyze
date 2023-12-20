@@ -26,6 +26,8 @@ namespace bigmain {
 
 class Rule {
  public:
+  virtual ~Rule() {}
+
   static std::vector<Rule*>& GetAllRules() {
     static std::vector<Rule*>* all_rules = new std::vector<Rule*>();
     return *all_rules;
@@ -35,9 +37,12 @@ class Rule {
 
   // Returns true if this rule is handled
   virtual bool Entrypoint(int argc, char** argv, int* return_value) = 0;
+
+  // Unconditionally run this rule.
+  virtual int Run(int argc, char** argv) = 0;
 };
 
 }  // namespace bigmain
 }  // namespace podman_image
 
-#endif
+#endif  // ANALYZER_PODMAN_IMAGE_BIGMAIN_RULE_H_

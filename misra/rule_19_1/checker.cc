@@ -29,10 +29,9 @@ using namespace llvm;
 
 namespace misra {
 namespace rule_19_1 {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         binaryOperator(
@@ -58,7 +57,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Expr* e = result.Nodes.getNodeAs<Expr>("op");
     const VarDecl* decl = result.Nodes.getNodeAs<VarDecl>("LDecl");
     if (misra::libtooling_utils::IsInSystemHeader(e, result.Context)) {

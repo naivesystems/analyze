@@ -46,10 +46,9 @@ namespace googlecpp {
 namespace g1183 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         cxxRecordDecl(isClass(), unless(isExpansionInSystemHeader()))
@@ -57,7 +56,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     auto* SM = result.SourceManager;
     const auto* record_decl = result.Nodes.getNodeAs<RecordDecl>("record_decl");
     unsigned int first_decl_line = 0;
@@ -132,7 +131,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   struct ClassInfo {
     unsigned int public_line = 0;
     unsigned int protected_line = 0;
@@ -141,7 +140,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   };
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

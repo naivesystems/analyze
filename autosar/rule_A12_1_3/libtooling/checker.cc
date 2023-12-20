@@ -37,12 +37,11 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "If all user-defined constructors of a class initialize data members with constant values that are the same across all constructors, then data members shall be initialized using NSDMI instrad.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -56,8 +55,7 @@ namespace libtooling {
 typedef unordered_map<const FieldDecl*, vector<pair<const Expr*, string>>*>
     CheckMap;
 
-string getValue(const ast_matchers::MatchFinder::MatchResult& result,
-                const Expr* expr) {
+string getValue(const MatchFinder::MatchResult& result, const Expr* expr) {
   clang::SourceRange range =
       SourceRange(result.SourceManager->getSpellingLoc(expr->getBeginLoc()),
                   result.SourceManager->getSpellingLoc(expr->getEndLoc()));
@@ -70,9 +68,9 @@ string getValue(const ast_matchers::MatchFinder::MatchResult& result,
   return source.str();
 }
 
-void addExprToCheckMapItem(
-    CheckMap* checkMap, const Expr* expr, const FieldDecl* FD,
-    const ast_matchers::MatchFinder::MatchResult& result) {
+void addExprToCheckMapItem(CheckMap* checkMap, const Expr* expr,
+                           const FieldDecl* FD,
+                           const MatchFinder::MatchResult& result) {
   if (!checkMap->count(FD)) {
     vector<pair<const Expr*, string>>* valueList =
         new vector<pair<const Expr*, string>>;
@@ -95,10 +93,9 @@ bool hasInitByVariable(CheckMap* checkMap, const FieldDecl* FD) {
   return checkMap->count(FD) && (*checkMap)[FD] == nullptr;
 }
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(
@@ -107,7 +104,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const CXXRecordDecl* record =
         result.Nodes.getNodeAs<CXXRecordDecl>("record");
     CheckMap initMap;
@@ -131,7 +128,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
           // use NSDMI
           markAsInitByVariable(&initMap, FD);
           if (FD->hasInClassInitializer()) {
-            std::string path =
+            string path =
                 misra::libtooling_utils::GetFilename(FD, result.SourceManager);
             int line_number =
                 misra::libtooling_utils::GetLine(FD, result.SourceManager);
@@ -177,7 +174,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
               // should not use NSDMI
               markAsInitByVariable(&initMap, FD);
               if (FD->hasInClassInitializer()) {
-                std::string path = misra::libtooling_utils::GetFilename(
+                string path = misra::libtooling_utils::GetFilename(
                     FD, result.SourceManager);
                 int line_number =
                     misra::libtooling_utils::GetLine(FD, result.SourceManager);
@@ -203,7 +200,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
             if (memberInit.first->hasInClassInitializer()) {
               // this data member is initialized with different values, so it
               // should not use NSDMI
-              std::string path = misra::libtooling_utils::GetFilename(
+              string path = misra::libtooling_utils::GetFilename(
                   memberInit.first, result.SourceManager);
               int line_number = misra::libtooling_utils::GetLine(
                   memberInit.first, result.SourceManager);
@@ -216,7 +213,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
           // this data member is initialized with the same constant values, so
           // it should use NSDMI, report error on each constructor decl
           for (auto value : values) {
-            std::string path = misra::libtooling_utils::GetFilename(
+            string path = misra::libtooling_utils::GetFilename(
                 value.first, result.SourceManager);
             int line_number = misra::libtooling_utils::GetLine(
                 value.first, result.SourceManager);
@@ -245,10 +242,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

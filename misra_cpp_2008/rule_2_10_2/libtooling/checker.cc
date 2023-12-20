@@ -123,7 +123,7 @@ class Callback : public MatchFinder::MatchCallback {
   void run(const MatchFinder::MatchResult& result);
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
 void Callback::Init(ResultsList* results_list, MatchFinder* finder) {
@@ -148,7 +148,7 @@ void Callback::run(const MatchFinder::MatchResult& result) {
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

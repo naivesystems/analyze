@@ -237,6 +237,10 @@ class ASTVisitor : public RecursiveASTVisitor<ASTVisitor> {
     funcDecls.emplace_back(fd);  // Store the node
     return true;                 // Continue traversal
   }
+  bool VisitCallExpr(const CallExpr* ce) {
+    callExprs.emplace_back(ce);  // Store the node
+    return true;                 // Continue traversal
+  }
   bool VisitArrayType(const ArrayType* at) {
     arrayTypes.emplace_back(at);  // Store the node
     return true;                  // Continue traversal
@@ -272,6 +276,7 @@ class ASTVisitor : public RecursiveASTVisitor<ASTVisitor> {
     return binaryOps;
   }
   const vector<const FunctionDecl*>& getFuncDecls() const { return funcDecls; }
+  const vector<const CallExpr*>& getCallExprs() const { return callExprs; }
   const vector<const ArrayType*>& getArrayTypes() const { return arrayTypes; }
   const vector<const FunctionType*>& getFuncTypes() const { return funcTypes; }
   const vector<const PointerType*>& getPtrTypes() const { return ptrTypes; }
@@ -286,6 +291,7 @@ class ASTVisitor : public RecursiveASTVisitor<ASTVisitor> {
   vector<const VarDecl*> varDecls{};
   vector<const BinaryOperator*> binaryOps{};
   vector<const FunctionDecl*> funcDecls{};
+  vector<const CallExpr*> callExprs{};
   vector<const ArrayType*> arrayTypes{};
   vector<const FunctionType*> funcTypes{};
   vector<const PointerType*> ptrTypes{};

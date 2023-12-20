@@ -49,7 +49,7 @@ int rule_1_0_1(int argc, char** argv) {
       ns_libtooling_checker);
   gflags::ParseCommandLineFlags(&gflag_argc, &argv, false);
   if (!expected_parser) {
-    llvm::errs() << expected_parser.takeError();
+    errs() << expected_parser.takeError();
     return 1;
   }
   CommonOptionsParser& options_parser = expected_parser.get();

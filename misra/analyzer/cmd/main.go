@@ -38,6 +38,7 @@ import (
 	"naive.systems/analyzer/cruleslib/filter"
 	"naive.systems/analyzer/cruleslib/i18n"
 	"naive.systems/analyzer/cruleslib/options"
+	"naive.systems/analyzer/cruleslib/runner"
 	"naive.systems/analyzer/cruleslib/stats"
 	googlecpp "naive.systems/analyzer/googlecpp/analyzer"
 	"naive.systems/analyzer/misra/analyzer/analyzerinterface"
@@ -45,7 +46,9 @@ import (
 	"naive.systems/analyzer/misra/checker_integration/checkrule"
 	misra_c_2012_crules "naive.systems/analyzer/misra_c_2012_crules/analyzer"
 	misra_cpp_2008 "naive.systems/analyzer/misra_cpp_2008/analyzer"
+	telemetry "naive.systems/analyzer/telemetry/client/sender"
 	toy_rules "naive.systems/analyzer/toy_rules/analyzer"
+
 )
 
 var compileCommandsPath = "/src/compile_commands.json"
@@ -83,23 +86,27 @@ func main() {
 	if logDir.Value.String() == "" {
 		err := flag.Set("log_dir", filepath.Join(sharedOptions.GetResultsDir(), "logs"))
 		if err != nil {
+			telemetry.Wait()
 			glog.Fatalf("failed to set default log_dir: %v", err)
 		}
 	}
 	err := analyzerinterface.CreateLogDir(logDir.Value.String())
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("failed to create log dir: %v", err)
 	}
 
 	if !sharedOptions.GetDebugMode() {
 		err := flag.Set("stderrthreshold", "FATAL")
 		if err != nil {
+			telemetry.Wait()
 			glog.Fatalf("failed to set default stderrthreshold: %v", err)
 		}
 	}
 
 	fmt.Println("(c) 2023 Naive Systems Ltd.")
 
+	telemetry.Send("Start to generate compilation database", "sharedOptions", sharedOptions)
 	if sharedOptions.GetCheckProgress() {
 		basic.PrintfWithTimeStamp(printer.Sprintf("Start to generate compilation database"))
 		stats.WriteProgress(sharedOptions.GetResultsDir(), stats.CC, "0%", time.Now())
@@ -107,6 +114,7 @@ func main() {
 
 	numWorkers, err := options.ParseLimitMemory(sharedOptions, numWorkersStr)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("options.ParseLimitMemory: %v", err)
 	}
 
@@ -116,6 +124,7 @@ func main() {
 
 	err = analyzerinterface.CreateResultDir(sharedOptions.GetResultsDir())
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("failed to create result dir: %v", err)
 	}
 
@@ -123,24 +132,34 @@ func main() {
 	resultsWithSuffixPath := filepath.Join(sharedOptions.GetResultsDir(), "results.nsa_results")
 	resultsJsonPath := filepath.Join(sharedOptions.GetResultsDir(), "nsa_results.json")
 	if !filepath.IsAbs(sharedOptions.GetConfigDir()) {
+		telemetry.Wait()
 		glog.Fatal("configDir must be an absolute path")
 	}
 
 	if sharedOptions.GetSrcDir() != "/src" {
-		srcDir := filepath.Join("/src", sharedOptions.GetSrcDir())
+		workingDir, err := os.Getwd()
+		if err != nil {
+			telemetry.Wait()
+			glog.Fatalf("os.Getwd: %v", err)
+		}
+		srcDir := sharedOptions.GetSrcDir()
+		if !filepath.IsAbs(srcDir) {
+			srcDir = filepath.Join(workingDir, sharedOptions.GetSrcDir())
+		}
 		compileCommandsPath = filepath.Join(srcDir, analyzerinterface.CCJson)
 		sharedOptions.SetSrcDir(srcDir)
 	}
 
 	projType, err := options.ParseProjectType(sharedOptions)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("options.ParseProjectType: %v", err)
 	}
 	if projType == analyzerinterface.Keil {
 		options.ProcessKeilProject(sharedOptions)
 	}
 
-	shouldCreateNew := (!sharedOptions.GetSkipBearMake() && (projType == analyzerinterface.Make || projType == analyzerinterface.CMake || projType == analyzerinterface.QMake || projType == analyzerinterface.Script))
+	shouldCreateNew := (!sharedOptions.GetSkipBearMake() && (projType == analyzerinterface.Make || projType == analyzerinterface.CMake || projType == analyzerinterface.QMake || projType == analyzerinterface.Script || projType == analyzerinterface.None))
 	onlyCppcheck, err := analyzerinterface.CheckCompilationDatabase(
 		compileCommandsPath,
 		shouldCreateNew,
@@ -153,6 +172,7 @@ func main() {
 		/*isDev=*/ false,
 	)
 	if err != nil {
+		telemetry.Wait()
 		if os.IsNotExist(err) {
 			glog.Fatal("Compilation database not found, consider removing `-skip_bear_make`?")
 		} else {
@@ -169,6 +189,7 @@ func main() {
 	// 2) if the number of code lines exceed the maximum limit.
 	clines, cpplines, err := options.CheckCodeLines(compileCommandsPath, sharedOptions, linesLimitStr)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("options.CheckCodeLines: %v", err)
 	}
 
@@ -178,6 +199,7 @@ func main() {
 
 	start := time.Now()
 
+	telemetry.Send("Start parsing compilation database", "start", start)
 	if sharedOptions.GetCheckProgress() {
 		basic.PrintfWithTimeStamp(printer.Sprintf("Start parsing compilation database"))
 		stats.WriteProgress(sharedOptions.GetResultsDir(), stats.PP, "0%", start)
@@ -185,10 +207,12 @@ func main() {
 	// TODO: there still some duplicated action which remove ignore files twice.
 	compileCommandsPath, err := analyzerinterface.GenerateActualCCJsonByRemoveIgnoreFiles(compileCommandsPath, sharedOptions.GetIgnoreDirPatterns())
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("analyzerinterface.GenerateActualCCJsonByRemoveIgnoreFiles(: %v", err)
 	}
 	filteredCompileCommandsFolder, err := analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(compileCommandsPath)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("analyzerinterface.CreateTempFolderContainsFilteredCompileCommandsJsonFile(: %v", err)
 	}
 	defer os.RemoveAll(filteredCompileCommandsFolder)
@@ -197,18 +221,44 @@ func main() {
 	checkRulesPath := filepath.Join(sharedOptions.GetConfigDir(), "check_rules")
 	checkRules, err := analyzerinterface.ReadCheckRules(checkRulesPath)
 	if err != nil {
-		glog.Errorf("failed to read check rules from %s: %v", checkRulesPath, err)
+		telemetry.Wait()
+		glog.Fatalf("failed to read check rules from %s: %v", checkRulesPath, err)
 	}
 
 	var allResults *pb.ResultsList
 	standardSet, err := checkrule.ConstructStandardSet(checkRules)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatalf("failed to construct standard set: %v", err)
 	}
 
 	err = analyzerinterface.CleanResultDir(sharedOptions.GetResultsDir())
 	if err != nil {
 		glog.Errorf("failed to clean log and result dir: %v", err)
+	}
+
+	coccinelleResults, err := runner.RunCoccinelle(sharedOptions.GetSrcDir(), sharedOptions.GetConfigDir())
+	if err != nil {
+		glog.Errorf("coccinelle.Run: %v", err)
+	} else {
+		coccinelleResults = analyzerinterface.ProcessIgnoreDir(coccinelleResults, &sharedOptions.IgnoreDirPatterns)
+		if allResults == nil {
+			allResults = coccinelleResults
+		} else {
+			allResults.Results = append(allResults.Results, coccinelleResults.Results...)
+		}
+	}
+
+	semgrepResults, err := runner.RunSemgrep(sharedOptions.GetSrcDir(), sharedOptions.GetConfigDir(), sharedOptions.GetSemgrepBin())
+	if err != nil {
+		glog.Errorf("semgrep.Run: %v", err)
+	} else {
+		semgrepResults = analyzerinterface.ProcessIgnoreDir(semgrepResults, &sharedOptions.IgnoreDirPatterns)
+		if allResults == nil {
+			allResults = semgrepResults
+		} else {
+			allResults.Results = append(allResults.Results, semgrepResults.Results...)
+		}
 	}
 
 	csaSystemLibOptionsCopy := parsedCheckerConfig.CsaSystemLibOptions
@@ -237,6 +287,7 @@ func main() {
 
 		if len(filteredCheckRules) > 0 {
 			start := time.Now()
+			telemetry.Send("Start preprocessing C/C++ files", "start", start)
 			basic.PrintfWithTimeStamp(printer.Sprintf("Start preprocessing C/C++ files"))
 			envOptions := options.NewEnvOptionsFromShared(
 				standardSet,
@@ -250,6 +301,7 @@ func main() {
 			)
 			elapsed := time.Since(start)
 			timeUsed := basic.FormatTimeDuration(elapsed)
+			telemetry.Send("Preprocessing C/C++ files completed", "start", start, "envOptions", envOptions, "elapsed", elapsed, "timeUsed", timeUsed)
 			basic.PrintfWithTimeStamp(printer.Sprintf("Preprocessing C/C++ files completed [%s]", timeUsed))
 
 			results := checkRuleSet(sharedOptions.GetSrcDir(), ruleSet, filteredCheckRules, envOptions, printer)
@@ -274,6 +326,7 @@ func main() {
 
 			err = checker_integration.DeleteRepeatedResults(results)
 			if err != nil {
+				telemetry.Wait()
 				glog.Fatal(err)
 			}
 
@@ -317,15 +370,18 @@ func main() {
 	// write results
 	err = analyzerinterface.WriteResults(allResults, resultsPath)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 	}
 	err = analyzerinterface.WriteResults(allResults, resultsWithSuffixPath)
 	if err != nil {
+		telemetry.Wait()
 		glog.Fatal(err)
 	}
 	if sharedOptions.GetShowJsonResults() {
 		err = analyzerinterface.WriteJsonResults(allResults, resultsJsonPath)
 		if err != nil {
+			telemetry.Wait()
 			glog.Fatal(err)
 		}
 	}
@@ -346,6 +402,7 @@ func main() {
 	elapsed := time.Since(start)
 	if sharedOptions.GetCheckProgress() {
 		timeUsed := basic.FormatTimeDuration(elapsed)
+		telemetry.Send("Total time for analysis", "start", start, "elapsed", elapsed, "timeUsed", timeUsed, "resultsCount", len(allResults.Results))
 		basic.PrintfWithTimeStamp(printer.Sprintf("Total time for analysis: %s", timeUsed))
 	}
 
@@ -371,6 +428,7 @@ func main() {
 		glog.Errorf("failed to compress log files: %v", err)
 	}
 	glog.Flush()
+	telemetry.Wait()
 }
 
 type runFuncType = func([]checkrule.CheckRule, string, *options.EnvOptions) (*pb.ResultsList, []error)
@@ -403,13 +461,15 @@ func checkRuleSet(
 			glog.Infof("nothing to check for %s rules", strings.ToUpper(rulePrefix))
 		} else {
 			start := time.Now()
+			telemetry.Send("Start analyzing C/C++ files", "srcdir", srcdir, "rulePrefix", rulePrefix, "checkRules", checkRules, "envOptions", envOptions, "start", start)
 			if envOptions.CheckProgress {
 				basic.PrintfWithTimeStamp(printer.Sprintf("Start analyzing C/C++ files"))
 				stats.WriteProgress(envOptions.ResultsDir, stats.AC, "0%", start)
 			}
-			runner, error := selectRun(rulePrefix)
-			if error != nil {
-				glog.Fatal(error)
+			runner, err := selectRun(rulePrefix)
+			if err != nil {
+				telemetry.Wait()
+				glog.Fatal(err)
 			}
 			// TODO: handle onlyCppcheck
 			results, errors := runner(checkRules, srcdir, envOptions)
@@ -419,8 +479,9 @@ func checkRuleSet(
 				}
 			}
 			elapsed := time.Since(start)
+			timeUsed := basic.FormatTimeDuration(elapsed)
+			telemetry.Send("Analyzing C/C++ files completed", "start", start, "elapsed", elapsed, "timeUsed", timeUsed)
 			if envOptions.CheckProgress {
-				timeUsed := basic.FormatTimeDuration(elapsed)
 				basic.PrintfWithTimeStamp(printer.Sprintf("Analyzing C/C++ files completed [%s]", timeUsed))
 			}
 			return results

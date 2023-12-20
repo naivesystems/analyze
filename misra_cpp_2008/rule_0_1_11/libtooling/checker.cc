@@ -63,7 +63,7 @@ class ParamCallback : public MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const DeclRefExpr* callback_fd =
         result.Nodes.getNodeAs<DeclRefExpr>("callback_fd");
 
@@ -133,13 +133,13 @@ class ParamCallback : public MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   // key is function qualifier(if any) + function name, value is a list of
   // function references with the given key as name.
   std::unordered_map<std::string, vector<MethodInfo>> callback_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   callback_ = new ParamCallback;
   callback_->Init(result_list, &finder_);
 }

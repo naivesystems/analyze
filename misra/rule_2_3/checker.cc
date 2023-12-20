@@ -31,7 +31,7 @@ using analyzer::proto::ResultsList;
 namespace misra {
 namespace rule_2_3 {
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   finder_.addMatcher(typedefDecl().bind("typedef_decl"), this);
 }

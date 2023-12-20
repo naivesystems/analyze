@@ -25,7 +25,7 @@ namespace bigmain {
 
 bool SuffixRule::Entrypoint(int argc, char** argv, int* return_value) {
   if (!absl::EndsWith(argv[0], suffix_)) return false;
-  *return_value = fn_(argc, argv);
+  *return_value = Run(argc, argv);
   return true;
 }
 

@@ -48,7 +48,7 @@ int g1178(int argc, char** argv) {
       libtooling_argc, &const_argv[argc - libtooling_argc],
       ns_libtooling_checker);
   if (!ep) {
-    llvm::errs() << ep.takeError();
+    errs() << ep.takeError();
     return 1;
   }
   tooling::CommonOptionsParser& op = ep.get();

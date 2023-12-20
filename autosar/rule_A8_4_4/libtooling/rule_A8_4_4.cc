@@ -65,13 +65,13 @@ int rule_A8_4_4(int argc, char** argv) {
       ns_libtooling_checker);
   gflags::ParseCommandLineFlags(&gflag_argc, &argv, false);
   if (!expected_parser) {
-    llvm::errs() << expected_parser.takeError();
+    errs() << expected_parser.takeError();
     return 1;
   }
   CommonOptionsParser& OptionsParser = expected_parser.get();
   ClangTool tool(OptionsParser.getCompilations(),
                  OptionsParser.getSourcePathList());
-  analyzer::proto::ResultsList all_results;
+  ResultsList all_results;
   autosar::rule_A8_4_4::libtooling::Checker checker;
   checker.Init(&all_results);
   int status =

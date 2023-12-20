@@ -1,7 +1,19 @@
 /*
-Copyright 2023 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "autosar/rule_A2_7_1/libtooling/checker.h"
@@ -65,8 +77,7 @@ void CheckCommentConsumer::ReportError(std::string path, int line_number,
   std::string error_message =
       "The character \\ shall not occur as a last character of a C++ comment.";
   analyzer::proto::Result* pb_result =
-      misra::proto_util::AddResultToResultsList(results_list_, path,
-                                                line_number, error_message);
+      AddResultToResultsList(results_list_, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }

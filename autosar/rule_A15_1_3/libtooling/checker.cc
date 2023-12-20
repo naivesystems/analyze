@@ -33,11 +33,10 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message = "All thrown exceptions should be unique.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  string error_message = "All thrown exceptions should be unique.";
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -48,10 +47,9 @@ namespace autosar {
 namespace rule_A15_1_3 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(
@@ -61,19 +59,18 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const CXXConstructExpr* exception_construct_expr =
         result.Nodes.getNodeAs<CXXConstructExpr>("exception_construct_expr");
 
-    const std::string exception =
-        misra::libtooling_utils::GetTokenFromSourceLoc(
-            result.SourceManager, exception_construct_expr->getBeginLoc(),
-            exception_construct_expr->getEndLoc());
+    const string exception = misra::libtooling_utils::GetTokenFromSourceLoc(
+        result.SourceManager, exception_construct_expr->getBeginLoc(),
+        exception_construct_expr->getEndLoc());
 
     if (exception_set.insert(exception).second) {
       return;
     } else {
-      std::string path = misra::libtooling_utils::GetFilename(
+      string path = misra::libtooling_utils::GetFilename(
           exception_construct_expr, result.SourceManager);
       int line_number = misra::libtooling_utils::GetLine(
           exception_construct_expr, result.SourceManager);
@@ -83,11 +80,11 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  std::set<std::string> exception_set;
-  analyzer::proto::ResultsList* results_list_;
+  std::set<string> exception_set;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

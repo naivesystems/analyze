@@ -49,6 +49,7 @@ import (
 	"naive.systems/analyzer/misra/checker_integration/csa"
 	"naive.systems/analyzer/misra/checker_integration/libtooling"
 	"naive.systems/analyzer/misra/utils"
+	telemetry "naive.systems/analyzer/telemetry/client/sender"
 )
 
 func ListSourceFiles(compileCommandsPath string, ignoreDirPatterns []string) ([]string, error) {
@@ -453,7 +454,6 @@ func PreAnalyze(
 	resultsDir string,
 	config *pb.CheckerConfiguration,
 	checkProgress bool,
-	enableCodeChecker bool,
 	numWorkers int32,
 	ignoreDirPatterns []string,
 	lang string,
@@ -461,7 +461,7 @@ func PreAnalyze(
 ) (map[string]string, error) {
 	glog.Infof("Start PreAnalyze")
 
-	err := resolveCheckerBinariesPath(checkRules, config, enableCodeChecker)
+	err := resolveCheckerBinariesPath(checkRules, config)
 	if err != nil {
 		return nil, err
 	}
@@ -490,7 +490,6 @@ func PreAnalyze(
 		resultsDir,
 		config,
 		checkProgress,
-		enableCodeChecker,
 		numWorkers,
 		ignoreDirPatterns,
 		lang,
@@ -508,7 +507,6 @@ func PreAnalyzeBody(
 	resultsDir string,
 	config *pb.CheckerConfiguration,
 	checkProgress bool,
-	enableCodeChecker bool,
 	numWorkers int32,
 	ignoreDirPatterns []string,
 	lang string,
@@ -521,25 +519,19 @@ func PreAnalyzeBody(
 	}
 	if (usedCheckers[checker_integration.CSA] || usedCheckers[checker_integration.Misra]) && !onlyCppcheck {
 		start := time.Now()
+		telemetry.Send("Start preparing CTU information", "start", start, "config", config)
 		if checkProgress {
 			basic.PrintfWithTimeStamp(printer.Sprintf("Start preparing CTU information"))
 			stats.WriteProgress(resultsDir, stats.CTU, "0%", start)
 		}
-		if enableCodeChecker {
-			err := csa.GenerateCTUExtraArgumentsFromCodeChecker(compileCommandsPath, resultsDir, config)
-			if err != nil {
-				return dumpErrors, fmt.Errorf("csa.GenerateCTUExtraArgumentsFromCodeChecker: %v", err)
-			}
-		} else {
-			// currently use our pre-analyzer
-			err := csa.GenerateCTUExtraArguments(compileCommandsPath, resultsDir, config, checkProgress, lang, numWorkers)
-			if err != nil {
-				return dumpErrors, fmt.Errorf("csa.GenerateCTUExtraArguments: %v", err)
-			}
+		err := csa.GenerateCTUExtraArguments(compileCommandsPath, resultsDir, config, checkProgress, lang, numWorkers)
+		if err != nil {
+			return dumpErrors, fmt.Errorf("csa.GenerateCTUExtraArguments: %v", err)
 		}
 		elapsed := time.Since(start)
+		timeUsed := basic.FormatTimeDuration(elapsed)
+		telemetry.Send("CTU information preparation completed", "start", start, "elapsed", elapsed, "timeUsed", timeUsed)
 		if checkProgress {
-			timeUsed := basic.FormatTimeDuration(elapsed)
 			basic.PrintfWithTimeStamp(printer.Sprintf("CTU information preparation completed [%s]", timeUsed))
 		}
 	}
@@ -550,6 +542,7 @@ func PreAnalyzeBody(
 		var finishededTaskNumbers int = 0
 
 		start := time.Now()
+		telemetry.Send("Start preparing STU information", "start", start)
 		if checkProgress {
 			basic.PrintfWithTimeStamp(printer.Sprintf("Start preparing STU information"))
 			stats.WriteProgress(resultsDir, stats.STU, "0%", start)
@@ -566,6 +559,7 @@ func PreAnalyzeBody(
 		for i := 0; i < taskNumbers; i++ {
 			actionErrs := <-results
 			finishededTaskNumbers++
+			telemetry.Send("STU information preparation completed", "finishededTaskNumbers", finishededTaskNumbers, "taskNumbers", taskNumbers)
 			if checkProgress {
 				percent := basic.GetPercentString(finishededTaskNumbers, taskNumbers)
 				stats.WriteProgress(resultsDir, stats.STU, percent, start)
@@ -585,8 +579,9 @@ func PreAnalyzeBody(
 		})
 
 		elapsed := time.Since(start)
+		timeUsed := basic.FormatTimeDuration(elapsed)
+		telemetry.Send("STU information preparation completed", "start", start, "elapsed", elapsed, "timeUsed", timeUsed)
 		if checkProgress {
-			timeUsed := basic.FormatTimeDuration(elapsed)
 			basic.PrintfWithTimeStamp(printer.Sprintf("STU information preparation completed [%s]", timeUsed))
 		}
 	}
@@ -672,6 +667,7 @@ func Analyze(
 	if numWorkers == 0 {
 		numWorkers = int32(runtime.NumCPU())
 	}
+	telemetry.Send("Use CPU(s)", "numWorkers", numWorkers)
 	if checkProgress {
 		basic.PrintfWithTimeStamp(printer.Sprintf("Use %d CPU(s)", numWorkers))
 	}
@@ -701,13 +697,14 @@ func Analyze(
 
 				elapsed := time.Since(start)
 				currentFinishedNumber := atomic.AddInt32(&finishedTaskNumbers, 1)
+				timeUsed := basic.FormatTimeDuration(elapsed)
+				totalRuleNumber := len(checkRules)
+				ruleName := j.Rule.Name
+				telemetry.Send("Analysis completed", "ruleName", ruleName, "currentFinishedNumber", currentFinishedNumber, "totalRuleNumber", totalRuleNumber, "timeUsed", timeUsed)
 				if checkProgress {
 					percent := basic.GetPercentString(int(currentFinishedNumber), len(checkRules))
 					stats.WriteProgress(resultsDir, stats.AC, percent, analyzeStart)
 					percent += "%"
-					totalRuleNumber := len(checkRules)
-					ruleName := j.Rule.Name
-					timeUsed := basic.FormatTimeDuration(elapsed)
 					basic.PrintfWithTimeStamp(printer.Sprintf("Analysis of %s completed (%s, %v/%v) [%s]", ruleName, percent, currentFinishedNumber, totalRuleNumber, timeUsed))
 
 				}
@@ -736,6 +733,7 @@ func Analyze(
 			select {
 			case <-sigs:
 				// if recived a SIGINT, stop collector and analyze rule loop
+				telemetry.Send("Ctrl C Pressed. Stop analysis")
 				if checkProgress {
 					basic.PrintfWithTimeStamp("Ctrl C Pressed. Stop analysis")
 				}
@@ -790,8 +788,9 @@ func Analyze(
 	collectorWg.Wait()
 	glog.Infof("Finish Analyze")
 	analyzeElapsed := time.Since(analyzeStart)
+	timeUsed := basic.FormatTimeDuration(analyzeElapsed)
+	telemetry.Send("Analysis completed", "analyzeStart", analyzeStart, "analyzeElapsed", analyzeElapsed, "timeUsed", timeUsed)
 	if checkProgress {
-		timeUsed := basic.FormatTimeDuration(analyzeElapsed)
 		basic.PrintfWithTimeStamp(printer.Sprintf("Analysis completed [%s]", timeUsed))
 	}
 	return allResults
@@ -849,11 +848,10 @@ func ExecMixture(checkRule checkrule.CheckRule, compileCommandsPath, resultsDir,
 	return nil
 }
 
-func resolveCheckerBinariesPath(checkRules []checkrule.CheckRule, config *pb.CheckerConfiguration, enableCodeChecker bool) error {
+func resolveCheckerBinariesPath(checkRules []checkrule.CheckRule, config *pb.CheckerConfiguration) error {
 	binPathSet := []*string{
 		&config.InferBin,
 		&config.ClangBin,
-		&config.CodeCheckerBin,
 		&config.CppcheckBin,
 		&config.PythonBin,
 		&config.ClangtidyBin,
@@ -861,11 +859,9 @@ func resolveCheckerBinariesPath(checkRules []checkrule.CheckRule, config *pb.Che
 		&config.ClangmappingBin,
 	}
 	for _, binPath := range binPathSet {
-		if *binPath == config.CodeCheckerBin && !enableCodeChecker {
-			continue
-		}
 		resolvedBinPath, err := utils.ResovleBinaryPath(*binPath)
 		if err != nil {
+			telemetry.Wait()
 			glog.Fatalf("utils.ResovleBinaryPath: %v", err)
 		}
 		*binPath = resolvedBinPath
@@ -883,6 +879,7 @@ func resolveCheckerBinariesPath(checkRules []checkrule.CheckRule, config *pb.Che
 		progName := filepath.Join(config.MisraCheckerPath, ruleNumber)
 		_, err := utils.ResovleBinaryPath(progName)
 		if err != nil {
+			telemetry.Wait()
 			glog.Fatalf("utils.ResovleBinaryPath: %v", err)
 		}
 	}

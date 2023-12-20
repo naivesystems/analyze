@@ -44,7 +44,7 @@ namespace misra_cpp_2008 {
 namespace rule_7_3_4 {
 namespace libtooling {
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   finder_.addMatcher(usingDirectiveDecl().bind("using"), this);
 }

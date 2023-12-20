@@ -34,15 +34,14 @@ namespace g1188 {
 namespace libtooling {
 
 extern FuncInfo2ParamInfos func_info_2_param_infos;
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     AddFuncOutputParamMatchers(finder, this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     FuncOutputParamCallback(result, func_info_2_param_infos);
   }
 

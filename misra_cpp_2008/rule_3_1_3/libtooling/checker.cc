@@ -30,15 +30,14 @@ using namespace llvm;
 namespace misra_cpp_2008 {
 namespace rule_3_1_3 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(varDecl(hasType(arrayType())).bind("vd"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const VarDecl* vd = result.Nodes.getNodeAs<VarDecl>("vd");
     if (misra::libtooling_utils::IsInSystemHeader(vd, result.Context)) {
       return;

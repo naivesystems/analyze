@@ -50,10 +50,9 @@ namespace libtooling {
  * constructor/destructor are matched and then checked they are purely virtual
  * in 'VirtualCallToVirtualFunction'.
  */
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(
@@ -114,9 +113,8 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
 
   // check if the contructor/destructor contains a virtual call to a virtual
   // function, return false if such call does not exist
-  bool VirtualCallToVirtualFunction(
-      const ast_matchers::MatchFinder::MatchResult& result,
-      const CallExpr* callexpr) {
+  bool VirtualCallToVirtualFunction(const MatchFinder::MatchResult& result,
+                                    const CallExpr* callexpr) {
     // get the function declaration
     const FunctionDecl* func_decl = callexpr->getDirectCallee();
     if (func_decl == nullptr) {
@@ -147,7 +145,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     return true;
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const CXXDynamicCastExpr* dcast =
         result.Nodes.getNodeAs<CXXDynamicCastExpr>("dcast");
     const CallExpr* callexpr = result.Nodes.getNodeAs<CallExpr>("callexpr");

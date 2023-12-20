@@ -51,8 +51,7 @@ struct MethodInfo {
   int line_number;
 };
 
-class FriendInSameFileCallback
-    : public ast_matchers::MatchFinder::MatchCallback {
+class FriendInSameFileCallback : public MatchFinder::MatchCallback {
  public:
   std::unordered_map<std::string, MethodInfo>
       friend_func_decl_locs_;  // Store all friend function declaration
@@ -63,8 +62,7 @@ class FriendInSameFileCallback
   std::unordered_map<std::string, MethodInfo>
       class_def_locs_;  // Store all class definition
 
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // Get all friend declaration(including class and function)
     finder->addMatcher(
@@ -83,7 +81,7 @@ class FriendInSameFileCallback
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     ASTContext* context = result.Context;
     SourceManager* source_manager = result.SourceManager;
 
@@ -133,7 +131,7 @@ class FriendInSameFileCallback
   static constexpr int class_prefix_length =
       6;  // The i = 6 indicates the length of string "class "
 
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 
   // Subtract the class name from string like "class A" or "class A<T>"
   std::string getClassName(std::string class_str) {
@@ -178,7 +176,7 @@ void Checker::Run() const {
   }
 }
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new FriendInSameFileCallback;
   callback_->Init(result_list, &finder_);

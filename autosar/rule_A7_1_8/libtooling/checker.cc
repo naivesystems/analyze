@@ -35,12 +35,11 @@ using std::string;
 
 namespace {
 
-void ReportError(const std::string& path, int line_number,
+void ReportError(const string& path, int line_number,
                  ResultsList* results_list) {
-  std::string error_message =
+  string error_message =
       "A non-type specifier shall be placed before a type specifier in a declaration.";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
   LOG(INFO) << absl::StrFormat("%s, path: %s, line: %d", error_message, path,
                                line_number);
 }
@@ -52,7 +51,7 @@ namespace rule_A7_1_8 {
 namespace libtooling {
 
 StringRef getDeclSource(SourceLocation startLoc, SourceLocation endLoc,
-                        const ast_matchers::MatchFinder::MatchResult& result) {
+                        const MatchFinder::MatchResult& result) {
   clang::SourceRange range =
       SourceRange(result.SourceManager->getSpellingLoc(startLoc),
                   result.SourceManager->getSpellingLoc(endLoc));
@@ -64,10 +63,9 @@ StringRef getDeclSource(SourceLocation startLoc, SourceLocation endLoc,
   return source;
 }
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(
@@ -84,7 +82,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     set<string> non_type_specifier_set{
         "friend",       "constexpr", "register", "static",  "extern",
         "thread_local", "mutable",   "inline",   "virtual", "explicit"};
@@ -118,7 +116,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
       while (regex_search(begin, end, match, re_token)) {
         if (non_type_specifier_set.find(match[0]) !=
             non_type_specifier_set.end()) {
-          std::string path =
+          string path =
               misra::libtooling_utils::GetFilename(decl, result.SourceManager);
           int line_number =
               misra::libtooling_utils::GetLine(decl, result.SourceManager);
@@ -141,7 +139,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
       regex_search(str, match, re_token);
       // the first token in typedef decl should be 'typedef'
       if (match[0] != "typedef") {
-        std::string path = misra::libtooling_utils::GetFilename(
+        string path = misra::libtooling_utils::GetFilename(
             typedef_decl, result.SourceManager);
         int line_number = misra::libtooling_utils::GetLine(
             typedef_decl, result.SourceManager);
@@ -172,10 +170,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

@@ -1,4 +1,4 @@
-FROM fedora:36
+FROM fedora:37
 
 # Install build dependencies.
 RUN dnf install -y \
@@ -10,6 +10,7 @@ clang \
 clang-devel \
 clang-tools-extra \
 cmake \
+coccinelle \
 diffutils \
 expat-devel \
 file \
@@ -42,29 +43,30 @@ wget \
 zlib-devel
 
 # Install Bear
-COPY bear-3.0.21-2.fc36.x86_64.rpm /bear/bear-3.0.21-2.fc36.x86_64.rpm
-RUN cd bear/ && dnf install -y bear-3.0.21-2.fc36.x86_64.rpm
+COPY bear-3.1.3-2.fc37.x86_64.rpm /bear/bear-3.1.3-2.fc37.x86_64.rpm
+RUN cd bear/ && dnf install -y bear-3.1.3-2.fc37.x86_64.rpm
 
 # Install Infer
-COPY infer /infer
-RUN ln -s /infer/bin/infer /usr/local/bin/infer
+COPY infer /opt/naivesystems/infer
 
 # Install Cppcheck
-COPY cppcheck /cppcheck
+COPY cppcheck /opt/naivesystems/cppcheck
 
 # Install ProjectConverter
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ lxml==4.9.1
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ jinja2
-COPY ProjectConverter /ProjectConverter
+COPY ProjectConverter /opt/naivesystems/projectconverter
 
 # Install Cpplint
-RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ flake8>=4.0.1
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ flake8
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ flake8-polyfill
-RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ pylint>=2.11.0
-RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ tox>=3.0.0
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ pylint
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ tox
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ tox-pyenv
-RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ importlib-metadata>=0.12
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ importlib-metadata
 COPY cpplint.py /opt/naivesystems/cpplint.py
+
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ semgrep
 
 COPY "clang" "/opt/naivesystems/clang"
 COPY "clang-extdef-mapping" "/opt/naivesystems/clang-extdef-mapping"

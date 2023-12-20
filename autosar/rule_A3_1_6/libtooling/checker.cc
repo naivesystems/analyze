@@ -47,10 +47,9 @@ namespace autosar {
 namespace rule_A3_1_6 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         cxxMethodDecl(unless(isExpansionInSystemHeader()),
@@ -59,7 +58,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
         this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const auto* md = result.Nodes.getNodeAs<CXXMethodDecl>("method");
     if (!md->hasBody()) {
       return;
@@ -87,7 +86,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 
   bool IsAccessor(CXXMethodDecl const* md) {
     auto body = md->getBody();
@@ -126,7 +125,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   callback_ = new Callback;
   callback_->Init(results_list, &finder_);

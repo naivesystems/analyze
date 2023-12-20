@@ -33,7 +33,7 @@ using analyzer::proto::ResultsList;
 namespace misra {
 namespace dir_4_10 {
 
-void PrecautionCheck::Init(analyzer::proto::ResultsList* results_list,
+void PrecautionCheck::Init(ResultsList* results_list,
                            SourceManager* source_manager) {
   results_list_ = results_list;
   source_manager_ = source_manager;
@@ -225,9 +225,7 @@ bool PrecautionAction::BeginSourceFileAction(CompilerInstance& ci) {
   return true;
 }
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
-  results_list_ = results_list;
-}
+void Checker::Init(ResultsList* results_list) { results_list_ = results_list; }
 
 }  // namespace dir_4_10
 }  // namespace misra

@@ -1,5 +1,6 @@
 {
 	"third_party": {
+		"license": "MIT",
 		"version": "v1.2.1"
 	}
 }

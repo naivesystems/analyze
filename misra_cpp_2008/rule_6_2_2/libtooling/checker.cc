@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "misra_cpp_2008/rule_6_2_2/libtooling/checker.h"
@@ -20,8 +32,7 @@ namespace {
 
 void ReportError(string path, int line_number, ResultsList* results_list) {
   string error_message = "不得直接或间接地对浮点表达式进行相等性或不等性测试";
-  misra::proto_util::AddResultToResultsList(results_list, path, line_number,
-                                            error_message);
+  AddResultToResultsList(results_list, path, line_number, error_message);
 }
 
 }  // namespace
@@ -30,9 +41,8 @@ namespace misra_cpp_2008 {
 namespace rule_6_2_2 {
 namespace libtooling {
 
-void CheckFloatComparisonCallback::Init(
-    analyzer::proto::ResultsList* results_list,
-    ast_matchers::MatchFinder* finder) {
+void CheckFloatComparisonCallback::Init(ResultsList* results_list,
+                                        MatchFinder* finder) {
   results_list_ = results_list;
   finder->addMatcher(
       binaryOperator(
@@ -46,8 +56,7 @@ void CheckFloatComparisonCallback::Init(
       this);
 }
 
-void CheckFloatComparisonCallback::run(
-    const ast_matchers::MatchFinder::MatchResult& result) {
+void CheckFloatComparisonCallback::run(const MatchFinder::MatchResult& result) {
   auto op_ = result.Nodes.getNodeAs<BinaryOperator>("comparison");
   auto lhs_type_ = result.Nodes.getNodeAs<Type>("lhs_type");
   auto rhs_type_ = result.Nodes.getNodeAs<Type>("rhs_type");
@@ -69,7 +78,7 @@ void CheckFloatComparisonCallback::run(
   return;
 }
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new CheckFloatComparisonCallback;
   callback_->Init(results_list_, &finder_);

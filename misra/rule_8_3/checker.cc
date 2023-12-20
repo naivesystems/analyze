@@ -36,7 +36,7 @@ namespace {
 
 void ReportInvalidDeclarationError(string name, string path, int line,
                                    ResultsList* results_list) {
-  std::string error_message = absl::StrFormat(
+  string error_message = absl::StrFormat(
       "[C0512][misra-c2012-8.3]: violation of misra-c2012-8.3 for invalid declaration\n"
       "Name: %s",
       name);
@@ -57,7 +57,7 @@ void ReportError(const FunctionDecl* fd, const MatchFinder::MatchResult& result,
   auto path = misra::libtooling_utils::GetFilename(fd, result.SourceManager);
   auto line = misra::libtooling_utils::GetLine(fd, result.SourceManager);
   auto loc = misra::libtooling_utils::GetLocation(fd, result.SourceManager);
-  std::string error_message = absl::StrFormat(
+  string error_message = absl::StrFormat(
       "[C0512][misra-c2012-8.3]: violation of misra-c2012-8.3 for %s\n"
       "Name: %s\n"
       "Location: %s\n"

@@ -1,7 +1,19 @@
 /*
-Copyright 2022 Naive Systems Ltd.
-This software contains information and intellectual property that is
-confidential and proprietary to Naive Systems Ltd. and its affiliates.
+NaiveSystems Analyze - A tool for static code analysis
+Copyright (C) 2023  Naive Systems Ltd.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "misra_cpp_2008/rule_14_5_3/libtooling/checker.h"
 
@@ -47,7 +59,7 @@ class Callback : public MatchFinder::MatchCallback {
 
   void run(const MatchFinder::MatchResult& result) override {
     const CXXMethodDecl* decl_ = result.Nodes.getNodeAs<CXXMethodDecl>("decl");
-    std::string path_ =
+    string path_ =
         misra::libtooling_utils::GetFilename(decl_, result.SourceManager);
     int line_number_ =
         misra::libtooling_utils::GetLine(decl_, result.SourceManager);
@@ -70,7 +82,7 @@ class Callback : public MatchFinder::MatchCallback {
     // section of Deleted implicitly-declared copy assignment operator of the
     // above link for the conditions.
     const CXXRecordDecl* cls = result.Nodes.getNodeAs<CXXRecordDecl>("cls");
-    std::string cls_path =
+    string cls_path =
         misra::libtooling_utils::GetFilename(cls, result.SourceManager);
     int cls_line_number =
         misra::libtooling_utils::GetLine(cls, result.SourceManager);
@@ -84,7 +96,7 @@ class Callback : public MatchFinder::MatchCallback {
       if (!method->isCopyAssignmentOperator()) {
         continue;
       }
-      std::string method_path =
+      string method_path =
           misra::libtooling_utils::GetFilename(method, result.SourceManager);
       int method_line_number =
           misra::libtooling_utils::GetLine(method, result.SourceManager);

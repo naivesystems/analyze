@@ -54,7 +54,7 @@ class CallParamCallback : public MatchFinder::MatchCallback {
   void run(const MatchFinder::MatchResult& result) override {
     const Expr* call = result.Nodes.getNodeAs<Expr>("call");
 
-    std::string error_message =
+    string error_message =
         "[C2310][misra-c2012-dir-4.7]: error should be tested";
     analyzer::proto::Result* pb_result = AddResultToResultsList(
         results_list_,
@@ -117,7 +117,7 @@ class CallAssignCallback : public MatchFinder::MatchCallback {
   void run(const MatchFinder::MatchResult& result) override {
     const Expr* call = result.Nodes.getNodeAs<Expr>("call");
 
-    std::string error_message =
+    string error_message =
         "[C2310][misra-c2012-dir-4.7]: error should be tested";
     analyzer::proto::Result* pb_result = AddResultToResultsList(
         results_list_,
@@ -152,7 +152,7 @@ class CallCallback : public MatchFinder::MatchCallback {
   void run(const MatchFinder::MatchResult& result) override {
     const CallExpr* call = result.Nodes.getNodeAs<CallExpr>("call");
 
-    std::string error_message =
+    string error_message =
         "[C2310][misra-c2012-dir-4.7]: error should be tested";
     analyzer::proto::Result* pb_result = AddResultToResultsList(
         results_list_,
@@ -168,7 +168,7 @@ class CallCallback : public MatchFinder::MatchCallback {
   ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* results_list) {
+void Checker::Init(ResultsList* results_list) {
   results_list_ = results_list;
   call_callback_ = new CallCallback;
   call_callback_->Init(results_list_, &finder_);

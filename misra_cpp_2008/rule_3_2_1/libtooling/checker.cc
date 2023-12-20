@@ -154,15 +154,14 @@ void ReportError(string loc, std::string other_loc, int line_number,
 namespace misra_cpp_2008 {
 namespace rule_3_2_1 {
 namespace libtooling {
-class VarCallback : public ast_matchers::MatchFinder::MatchCallback {
+class VarCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(varDecl().bind("var"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     ASTContext* context = result.Context;
     SourceManager* sm = result.SourceManager;
     const VarDecl* var_decl = result.Nodes.getNodeAs<VarDecl>("var");
@@ -194,14 +193,13 @@ class VarCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   std::unordered_map<string, VarDeclInfo> name_info_;
 };
 
-class FuncCallback : public ast_matchers::MatchFinder::MatchCallback {
+class FuncCallback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(functionDecl().bind("func"), this);
   }
@@ -211,7 +209,7 @@ class FuncCallback : public ast_matchers::MatchFinder::MatchCallback {
   // 1. if params list is identical, return type is also identical, skip
   // 2. if params list is not the same, skip
   // otherwise, report
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     ASTContext* context = result.Context;
     SourceManager* sm = result.SourceManager;
     const FunctionDecl* func_decl =
@@ -263,11 +261,11 @@ class FuncCallback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
   std::unordered_map<string, FuncDeclInfo> name_info_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   var_callback_ = new VarCallback;
   var_callback_->Init(result_list, &finder_);
   func_callback_ = new FuncCallback;

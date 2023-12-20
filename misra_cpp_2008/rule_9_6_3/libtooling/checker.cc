@@ -30,17 +30,16 @@ using namespace llvm;
 namespace misra_cpp_2008 {
 namespace rule_9_6_3 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(
         fieldDecl(allOf(hasType(enumType()), isBitField())).bind("decl"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Decl* s = result.Nodes.getNodeAs<Decl>("decl");
 
     if (misra::libtooling_utils::IsInSystemHeader(s, result.Context)) {

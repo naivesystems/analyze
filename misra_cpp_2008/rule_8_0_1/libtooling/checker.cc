@@ -31,10 +31,9 @@ using namespace llvm;
 namespace misra_cpp_2008 {
 namespace rule_8_0_1 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
 
     finder->addMatcher(declStmt(hasDescendant(varDecl())).bind("stmt"), this);
@@ -45,7 +44,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     finder->addMatcher(fieldDecl().bind("decl"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Decl* decl = result.Nodes.getNodeAs<Decl>("decl");
     const DeclStmt* stmt = result.Nodes.getNodeAs<DeclStmt>("stmt");
 

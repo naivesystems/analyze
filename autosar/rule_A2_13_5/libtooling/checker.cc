@@ -33,7 +33,7 @@ using std::string;
 namespace {
 
 void ReportError(string path, int line_number, ResultsList* results_list_) {
-  std::string error_message =
+  string error_message =
       absl::StrFormat("Hexadecimal constants should be upper case.");
   analyzer::proto::Result* pb_result =
       AddResultToResultsList(results_list_, path, line_number, error_message);
@@ -51,16 +51,15 @@ auto isHexadecimal(StringRef num) -> bool {
   return num.startswith_insensitive("0x");
 };
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         integerLiteral(unless(isExpansionInSystemHeader())).bind("lit"), this);
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) {
+  void run(const MatchFinder::MatchResult& result) {
     const Stmt* lit = result.Nodes.getNodeAs<Stmt>("lit");
 
     clang::SourceRange range =
@@ -77,7 +76,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     const int start_loc = 2;  // length of "0x"
     for (int i = start_loc; i < source.size(); i++) {
       if (source[i] >= 'a' && source[i] <= 'f') {
-        std::string path =
+        string path =
             misra::libtooling_utils::GetFilename(lit, result.SourceManager);
         int line_number =
             misra::libtooling_utils::GetLine(lit, result.SourceManager);
@@ -90,10 +89,10 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
   }
 
  private:
-  analyzer::proto::ResultsList* results_list_;
+  ResultsList* results_list_;
 };
 
-void Checker::Init(analyzer::proto::ResultsList* result_list) {
+void Checker::Init(ResultsList* result_list) {
   results_list_ = result_list;
   callback_ = new Callback;
   callback_->Init(results_list_, &finder_);

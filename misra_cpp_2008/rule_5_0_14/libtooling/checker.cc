@@ -30,10 +30,9 @@ using namespace clang::ast_matchers;
 namespace misra_cpp_2008 {
 namespace rule_5_0_14 {
 namespace libtooling {
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     finder->addMatcher(
         conditionalOperator(hasCondition(
@@ -45,7 +44,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
                                .bind("condition"))),
                        this);
   }
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     const Expr* condition = result.Nodes.getNodeAs<Expr>("condition");
     condition->dump();
 

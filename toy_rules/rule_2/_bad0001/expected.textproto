@@ -1,0 +1,5 @@
+results {
+    path:"bad.c"
+    line_number:3
+    error_message:"不应使用goto语句"
+}

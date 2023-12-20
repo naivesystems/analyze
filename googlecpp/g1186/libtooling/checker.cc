@@ -32,10 +32,9 @@ namespace googlecpp {
 namespace g1186 {
 namespace libtooling {
 
-class Callback : public ast_matchers::MatchFinder::MatchCallback {
+class Callback : public MatchFinder::MatchCallback {
  public:
-  void Init(analyzer::proto::ResultsList* results_list,
-            ast_matchers::MatchFinder* finder) {
+  void Init(analyzer::proto::ResultsList* results_list, MatchFinder* finder) {
     results_list_ = results_list;
     // can not handle situations that the parameter is changed as parameter to
     // another function, e.g.
@@ -98,7 +97,7 @@ class Callback : public ast_matchers::MatchFinder::MatchCallback {
     return param_infos;
   }
 
-  void run(const ast_matchers::MatchFinder::MatchResult& result) override {
+  void run(const MatchFinder::MatchResult& result) override {
     FunctionDecl const* const func =
         result.Nodes.getNodeAs<FunctionDecl>("func");
     DeclRefExpr const* const binary_lhs =
