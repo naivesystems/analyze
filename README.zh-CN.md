@@ -26,7 +26,7 @@ NaiveSystems Analyze 社区版目前支持以下编码标准：
 对于使用 Makefile 的项目，在项目根目录下运行以下命令：
 
 ```
-podman pull ccr.ccs.tencentyun.com/naivesystems/analyze:2023.4.0.0
+podman pull ccr.ccs.tencentyun.com/naivesystems/analyze:2023.4.1.0
 
 mkdir -p output
 
@@ -34,7 +34,7 @@ podman run --rm \
   -v $PWD:/src:O \
   -v $PWD/.naivesystems:/config:Z \
   -v $PWD/output:/output:Z \
-  ccr.ccs.tencentyun.com/naivesystems/analyze:2023.4.0.0 \
+  ccr.ccs.tencentyun.com/naivesystems/analyze:2023.4.1.0 \
   /opt/naivesystems/misra_analyzer -show_results
 ```
 
@@ -54,7 +54,7 @@ podman run --rm \
 
 * 如果您不使用 SELinux，可以移除 `:Z`。
 
-* 用您想使用的实际版本号替换 `2023.4.0.0`。
+* 用您想使用的实际版本号替换 `2023.4.1.0`。
 
 NaiveSystems Analyze 可以自动追踪并捕获您的构建过程。目前我们仅在社区版中发布基于 Fedora 的镜像，因此您的代码必须在 Fedora Linux 下成功编译才能使用预构建的容器镜像。对于 Debian、Ubuntu、CentOS 或 RHEL 等其他操作系统，请联系我们获取企业版。
 
