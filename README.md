@@ -32,6 +32,8 @@ directly from the source code.
 
 ### Using prebuilt container images
 
+Refer to [analyze-demo](https://github.com/naivesystems/analyze-demo) for an example.
+
 For projects using Makefiles, run the commands below in your project root:
 
 ```
