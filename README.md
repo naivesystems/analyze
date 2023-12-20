@@ -41,7 +41,7 @@ podman run --rm \
   -v $PWD:/src:O \
   -v $PWD/.naivesystems:/config:Z \
   -v $PWD/output:/output:Z \
-  ghcr.io/naivesystems/analyze:master \
+  ghcr.io/naivesystems/analyze:2023.3.3.0 \
   /opt/naivesystems/misra_analyzer -show_results
 ```
 
@@ -63,7 +63,7 @@ A few notes:
 
 * You may remove `:Z` if you are not using SELinux.
 
-* Replace `2023.3.0.0` with the actual version that you want to use.
+* Replace `2023.3.3.0` with the actual version that you want to use.
 
 NaiveSystems Analyze can trace and capture your build process automatically.
 Currently we only publish Fedora-based images in the Community Edition, so your
