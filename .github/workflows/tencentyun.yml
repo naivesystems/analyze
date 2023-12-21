@@ -1,0 +1,34 @@
+name: Sync to Tencent Cloud
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        type: string
+        required: true
+
+env:
+  from_image: ghcr.io/naivesystems/analyze:latest
+  to_image: ccr.ccs.tencentyun.com/naivesystems/analyze:${{ github.event.inputs.target_tag }}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Pull Image
+        run: docker pull ${{ env.from_image }}
+
+      - name: Tag Image
+        run: docker tag ${{ env.from_image }} ${{ env.to_image }}
+
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          registry: ccr.ccs.tencentyun.com
+          username: ${{ secrets.TENCENTYUN_USERNAME }}
+          password: ${{ secrets.TENCENTYUN_PASSWORD }}
+
+      - name: Push Image
+        run: docker push ${{ env.to_image }}
