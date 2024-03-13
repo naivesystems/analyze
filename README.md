@@ -137,7 +137,7 @@ Use [GitHub Discussions](https://github.com/naivesystems/analyze/discussions) fo
 
 If you use WeChat, you may scan the QR code below to join our group chat:
 
-<img alt="20240313" src="https://github.com/naivesystems/analyze/assets/22113324/aba9bfc1-248a-4e23-ab8f-4b428bf935c8">
+![20240320](https://github.com/naivesystems/analyze/assets/22113324/52a37f54-d78c-4753-ac52-85e277b9913f)
 
 (The QR code is updated when it's expired or when the group exceeds 200 people.)
 
