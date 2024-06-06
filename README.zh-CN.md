@@ -105,7 +105,7 @@ NaiveSystems Analyze 可以在各种 Linux 发行版上构建。例如，本存�
 
 如果您使用微信，可以扫描下方的二维码加入我们的群聊：
 
-![20240603](https://github.com/naivesystems/analyze/assets/22113324/f626c1d1-18ad-4dc2-b05f-236aad1651c7)
+![20240612](https://github.com/naivesystems/analyze/assets/22113324/d8ec1b08-f89e-4a63-a049-febe44e1dfb9)
 
 （二维码在过期或群组人数超过 200 人时会更新。）
 
