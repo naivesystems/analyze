@@ -107,7 +107,7 @@ NaiveSystems Analyze 可以在各种 Linux 发行版上构建。例如，本存�
 
 （二维码在过期或群组人数超过 200 人时会更新。）
 
-![20241226](https://github.com/user-attachments/assets/aabbd4cc-4460-4b79-a520-25cc0add1ed6)
+![20250106](https://github.com/user-attachments/assets/fc2cb8fa-7b9e-4d7d-9d04-99e82ab73d4c)
 
 ## 许可证
 
